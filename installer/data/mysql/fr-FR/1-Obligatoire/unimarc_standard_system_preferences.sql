@@ -66,4 +66,4 @@ UPDATE `systempreferences` SET value = "'title' => '200a,200c,200d,200e,225a,225
         'subject' => '600*,601*,606*,610*',
         'dewey' => '676a',
         'homebranch' => '995a,995b',
-        'lcn' => '995k'";
+        'lcn' => '995k'" WHERE variable = 'NoZebraIndexes';
