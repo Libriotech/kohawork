@@ -5284,6 +5284,16 @@ if ( C4::Context->preference("Version") < TransformToNum($DBversion) ) {
     SetVersion($DBversion);
 }
 
+
+
+$DBversion = "3.09.00.XXX";
+if ( C4::Context->preference("Version") < TransformToNum($DBversion) ) {
+    $dbh->do("INSERT INTO permissions (module_bit, code, description) VALUES (13, 'edit_shelf_maps', 'Add and edit shelf maps');");
+    print "Upgrade to $DBversion done (Added permission for adding and editing shelfmaps)\n";
+    SetVersion($DBversion);
+
+
+
 =head1 FUNCTIONS
 
 =head2 TableExists($table)
