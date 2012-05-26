@@ -64,6 +64,9 @@
     <li><a href="/cgi-bin/koha/rotating_collections/rotatingCollections.pl">Rotating collections</a></li>
     [% END %]
 -->
+    [% IF ( CAN_user_tools_edit_shelf_maps ) %]
+  <li><a href="/cgi-bin/koha/tools/shelfmap.pl">Shelf maps</a></li>
+    [% END %]
     [% IF ( CAN_user_tools_stage_marc_import ) %]
 	<li><a href="/cgi-bin/koha/tools/stage-marc-import.pl">Stage MARC for import</a></li>
     [% END %]
