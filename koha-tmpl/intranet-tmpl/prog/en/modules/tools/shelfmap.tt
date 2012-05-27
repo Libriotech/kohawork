@@ -35,7 +35,11 @@ $(document).ready(function() {
 
 [% IF op == 'map_form' %]
 
+  [% IF ( shelfmap.shelfmapid ) %]
+  <h1>Edit shelf map</h1>
+  [% ELSE %]
   <h1>Add shelf map</h1>
+  [% END %]
   <form action="[% script_name %]" name="mapform" method="post">
   <input type="hidden" name="op" value="save_map" />
   [% IF ( shelfmap.shelfmapid ) %]
