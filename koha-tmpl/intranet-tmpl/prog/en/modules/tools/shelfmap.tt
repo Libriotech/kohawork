@@ -13,7 +13,7 @@ $(document).ready(function() {
 </script>
 
 </head>
-<body id="tools_upload-images" class="tools">
+<body id="tools_shelfmaps" class="tools">
 [% INCLUDE 'header.inc' %]
 [% INCLUDE 'cat-search.inc' %]
 
