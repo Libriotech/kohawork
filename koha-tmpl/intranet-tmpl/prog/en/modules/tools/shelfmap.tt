@@ -64,6 +64,30 @@ $(document).ready(function() {
   <fieldset class="action">	<input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
+[% ELSIF op == 'del_map' %]
+
+  <div class="dialog alert">
+    <h3>Confirm deletion of map <span class="ex">'[% shelfmap.floor %]'</span>?</h3>
+    <p>Library: [% shelfmap.branchcode %]</p>
+    <form action="[% script_name %]" method="post">
+	  <input type="hidden" name="op" value="del_map_ok" />
+	  <input type="hidden" name="shelfmapid" value="[% shelfmap.shelfmapid %]" />
+	  <input type="submit" class="approve" value="Yes, Delete this map" /></form>
+	
+	  <form action="[% script_name %]" method="get">
+	  <input type="submit" value="No, do not delete" class="deny" />
+	  </form>
+	</div>
+
+[% ELSIF op == 'del_map_ok' %]
+
+  <div class="dialog message">
+    <h3>Map deleted</h3>
+    <form action="[% script_name %]" method="get">
+    <input type="submit" value="OK" class="approve" />
+    </form>
+  </div>
+
 [% ELSE %]
 
   <h1>Shelf maps</h1>

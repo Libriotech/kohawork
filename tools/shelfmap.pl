@@ -50,7 +50,8 @@ use C4::UploadedFile;
 use C4::Branch;
 
 my $cgi = new CGI;
-my $dbh   = C4::Context->dbh;
+my $dbh = C4::Context->dbh;
+my $script_name = 'shelfmap.pl';
 
 my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     {
@@ -116,12 +117,30 @@ if ( $op eq 'add_map' ) {
     $sth->execute( $cgi->param('branchcode'), $cgi->param('floor') );
   }
 
-  print $cgi->redirect('shelfmap.pl');
+  print $cgi->redirect($script_name);
 
 } elsif ( $op eq 'del_map' ) {
 
-   #TODO
+  my $query = "SELECT shelfmapid, branchcode, floor FROM shelfmaps WHERE shelfmapid = ?";
+	my $sth = $dbh->prepare($query);
+	$sth->execute($shelfmapid);
+	my $shelfmap = $sth->fetchrow_hashref();
 
+	$template->param(
+    'op'          => 'del_map',
+    'shelfmap'    => $shelfmap,
+    'script_name' => $script_name,
+  );
+
+} elsif ( $op eq 'del_map_ok' ) {
+
+  # TODO Actual delete
+  
+  $template->param(
+    'op'          => 'del_map_ok',
+    'script_name' => $script_name,
+  );
+  
 } else {
 
 	my $query = "SELECT s.*, b.branchname
