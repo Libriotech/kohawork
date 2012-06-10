@@ -134,7 +134,8 @@ if ( $op eq 'add_map' ) {
 
 } elsif ( $op eq 'del_map_ok' ) {
 
-  # TODO Actual delete
+  my $sth = $dbh->prepare('DELETE FROM shelfmaps WHERE shelfmapid = ?');
+  $sth->execute($shelfmapid);
   
   $template->param(
     'op'          => 'del_map_ok',
