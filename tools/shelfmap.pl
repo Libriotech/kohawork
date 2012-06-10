@@ -86,10 +86,7 @@ if ( $op eq 'add_map' ) {
 
 } elsif ( $op eq 'edit_map' && $shelfmapid ne '') {
 
-	my $query = "SELECT shelfmapid, branchcode, floor FROM shelfmaps WHERE shelfmapid = ?";
-	my $sth = $dbh->prepare($query);
-	$sth->execute($shelfmapid);
-	my $shelfmap = $sth->fetchrow_hashref();
+	my $shelfmap = GetShelfmap( $shelfmapid );
 
 	my $branches = GetBranches();
   my @branchloop;
@@ -121,10 +118,7 @@ if ( $op eq 'add_map' ) {
 
 } elsif ( $op eq 'del_map' ) {
 
-  my $query = "SELECT shelfmapid, branchcode, floor FROM shelfmaps WHERE shelfmapid = ?";
-	my $sth = $dbh->prepare($query);
-	$sth->execute($shelfmapid);
-	my $shelfmap = $sth->fetchrow_hashref();
+  my $shelfmap = GetShelfmap( $shelfmapid );
 
 	$template->param(
     'op'          => 'del_map',
@@ -134,8 +128,7 @@ if ( $op eq 'add_map' ) {
 
 } elsif ( $op eq 'del_map_ok' ) {
 
-  my $sth = $dbh->prepare('DELETE FROM shelfmaps WHERE shelfmapid = ?');
-  $sth->execute($shelfmapid);
+  DeleteShelfmap( $shelfmapid );
   
   $template->param(
     'op'          => 'del_map_ok',
@@ -144,12 +137,8 @@ if ( $op eq 'add_map' ) {
   
 } else {
 
-	my $query = "SELECT s.*, b.branchname
-	             FROM shelfmaps as s, branches as b
-	             WHERE s.branchcode = b.branchcode";
-	my $sth = $dbh->prepare($query);
-	$sth->execute();
-	my $shelfmaps = $sth->fetchall_arrayref({});
+  my $shelfmaps = GetAllShelfmaps();
+
 	$template->param(
 	  'shelfmaps' => $shelfmaps,
 	  'else'      => 1
@@ -160,6 +149,41 @@ if ( $op eq 'add_map' ) {
 output_html_with_http_headers $cgi, $cookie, $template->output;
 
 exit 0;
+
+sub GetShelfmap {
+
+  my ( $shelfmapid ) = @_;
+  
+  return unless $shelfmapid;
+
+  my $query = "SELECT shelfmapid, branchcode, floor FROM shelfmaps WHERE shelfmapid = ?";
+	my $sth = $dbh->prepare($query);
+	$sth->execute($shelfmapid);
+	return $sth->fetchrow_hashref();
+
+}
+
+sub GetAllShelfmaps {
+
+	my $query = "SELECT s.*, b.branchname
+	             FROM shelfmaps as s, branches as b
+	             WHERE s.branchcode = b.branchcode";
+	my $sth = $dbh->prepare($query);
+	$sth->execute();
+	return $sth->fetchall_arrayref({});
+
+}
+
+sub DeleteShelfmap {
+
+  my ( $shelfmapid ) = @_;
+
+  return unless $shelfmapid;
+
+  my $sth = $dbh->prepare('DELETE FROM shelfmaps WHERE shelfmapid = ?');
+  return $sth->execute($shelfmapid);
+
+}
 
 =head1 AUTHORS
 
