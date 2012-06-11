@@ -107,11 +107,13 @@ if ( $op eq 'add_map' ) {
 } elsif ( $op eq 'save_map' ) {
 
   if ($cgi->param('shelfmapid')) {
-    my $sth=$dbh->prepare("UPDATE shelfmaps SET branchcode = ?, floor = ? WHERE shelfmapid = ?");
-    $sth->execute( $cgi->param('branchcode'), $cgi->param('floor'), $cgi->param('shelfmapid') );
+
+    EditShelfmap( $cgi->param('branchcode'), $cgi->param('floor'), $cgi->param('shelfmapid') );
+
   } else {
-    my $sth=$dbh->prepare("INSERT INTO shelfmaps SET branchcode = ?, floor = ?");
-    $sth->execute( $cgi->param('branchcode'), $cgi->param('floor') );
+  
+    AddShelfmap( $cgi->param('branchcode'), $cgi->param('floor') );
+
   }
 
   print $cgi->redirect($script_name);
@@ -149,6 +151,22 @@ if ( $op eq 'add_map' ) {
 output_html_with_http_headers $cgi, $cookie, $template->output;
 
 exit 0;
+
+sub AddShelfmap {
+
+  my $sth=$dbh->prepare("INSERT INTO shelfmaps SET branchcode = ?, floor = ?");
+  $sth->execute( $cgi->param('branchcode'), $cgi->param('floor') );
+
+}
+
+sub EditShelfmap {
+
+  my ( $branchcode, $floor, $shelfmapid ) = @_;
+
+  my $sth = $dbh->prepare("UPDATE shelfmaps SET branchcode = ?, floor = ? WHERE shelfmapid = ?");
+  return $sth->execute( $branchcode, $floor, $shelfmapid );
+
+}
 
 sub GetShelfmap {
 
