@@ -35,8 +35,8 @@ as adding points of interest to the maps.
 
 =cut
 
-use strict;
-use warnings;
+use Modern::Perl;
+use Koha::Shelfmaps;
 
 use File::Temp;
 use CGI;
@@ -151,57 +151,6 @@ if ( $op eq 'add_map' ) {
 output_html_with_http_headers $cgi, $cookie, $template->output;
 
 exit 0;
-
-sub AddShelfmap {
-
-  my $sth=$dbh->prepare("INSERT INTO shelfmaps SET branchcode = ?, floor = ?");
-  $sth->execute( $cgi->param('branchcode'), $cgi->param('floor') );
-
-}
-
-sub EditShelfmap {
-
-  my ( $branchcode, $floor, $shelfmapid ) = @_;
-
-  my $sth = $dbh->prepare("UPDATE shelfmaps SET branchcode = ?, floor = ? WHERE shelfmapid = ?");
-  return $sth->execute( $branchcode, $floor, $shelfmapid );
-
-}
-
-sub GetShelfmap {
-
-  my ( $shelfmapid ) = @_;
-  
-  return unless $shelfmapid;
-
-  my $query = "SELECT shelfmapid, branchcode, floor FROM shelfmaps WHERE shelfmapid = ?";
-	my $sth = $dbh->prepare($query);
-	$sth->execute($shelfmapid);
-	return $sth->fetchrow_hashref();
-
-}
-
-sub GetAllShelfmaps {
-
-	my $query = "SELECT s.*, b.branchname
-	             FROM shelfmaps as s, branches as b
-	             WHERE s.branchcode = b.branchcode";
-	my $sth = $dbh->prepare($query);
-	$sth->execute();
-	return $sth->fetchall_arrayref({});
-
-}
-
-sub DeleteShelfmap {
-
-  my ( $shelfmapid ) = @_;
-
-  return unless $shelfmapid;
-
-  my $sth = $dbh->prepare('DELETE FROM shelfmaps WHERE shelfmapid = ?');
-  return $sth->execute($shelfmapid);
-
-}
 
 =head1 AUTHORS
 
