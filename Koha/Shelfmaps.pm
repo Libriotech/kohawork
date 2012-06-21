@@ -21,7 +21,7 @@ sub AddShelfmap {
   my ( $branchcode, $floor ) = @_;
 
   my $sth=$dbh->prepare("INSERT INTO shelfmaps SET branchcode = ?, floor = ?");
-  $sth->execute( $branchcode, $floor );
+  return $sth->execute( $branchcode, $floor );
 
 }
 
