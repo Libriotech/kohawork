@@ -7,6 +7,9 @@ BEGIN {use_ok('Koha::Shelfmaps') }
 use Koha::Shelfmaps;
 
 my $dbh = C4::Context->dbh;
+
+# TODO Check that CPL is a valid branchcode, or choose a random one from 
+# the branches table
 my $library1 = 'CPL';
 my $library1_floor1 = 'first';
 my $library1_floor1_2 = 'First';
