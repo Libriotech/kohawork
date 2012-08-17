@@ -546,7 +546,6 @@ OPAC:
                   yes: Use
                   no: "Don't use"
             - "the item collection code when finding items for the shelf browser."      
-
     Self Registration:
         -
             - pref: PatronSelfRegistration
@@ -580,3 +579,11 @@ OPAC:
             - pref: PatronSelfRegistrationBorrowerUnwantedField
               class: multi
             - (separate columns with |)
+    Digital Signs:
+        -
+            - pref: OPACDigitalSigns
+              default: 0
+              choices:
+                  yes: Enable
+                  no: Disable
+            - "digital signs in the OPAC. Please note: Digital signs are not linked to from the OPAC by default, so you will have to load the relevant URL by hand on displays where you want to use them."
