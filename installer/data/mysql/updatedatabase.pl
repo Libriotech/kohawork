@@ -5635,6 +5635,14 @@ if(C4::Context->preference("Version") < TransformToNum($DBversion) ) {
     SetVersion($DBversion);
 }
 
+$DBversion ="3.09.00.XXX";
+if(C4::Context->preference("Version") < TransformToNum($DBversion) ) {
+    $dbh->do("INSERT INTO systempreferences SET variable = 'AdLibrisCovers', value = 0,    explanation = 'If ON AdLibris book covers will be shown.', type = 'YesNo'");
+    $dbh->do("INSERT INTO systempreferences SET variable = 'AdLibrisLocale', value = 'se', explanation = 'Locale to use for data from AdLibris.com.', type = 'Choice', options = 'se|no|dk|fi'");
+    print "Upgrade to $DBversion done (Added sysprefs AdLibrisCovers and AdLibrisLocale.)\n";
+    SetVersion($DBversion);
+}
+
 =head1 FUNCTIONS
 
 =head2 TableExists($table)

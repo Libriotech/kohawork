@@ -316,6 +316,8 @@ sub get_template_and_user {
             EnhancedMessagingPreferences => C4::Context->preference('EnhancedMessagingPreferences'),
             GoogleJackets                => C4::Context->preference("GoogleJackets"),
             OpenLibraryCovers            => C4::Context->preference("OpenLibraryCovers"),
+            AdLibrisCovers               => C4::Context->preference("AdLibrisCovers"),
+            AdLibrisLocale               => C4::Context->preference("AdLibrisLocale"),
             KohaAdminEmailAddress        => "" . C4::Context->preference("KohaAdminEmailAddress"),
             LoginBranchcode              => (C4::Context->userenv?C4::Context->userenv->{"branch"}:"insecure"),
             LoginFirstname               => (C4::Context->userenv?C4::Context->userenv->{"firstname"}:"Bel"),

@@ -74,7 +74,7 @@ function verify_images() {
         <span class="Z3988" title="[% ocoins %]"></span>
     [% END %]
 
-    [% IF ( AmazonEnabled ) %]
+    [% IF ( AmazonEnabled || AdLibrisCovers ) %]
         [% IF ( XSLTDetailsDisplay ) %]
             <div class="yui-gc">
             <div id="catalogue_detail_biblio" class="yui-u first">
@@ -119,6 +119,10 @@ function verify_images() {
 
         [% IF ( AmazonEnabled ) %][% IF ( AmazonCoverImages ) %]</div><div class="yui-u" id="bookcoverimg">
         <a href="http://www.amazon[% AmazonTld %]/gp/reader/[% normalized_isbn %]/ref=sib_dp_pt/002-7879865-0184864#reader-link"><img border="0" src="http://images.amazon.com/images/P/[% normalized_isbn %].01.MZZZZZZZ.jpg" alt="" /></a>[% END %][% END %]
+        [% IF ( AdLibrisCovers ) %]
+        </div><div class="yui-u" id="bookcoverimg">
+        <img class="thumbnail adlibristhumbnail" src="http://www.adlibris.com/[% AdLibrisLocale %]/showimagesafe.aspx?isbn=[% normalized_isbn %]" alt="Cover image" />
+        [% END %]
     [% ELSE %]
 
     <h3>[% title |html %]</h3>

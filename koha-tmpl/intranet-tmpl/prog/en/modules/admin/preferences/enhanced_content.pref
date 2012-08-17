@@ -16,6 +16,22 @@ Enhanced Content:
                   yes: Show
                   no: "Don't show"
             - other editions of an item on the OPAC.
+    AdLibris:
+        -
+            - pref: AdLibrisCovers
+              default: 0
+              choices:
+                  yes: Use
+                  no: "Don't use"
+            - cover images from the 
+            - pref: AdLibrisLocale
+              default: se
+              choices:
+                  se: Swedish
+                  'no': Norwegian
+                  dk: Danish
+                  fi: Finnish
+            - locale of AdLibris on search results and detail pages in the OPAC and staff client.
     Amazon:
         -
             - pref: AmazonEnabled

@@ -623,6 +623,7 @@ $(document).ready(function(){
         [% IF OpenLibraryCovers %][% IF SEARCH_RESULT.normalized_isbn %]<span style="block" title="[% SEARCH_RESULT.biblionumber %]" class="[% SEARCH_RESULT.normalized_isbn %]" id="openlibrary-thumbnail[% loop.count %]"></span>[% ELSE %]<span class="no-image">No cover image available</span>[% END %][% END %]
                 </a>
                 [% IF ( BakerTaylorEnabled ) %][% IF ( SEARCH_RESULT.normalized_isbn ) %]<a href="https://[% BakerTaylorBookstoreURL |html %][% SEARCH_RESULT.normalized_isbn %]"><img alt="See Baker &amp; Taylor" src="[% BakerTaylorImageURL |html %][% SEARCH_RESULT.normalized_isbn %]" /></a>[% ELSE %]<span class="no-image">No cover image available</span>[% END %][% END %]
+                [% IF ( AdLibrisCovers ) %][% IF ( SEARCH_RESULT.normalized_isbn ) %]<img class="thumbnail adlibristhumbnail" src="http://www.adlibris.com/[% AdLibrisLocale %]/showimagesafe.aspx?isbn=[% SEARCH_RESULT.normalized_isbn %]" alt="Cover image" />[% ELSE %]<span class="no-image">No cover image available</span>[% END %][% END %]
                 </td>
                 </tr>
                 [% END %]

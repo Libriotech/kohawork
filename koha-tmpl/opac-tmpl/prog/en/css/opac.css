@@ -1150,6 +1150,10 @@ h2 span.hint {
 	float : left;
 	margin : 0pt 5px 5px 0pt;
 }
+.adlibristhumbnail {
+  max-height: 120px;
+  max-width: 120px;
+}
 a.cancel {
 	padding-left : 1em;
 }

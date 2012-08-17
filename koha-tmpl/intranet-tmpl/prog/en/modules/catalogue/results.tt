@@ -441,6 +441,7 @@ YAHOO.util.Event.onContentReady("searchheader", function () {
                 <table>
                     <tr>
                         [% IF ( AmazonEnabled ) %][% IF ( AmazonCoverImages ) %]<th>&nbsp;</th>[% END %][% END %]
+                        [% IF ( AdLibrisCovers ) %]<th>&nbsp;</th>[% END %]
                         <th colspan="2">Results</th>
                         <th>Location</th>
                     </tr>
@@ -454,6 +455,13 @@ YAHOO.util.Event.onContentReady("searchheader", function () {
                                         <img src="[% IF ( SEARCH_RESULT.normalized_isbn ) %]http://images.amazon.com/images/P/[% SEARCH_RESULT.normalized_isbn %].01.TZZZZZZZ.jpg[% ELSE %]http://g-images.amazon.com/images/G/01/x-site/icons/no-img-sm.gif[% END %]" alt="" class="thumbnail" />
                                     </a></td>
                             [% END %][% END %]
+                            [% IF ( AdLibrisCovers ) %]
+                              <td>
+                              [% IF ( SEARCH_RESULT.normalized_isbn ) %]
+                              <img class="thumbnail adlibristhumbnail" src="http://www.adlibris.com/[% AdLibrisLocale %]/showimagesafe.aspx?isbn=[% SEARCH_RESULT.normalized_isbn %]" alt="Cover image" />
+                              [% END %]
+                              </td>
+                            [% END %]
                             <td>
                                 <input type="checkbox" class="selection" id="bib[% SEARCH_RESULT.biblionumber %]" name="biblionumber" value="[% SEARCH_RESULT.biblionumber %]" style="display:none" />
                             </td>
