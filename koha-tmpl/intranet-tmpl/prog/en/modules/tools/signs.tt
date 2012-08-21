@@ -1,0 +1,26 @@
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha &rsaquo; Tools &rsaquo; Digital signs</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body id="tools_signs" class="tools">
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/tools/tools-home.pl">Tools</a> &rsaquo; <a href="/cgi-bin/koha/tools/signs.pl">Digital signs</a></div>
+
+<div id="doc3" class="yui-t2">
+
+   <div id="bd">
+	<div id="yui-main">
+	<div class="yui-b">
+
+<h1>Digital signs</h1>
+
+</div>
+</div>
+</div>
+<div class="yui-b">
+[% INCLUDE 'tools-menu.inc' %]
+</div>
+</div>
+[% INCLUDE 'intranet-bottom.inc' %]
