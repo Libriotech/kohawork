@@ -97,6 +97,11 @@
     <dd>Quote editor for Quote-of-the-day feature in OPAC</dd>
     [% END %]
 
+    [% IF ( CAN_user_tools_edit_digital_signs ) %]
+    <dt><a href="/cgi-bin/koha/tools/signs.pl">Digital signs</a></dt>
+    <dd>Create and edit digital signs for the OPAC</dd>
+    [% END %]
+
 </dl>
 </div>
 <div class="yui-u">
