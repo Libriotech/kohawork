@@ -98,4 +98,8 @@
     [% IF ( CAN_user_tools_edit_quotes ) %]
        <li><a href="/cgi-bin/koha/tools/quotes.pl">Quote editor</a></li>
     [% END %]
+    [% IF ( CAN_user_tools_edit_digital_signs ) %]
+  <li><a href="/cgi-bin/koha/tools/signs.pl">Digital signs</a></li>
+    [% END %]
+
 </ul></div></div>
