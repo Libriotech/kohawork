@@ -34,20 +34,18 @@ Allows authorized users to create and manage digital signs for the OPAC.
 
 =cut
 
-use strict;
-use warnings;
-
+use Koha::Signs;
 use CGI;
-use C4::Context;
 use C4::Auth;
 use C4::Branch;
+use C4::Context;
 use C4::Log;
 use C4::Output;
-
-my $debug = 1;
+use Modern::Perl;
 
 my $cgi = new CGI;
 my $dbh = C4::Context->dbh;
+my $script_name = 'signs.pl';
 
 my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     {
@@ -82,10 +80,7 @@ if ( $op eq 'add_sign' ) {
 
 } elsif ( $op eq 'edit_sign' && $sign_id ne '') {
 
-  my $query = "SELECT sign_id, branchcode, name FROM signs WHERE sign_id = ?";
-  my $sth = $dbh->prepare($query);
-  $sth->execute($sign_id);
-  my $sign = $sth->fetchrow_hashref();
+  my $sign = GetSign( $sign_id );
 
   my $branches = GetBranches();
   my @branchloop;
@@ -98,36 +93,43 @@ if ( $op eq 'add_sign' ) {
   }
 
   $template->param(
-  'sign' => $sign,
-  'branchloop' => \@branchloop,
+    'sign' => $sign,
+    'branchloop' => \@branchloop,
     'op' => 'sign_form'
   );
 
 } elsif ( $op eq 'save_sign' ) {
 
-  if ( $cgi->param('sign_id') ) {
-    my $sth=$dbh->prepare("UPDATE signs SET branchcode = ?, name = ? WHERE sign_id = ?");
-    $sth->execute( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('sign_id') );
+  if ($cgi->param('sign_id')) {
+    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('sign_id') );
   } else {
-    my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?");
-    $sth->execute( $cgi->param('branchcode'), $cgi->param('name') );
+    AddSign( $cgi->param('branchcode'), $cgi->param('name') );
   }
-
-  print $cgi->redirect('signs.pl');
+  print $cgi->redirect($script_name);
 
 } elsif ( $op eq 'del_sign' ) {
 
-   #TODO
+  my $sign = GetSign( $sign_id );
+
+  $template->param(
+    'op' => 'del_sign',
+    'sign' => $sign,
+    'script_name' => $script_name,
+  );
+
+} elsif ( $op eq 'del_sign_ok' ) {
+
+  DeleteSign( $sign_id );
+
+  $template->param(
+    'op' => 'del_sign_ok',
+    'script_name' => $script_name,
+  );
 
 } else {
 
-  my $query = "SELECT s.*, b.branchname
-               FROM signs as s LEFT JOIN branches as b
-               ON s.branchcode = b.branchcode
-               ORDER BY b.branchname, s.name";
-  my $sth = $dbh->prepare($query);
-  $sth->execute();
-  my $signs = $sth->fetchall_arrayref({});
+  my $signs = GetAllSigns();
+
   $template->param(
     'signs' => $signs,
     'else' => 1
