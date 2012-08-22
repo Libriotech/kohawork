@@ -55,7 +55,11 @@
       <select name="report" id="report">
         <option value="">Choose report</option>
         [% FOREACH report IN reports %]
-          <option value="[% report.id %]">[% report.report_name %]</option>
+          [% IF ( report.id == sign.saved_sql_id ) %]
+            <option value="[% report.id %]" selected="selected">[% report.report_name %]</option>
+          [% ELSE %]
+            <option value="[% report.id %]">[% report.report_name %]</option>
+          [% END %]
         [% END %]
       </select>
     </li>
