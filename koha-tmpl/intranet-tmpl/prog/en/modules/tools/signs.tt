@@ -38,7 +38,11 @@
 
 [% IF op == 'sign_form' %]
 
-  <h1>Add a digital sign</h1>
+  [% IF ( sign.sign_id ) %]
+  <h1>Edit sign</h1>
+  [% ELSE %]
+  <h1>Add sign</h1>
+  [% END %]
   <form action="[% script_name %]" name="signform" method="post">
   <input type="hidden" name="op" value="save_sign" />
   [% IF ( sign.sign_id ) %]
