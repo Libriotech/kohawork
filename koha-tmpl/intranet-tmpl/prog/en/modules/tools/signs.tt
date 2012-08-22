@@ -50,14 +50,11 @@
   [% END %]
   <fieldset class="rows">
     <ol>
-    <li><label for="branchcode">Library</label>
-      <select name="branchcode" id="branch">
-        <option value="">All libraries</option>
-        [% FOREACH branchloo IN branchloop %]
-          [% IF ( branchloo.selected ) %]
-          <option value="[% branchloo.value %]" selected="selected">[% branchloo.branchname %]</option>
-          [% ELSE %]
-          <option value="[% branchloo.value %]">[% branchloo.branchname %]</option>[% END %]
+    <li><label for="report">Report</label>
+      <select name="report" id="report">
+        <option value="">Choose report</option>
+        [% FOREACH report IN reports %]
+          <option value="[% report.id %]">[% report.report_name %]</option>
         [% END %]
       </select>
     </li>
@@ -71,7 +68,6 @@
 
   <div class="dialog alert">
     <h3>Confirm deletion of sign <span class="ex">'[% sign.name %]'</span>?</h3>
-    <p>Library: [% IF ( sign.branchname ) %][% sign.branchname %][% ELSE %]All libraries[% END %]</p>
     <form action="[% script_name %]" method="post">
     <input type="hidden" name="op" value="del_sign_ok" />
     <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
@@ -98,8 +94,8 @@
   [% IF signs %]
     <table>
     <tr>
-    <th>Library</th>
     <th>Name</th>
+    <th>Report</th>
     <th>Edit</th>
     <th>Delete</th>
     </tr>
@@ -107,8 +103,8 @@
     [% IF ( loop.even ) %]<tr class="highlight">
     [% ELSE %]<tr>
     [% END %]
-    <td>[% IF ( s.branchname ) %][% s.branchname %][% ELSE %]All libraries[% END %]</td>
     <td>[% s.name %]</td>
+    <td>[% s.saved_sql_id %]</td>
     <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
     <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
     </tr>
