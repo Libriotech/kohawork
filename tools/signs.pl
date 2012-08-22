@@ -64,6 +64,8 @@ my $sign_id = $cgi->param('sign_id') || '';
 
 if ( $op eq 'add_sign' ) {
 
+  # TODO Check that there are reports that can be used
+
   $template->param(
     'op'         => 'sign_form',
     'reports'    => get_saved_reports,
@@ -109,6 +111,8 @@ if ( $op eq 'add_sign' ) {
   );
 
 } else {
+
+  # TODO Check the setting of OPACDigitalSigns, give a warning if it is off
 
   my $signs = GetAllSigns();
 
