@@ -17,7 +17,6 @@ my $name3    = 'a changed name';
 
 # AddSign
 ok( AddSign( $library1, $name1 ), "AddSign" );
-ok( AddSign( '',        $name2 ), "AddSign, no branchcode" );
 
 # Find the sign_id of the sign we just added, for use in further tests
 my $query = "SELECT sign_id FROM signs WHERE branchcode = '$library1' AND name = '$name1'";
