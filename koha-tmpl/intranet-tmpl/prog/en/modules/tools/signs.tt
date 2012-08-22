@@ -63,6 +63,30 @@
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
+[% ELSIF op == 'del_sign' %]
+
+  <div class="dialog alert">
+    <h3>Confirm deletion of sign <span class="ex">'[% sign.name %]'</span>?</h3>
+    <p>Library: [% IF ( sign.branchname ) %][% sign.branchname %][% ELSE %]All libraries[% END %]</p>
+    <form action="[% script_name %]" method="post">
+    <input type="hidden" name="op" value="del_sign_ok" />
+    <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
+    <input type="submit" class="approve" value="Yes, Delete this sign" /></form>
+
+    <form action="[% script_name %]" method="get">
+    <input type="submit" value="No, do not delete" class="deny" />
+    </form>
+    </div>
+
+[% ELSIF op == 'del_sign_ok' %]
+
+  <div class="dialog message">
+    <h3>Sign deleted</h3>
+    <form action="[% script_name %]" method="get">
+    <input type="submit" value="OK" class="approve" />
+    </form>
+  </div>
+
 [% ELSE %]
 
   <h1>Digital signs</h1>
