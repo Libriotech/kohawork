@@ -51,8 +51,9 @@ sub GetSign {
 
 sub GetAllSigns {
 
-  my $query = "SELECT s.*
-               FROM signs as s
+  my $query = "SELECT s.*, sq.report_name as report_name
+               FROM signs AS s, saved_sql AS sq
+               WHERE s.saved_sql_id = sq.id
                ORDER BY s.name";
   my $sth = $dbh->prepare($query);
   $sth->execute();
