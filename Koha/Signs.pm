@@ -29,7 +29,7 @@ sub EditSign {
 
   my ( $branchcode, $name, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE shelfmaps SET branchcode = ?, name = ? WHERE sign_id = ?");
+  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ? WHERE sign_id = ?");
   return $sth->execute( $branchcode, $name, $sign_id );
 
 }

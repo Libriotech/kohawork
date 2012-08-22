@@ -93,9 +93,10 @@ if ( $op eq 'add_sign' ) {
   }
 
   $template->param(
-    'sign' => $sign,
-    'branchloop' => \@branchloop,
-    'op' => 'sign_form'
+    'op'          => 'sign_form',
+    'sign'        => $sign,
+    'branchloop'  => \@branchloop,
+    'script_name' => $script_name
   );
 
 } elsif ( $op eq 'save_sign' ) {
