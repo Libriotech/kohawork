@@ -104,7 +104,7 @@
     [% ELSE %]<tr>
     [% END %]
     <td>[% s.name %]</td>
-    <td>[% s.saved_sql_id %]</td>
+    <td title="ID: [% s.saved_sql_id %]">[% s.report_name %]</td>
     <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
     <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
     </tr>
