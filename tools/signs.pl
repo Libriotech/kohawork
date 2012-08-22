@@ -107,7 +107,7 @@ if ( $op eq 'add_sign' ) {
 
   if ( $cgi->param('sign_id') ) {
     my $sth=$dbh->prepare("UPDATE signs SET branchcode = ?, name = ? WHERE sign_id = ?");
-    $sth->execute( $cgi->param('branchcode'), $cgi->param('floor'), $cgi->param('sign_id') );
+    $sth->execute( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('sign_id') );
   } else {
     my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?");
     $sth->execute( $cgi->param('branchcode'), $cgi->param('name') );
