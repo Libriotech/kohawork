@@ -20,7 +20,7 @@ sub AddSign {
 
   my ( $branchcode, $name ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO shelfmaps SET branchcode = ?, name = ?");
+  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?");
   return $sth->execute( $branchcode, $name );
 
 }
