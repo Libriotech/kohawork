@@ -18,19 +18,19 @@ my $dbh = C4::Context->dbh;
 
 sub AddSign {
 
-  my ( $branchcode, $name ) = @_;
+  my ( $name, $report ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?");
-  return $sth->execute( $branchcode, $name );
+  my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, saved_sql_id = ?");
+  return $sth->execute( $name, $report );
 
 }
 
 sub EditSign {
 
-  my ( $branchcode, $name, $sign_id ) = @_;
+  my ( $name, $report, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ? WHERE sign_id = ?");
-  return $sth->execute( $branchcode, $name, $sign_id );
+  my $sth = $dbh->prepare("UPDATE signs SET name = ?, saved_sql_id = ? WHERE sign_id = ?");
+  return $sth->execute( $name, $report, $sign_id );
 
 }
 
@@ -40,9 +40,8 @@ sub GetSign {
 
   return unless $sign_id;
 
-  my $query = "SELECT s.*, b.branchname
-               FROM signs as s LEFT JOIN branches as b
-               ON s.branchcode = b.branchcode
+  my $query = "SELECT s.*
+               FROM signs as s
                WHERE s.sign_id = ?";
   my $sth = $dbh->prepare($query);
   $sth->execute($sign_id);
@@ -52,10 +51,9 @@ sub GetSign {
 
 sub GetAllSigns {
 
-  my $query = "SELECT s.*, b.branchname
-               FROM signs as s LEFT JOIN branches as b
-               ON s.branchcode = b.branchcode
-               ORDER BY b.branchname, s.name";
+  my $query = "SELECT s.*
+               FROM signs as s
+               ORDER BY s.name";
   my $sth = $dbh->prepare($query);
   $sth->execute();
   return $sth->fetchall_arrayref({});

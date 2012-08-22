@@ -41,6 +41,7 @@ use C4::Branch;
 use C4::Context;
 use C4::Log;
 use C4::Output;
+use C4::Reports::Guided;
 use Modern::Perl;
 
 my $cgi = new CGI;
@@ -63,48 +64,28 @@ my $sign_id = $cgi->param('sign_id') || '';
 
 if ( $op eq 'add_sign' ) {
 
-  # FIXME Is it possible to avoid duplicating this code?
-  my $branches = GetBranches();
-  my @branchloop;
-  for my $thisbranch (sort { $branches->{$a}->{branchname} cmp $branches->{$b}->{branchname} } keys %$branches) {
-    push @branchloop, {
-        value => $thisbranch,
-        branchname => $branches->{$thisbranch}->{'branchname'},
-    };
-  }
-
   $template->param(
-    'branchloop' => \@branchloop,
-    'op' => 'sign_form',
+    'op'         => 'sign_form',
+    'reports'    => get_saved_reports,
   );
 
 } elsif ( $op eq 'edit_sign' && $sign_id ne '') {
 
   my $sign = GetSign( $sign_id );
 
-  my $branches = GetBranches();
-  my @branchloop;
-  for my $thisbranch (sort { $branches->{$a}->{branchname} cmp $branches->{$b}->{branchname} } keys %$branches) {
-    push @branchloop, {
-        value => $thisbranch,
-        selected => $thisbranch eq $sign->{'branchcode'},
-        branchname => $branches->{$thisbranch}->{'branchname'},
-    };
-  }
-
   $template->param(
     'op'          => 'sign_form',
     'sign'        => $sign,
-    'branchloop'  => \@branchloop,
+    'reports'     => get_saved_reports,
     'script_name' => $script_name
   );
 
 } elsif ( $op eq 'save_sign' ) {
 
   if ($cgi->param('sign_id')) {
-    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('sign_id') );
+    EditSign( $cgi->param('name'), $cgi->param('report'), $cgi->param('sign_id') );
   } else {
-    AddSign( $cgi->param('branchcode'), $cgi->param('name') );
+    AddSign( $cgi->param('name'), $cgi->param('report'),  );
   }
   print $cgi->redirect($script_name);
 
