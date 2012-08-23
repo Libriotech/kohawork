@@ -12,6 +12,11 @@ EditSign
 GetSign
 GetAllSigns
 DeleteSign
+AddDeck
+EditDeck
+GetDeck
+GetAllDecks
+DeleteDeck
 );
 
 my $dbh = C4::Context->dbh;
@@ -71,5 +76,66 @@ sub DeleteSign {
   return $sth->execute($sign_id);
 
 }
+
+# Decks
+
+sub AddDeck {
+
+  my ( $branchcode, $name ) = @_;
+
+  my $sth=$dbh->prepare("INSERT INTO decks SET branchcode = ?, name = ?");
+  return $sth->execute( $branchcode, $name );
+
+}
+
+sub EditDeck {
+
+  my ( $branchcode, $name, $deck_id ) = @_;
+
+  my $sth = $dbh->prepare("UPDATE decks SET branchcode = ?, name = ? WHERE deck_id = ?");
+  return $sth->execute( $branchcode, $name, $deck_id );
+
+}
+
+sub GetDeck {
+
+  my ( $deck_id ) = @_;
+
+  return unless $deck_id;
+
+  my $query = "SELECT d.*, b.branchname
+               FROM decks as d LEFT JOIN branches as b
+               ON d.branchcode = b.branchcode
+               WHERE d.deck_id = ?";
+  my $sth = $dbh->prepare($query);
+  $sth->execute($deck_id);
+  return $sth->fetchrow_hashref();
+
+}
+
+sub GetAllDecks {
+
+  my $query = "SELECT d.*, b.branchname
+               FROM decks as d LEFT JOIN branches as b
+               ON d.branchcode = b.branchcode
+               ORDER BY b.branchname, d.name";
+  my $sth = $dbh->prepare($query);
+  $sth->execute();
+  return $sth->fetchall_arrayref({});
+
+}
+
+sub DeleteDeck {
+
+  my ( $deck_id ) = @_;
+
+  return unless $deck_id;
+
+  my $sth = $dbh->prepare('DELETE FROM decks WHERE deck_id = ?');
+  return $sth->execute($deck_id);
+
+}
+
+
 
 1;

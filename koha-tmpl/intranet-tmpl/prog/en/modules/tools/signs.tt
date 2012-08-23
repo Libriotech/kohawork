@@ -23,10 +23,23 @@
         size:          20
       });
 
+      $("#table_decks").tablesorter({
+        sortList: [[0,0]], // Default sort: first column, ascending order
+        headers: {
+         2: { sorter: false},
+         3: { sorter: false}
+       }
+      }).tablesorterPager({
+        container:     $("#pagertable_decks"),
+        positionFixed: false,
+        size:          20
+      });
+
 	 });
 
 	// YUI Toolbar Functions
 	function yuiToolbar() {
+	    new YAHOO.widget.Button("newdeck");
 	    new YAHOO.widget.Button("newsign");
 	}
 
@@ -48,6 +61,7 @@
 [% IF ( else ) %]
   <div id="toolbar">
     <ul class="toolbar">
+      <li><a id="newdeck" href="?op=add_deck">New deck</a></li>
       <li><a id="newsign" href="?op=add_sign">New sign</a></li>
     </ul>
   </div>
@@ -85,6 +99,38 @@
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
+[% ELSIF op == 'deck_form' %]
+
+  [% IF ( sign.sign_id ) %]
+  <h1>Edit deck</h1>
+  [% ELSE %]
+  <h1>Add deck</h1>
+  [% END %]
+  <form action="[% script_name %]" name="deckform" method="post">
+  <input type="hidden" name="op" value="save_deck" />
+  [% IF ( deck.deck_id ) %]
+  <input type="hidden" name="deck_id" value="[% deck.deck_id %]" />
+  [% END %]
+  <fieldset class="rows">
+    <ol>
+    <li><label for="name">Name</label><input type="text" name="name" value="[% deck.name %]" /></li>
+    <li><label for="branchcode">Library</label>
+      <select name="branchcode" id="branchcode">
+        <option value="">Choose a library</option>
+        [% FOREACH b IN branches %]
+          [% IF ( deck.branchcode == b.value ) %]
+            <option value="[% b.value %]" selected="selected">[% b.branchname %]</option>
+          [% ELSE %]
+            <option value="[% b.value %]">[% b.branchname %]</option>
+          [% END %]
+        [% END %]
+      </select>
+    </li>
+    </ol>
+  </fieldset>
+  <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
+  </form>
+
 [% ELSIF op == 'del_sign' %]
 
   <div class="dialog alert">
@@ -112,6 +158,36 @@
 
   <h1>Digital signs</h1>
 
+  <h2>Decks</h2>
+  [% IF decks %]
+    <div id="pagertable_decks">
+      [% INCLUDE 'table-pager.inc' perpage='20' %]
+    </div>
+    <table id="table_decks" class="tablesorter">
+    <thead>
+    <tr>
+    <th>Name</th>
+    <th>Library</th>
+    <th>Edit</th>
+    <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH d IN decks %]
+    [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
+    <td>[% d.name %]</td>
+    <td>[% d.branchname %]</td>
+    <td><a href="?op=edit_deck&amp;deck_id=[% d.deck_id %]">Edit</a></td>
+    <td><a href="?op=del_deck&amp;deck_id=[% d.deck_id %]">Delete</a></td>
+    </tr>
+    [% END %]
+    </tbody>
+    </table>
+  [% ELSE %]
+    <p>No decks defined!</p>
+  [% END %]
+
+  <h2>Signs</h2>
   [% IF signs %]
     <div id="pagertable_signs">
       [% INCLUDE 'table-pager.inc' perpage='20' %]

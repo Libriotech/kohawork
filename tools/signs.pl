@@ -61,6 +61,7 @@ my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
 
 my $op      = $cgi->param('op') || '';
 my $sign_id = $cgi->param('sign_id') || '';
+my $deck_id = $cgi->param('deck_id') || '';
 
 if ( $op eq 'add_sign' ) {
 
@@ -110,14 +111,59 @@ if ( $op eq 'add_sign' ) {
     'script_name' => $script_name,
   );
 
+# Decks
+
+} elsif ( $op eq 'add_deck' ) {
+
+  $template->param(
+    'op'         => 'deck_form',
+    'branches'    => GetBranchesLoop
+  );
+
+} elsif ( $op eq 'edit_deck' && $deck_id ne '') {
+
+  $template->param(
+    'op'          => 'deck_form',
+    'deck'        => GetDeck( $deck_id ),
+    'branches'    => GetBranchesLoop,
+    'script_name' => $script_name
+  );
+
+} elsif ( $op eq 'save_deck' ) {
+
+  if ($cgi->param('deck_id')) {
+    EditDeck( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('deck_id') );
+  } else {
+    AddDeck( $cgi->param('branchcode'), $cgi->param('name'),  );
+  }
+  print $cgi->redirect($script_name);
+
+} elsif ( $op eq 'del_deck' ) {
+
+  my $deck = GetDeck( $deck_id );
+
+  $template->param(
+    'op' => 'del_deck',
+    'deck' => $deck,
+    'script_name' => $script_name,
+  );
+
+} elsif ( $op eq 'del_deck_ok' ) {
+
+  DeleteDeck( $deck_id );
+
+  $template->param(
+    'op' => 'del_deck_ok',
+    'script_name' => $script_name,
+  );
+
 } else {
 
   # TODO Check the setting of OPACDigitalSigns, give a warning if it is off
 
-  my $signs = GetAllSigns();
-
   $template->param(
-    'signs' => $signs,
+    'decks' => GetAllDecks(),
+    'signs' => GetAllSigns(),
     'else' => 1
   );
 
