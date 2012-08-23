@@ -28,6 +28,39 @@ CREATE TABLE signs (
 INSERT INTO saved_sql
 ( id, borrowernumber,  date_created,          last_modified,         savedsql,                                                           last_run,  report_name,    type,  notes, cache_expiry, public ) VALUES
 ( 1,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT COUNT(*) FROM biblio',                                       NULL,     'test for sign', 1,     NULL,  300,          1 ),
-( 2,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report', 1,     NULL,  300,          0 );
+( 2,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 02', 1,     NULL,  300,          0 ),
+( 3,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 03', 1,     NULL,  300,          0 ),
+( 4,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 04', 1,     NULL,  300,          0 ),
+( 5,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 05', 1,     NULL,  300,          0 ),
+( 6,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 06', 1,     NULL,  300,          0 ),
+( 7,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 07', 1,     NULL,  300,          0 ),
+( 8,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 08', 1,     NULL,  300,          0 ),
+( 9,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 09', 1,     NULL,  300,          0 ),
+( 10,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 10', 1,     NULL,  300,          0 ),
+( 11,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 11', 1,     NULL,  300,          0 ),
+( 12,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 12', 1,     NULL,  300,          0 ),
+( 13,  51,             '2012-08-22 13:14:54', '2012-08-22 13:14:54', 'SELECT biblio.biblionumber,biblio.title FROM biblioitems LIMIT 10', NULL,     'custom report 13', 1,     NULL,  300,          0 );
 
-INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 1, 1, 'sign with report' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 1, 1, 'sign with report 01' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 2, 1, 'sign with report 02' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 3, 1, 'sign with report 03' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 4, 1, 'sign with report 04' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 5, 1, 'sign with report 05' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 6, 1, 'sign with report 06' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 7, 1, 'sign with report 07' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 8, 1, 'sign with report 08' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 9, 1, 'sign with report 09' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 10, 1, 'sign with report 10' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 11, 1, 'sign with report 11' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 12, 1, 'sign with report 12' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 13, 1, 'sign with report 13' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 14, 1, 'sign with report 14' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 15, 1, 'sign with report 15' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 16, 1, 'sign with report 16' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 17, 1, 'sign with report 17' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 18, 1, 'sign with report 18' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 19, 1, 'sign with report 19' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 20, 1, 'sign with report 20' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 21, 1, 'sign with report 21' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 22, 1, 'sign with report 22' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 23, 1, 'sign with report 23' );
