@@ -129,6 +129,22 @@ if ( $op eq 'add_sign' ) {
     'script_name' => $script_name
   );
 
+} elsif ( $op eq 'edit_signs' && $deck_id ne '') {
+
+  $template->param(
+    'op'          => 'edit_signs',
+    'deck'        => GetDeck( $deck_id ),
+    'signs'       => GetAllSigns(),
+    'attached'    => GetSignsAttachedToDeck( $deck_id ),
+    'script_name' => $script_name
+  );
+
+} elsif ( $op eq 'attach_sign_to_deck' && $deck_id ne '' && $sign_id ne '' ) {
+
+  AttachSignToDeck( $deck_id, $sign_id );
+
+  print $cgi->redirect($script_name . '?op=edit_signs&deck_id=' . $deck_id);
+
 } elsif ( $op eq 'save_deck' ) {
 
   if ($cgi->param('deck_id')) {

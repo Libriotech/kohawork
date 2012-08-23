@@ -131,6 +131,36 @@
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
+[% ELSIF op == 'edit_signs' %]
+
+  <h1>Edit signs attached to [% deck.name %]</h1>
+  <p>Library: [% deck.branchname %]</p>
+
+  <h2>Signs already attached to this deck</h2>
+  <ol>
+  [% FOREACH s IN attached %]
+    <li>[% s.name %]</li>
+  [% END %]
+  </ol>
+
+  <h2>Attach a new sign to this deck</h2>
+  <form action="[% script_name %]" name="decksignform" method="post">
+  <input type="hidden" name="op" value="attach_sign_to_deck" />
+  <input type="hidden" name="deck_id" value="[% deck.deck_id %]" />
+  <fieldset class="rows">
+    <ol>
+    <li><label for="sign">Choose a sign to attach</label>
+      <select name="sign_id" id="sign">
+        [% FOREACH s IN signs %]
+          <option value="[% s.sign_id %]">[% s.name %]</option>
+        [% END %]
+      </select>
+    </li>
+    </ol>
+  </fieldset>
+  <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
+  </form>
+
 [% ELSIF op == 'del_sign' %]
 
   <div class="dialog alert">
@@ -169,6 +199,7 @@
     <th>Name</th>
     <th>Library</th>
     <th>Edit</th>
+    <th>Edit signs</th>
     <th>Delete</th>
     </tr>
     </thead>
@@ -178,6 +209,7 @@
     <td>[% d.name %]</td>
     <td>[% d.branchname %]</td>
     <td><a href="?op=edit_deck&amp;deck_id=[% d.deck_id %]">Edit</a></td>
+    <td><a href="?op=edit_signs&amp;deck_id=[% d.deck_id %]">Edit signs</a></td>
     <td><a href="?op=del_deck&amp;deck_id=[% d.deck_id %]">Delete</a></td>
     </tr>
     [% END %]

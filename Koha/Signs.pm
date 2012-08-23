@@ -17,6 +17,8 @@ EditDeck
 GetDeck
 GetAllDecks
 DeleteDeck
+AttachSignToDeck
+GetSignsAttachedToDeck
 );
 
 my $dbh = C4::Context->dbh;
@@ -136,6 +138,34 @@ sub DeleteDeck {
 
 }
 
+# Signs attached to decks
 
+sub AttachSignToDeck {
+
+  my ( $deck_id, $sign_id ) = @_;
+
+  return unless $deck_id || $sign_id;
+
+  my $sth = $dbh->prepare('INSERT INTO signs_to_decks SET deck_id = ?, sign_id = ?');
+  return $sth->execute($deck_id, $sign_id);
+
+}
+
+sub GetSignsAttachedToDeck {
+
+  my ( $deck_id ) = @_;
+
+  return unless $deck_id;
+
+  my $query = "SELECT s.*
+               FROM signs AS s, signs_to_decks AS sd
+               WHERE s.sign_id = sd.sign_id
+                 AND sd.deck_id = ?
+               ORDER BY s.name";
+  my $sth = $dbh->prepare($query);
+  $sth->execute( $deck_id );
+  return $sth->fetchall_arrayref({});
+
+}
 
 1;

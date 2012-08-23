@@ -26,9 +26,15 @@ CREATE TABLE decks (
   PRIMARY KEY (deck_id),
   CONSTRAINT decks_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode)
 );
+DROP TABLE IF EXISTS signs_to_decks;
+CREATE TABLE signs_to_decks (
+  deck_id int(11) NOT NULL,    -- foreign key from the decks table
+  sign_id int(11) NOT NULL,    -- foreign key from the signs table
+  PRIMARY KEY (deck_id,sign_id),
+  CONSTRAINT signs_to_decks_sdfk_1 FOREIGN KEY (deck_id) REFERENCES decks (deck_id),
+  CONSTRAINT signs_to_decks_sdfk_2 FOREIGN KEY (sign_id) REFERENCES signs (sign_id)
+);
 
--- TODO Add signstack table
---   branchcode varchar(10) NOT NULL default '', -- foreign key from the branches table
 
 -- Sample data for testing
 -- TODO Delete before submitting patch
