@@ -24,7 +24,7 @@ CREATE TABLE decks (
   name varchar(32),                           -- name/title of the deck
   branchcode varchar(10) NOT NULL default '', -- foreign key from the branches table
   PRIMARY KEY (deck_id),
-  CONSTRAINT dekcs_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode)
+  CONSTRAINT decks_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode)
 );
 
 -- TODO Add signstack table
