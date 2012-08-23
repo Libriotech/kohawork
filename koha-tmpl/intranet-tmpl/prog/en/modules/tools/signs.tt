@@ -45,13 +45,13 @@
 	<div id="yui-main">
 	<div class="yui-b">
 
-[%# IF ( else ) %]
+[% IF ( else ) %]
   <div id="toolbar">
     <ul class="toolbar">
       <li><a id="newsign" href="?op=add_sign">New sign</a></li>
     </ul>
   </div>
-[%# END %]
+[% END %]
 
 [% IF op == 'sign_form' %]
 
