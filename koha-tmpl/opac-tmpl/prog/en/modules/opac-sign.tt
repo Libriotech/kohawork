@@ -1,0 +1,24 @@
+<html>
+<head>
+<script language="JavaScript">
+
+</script>
+</head>
+<body>
+
+<h1>Signs</h1>
+
+[% IF ( enabled == 0 )  %]
+  <p>Digital signs are not enabled!</p>
+[% ELSE %]
+
+  [% IF ( deck )  %]
+    [% deck.name %]
+  [% ELSE %]
+    Oops!
+  [% END %]
+
+[% END %]
+
+</body>
+</html>
