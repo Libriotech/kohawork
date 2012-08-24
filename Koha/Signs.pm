@@ -159,9 +159,10 @@ sub GetSignsAttachedToDeck {
 
   return unless $deck_id;
 
-  my $query = "SELECT s.*
-               FROM signs AS s, signs_to_decks AS sd
+  my $query = "SELECT s.*, sq.report_name, sq.savedsql
+               FROM signs AS s, signs_to_decks AS sd, saved_sql AS sq
                WHERE s.sign_id = sd.sign_id
+                 AND s.saved_sql_id = sq.id
                  AND sd.deck_id = ?
                ORDER BY s.name";
   my $sth = $dbh->prepare($query);
