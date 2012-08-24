@@ -26,6 +26,7 @@
 
     [% IF ( signs.0 )  %]
 
+      [%# Build an index page, listing all the signs %]
       <div data-role="page" id="index">
         <div data-role="header">
 	        <h1>Signs in this deck</h1>
@@ -42,6 +43,7 @@
         </div>
       </div>
 
+      [%# Iterate through the signs, creating one front page for each %]
       [% FOREACH s IN signs %]
         <div data-role="page" id="sign_[% s.sign_id %]">
           <div data-role="header">
