@@ -94,9 +94,12 @@ if ( $op eq 'add_sign' ) {
 
 } elsif ( $op eq 'view_sign' && $sign_id ne '') {
 
+  my $sign = GetSign( $sign_id );
+
   $template->param(
     'op'          => 'view_sign',
-    'sign'        => GetSign( $sign_id ),
+    'sign'        => $sign,
+    'records'     => RunSQL( $sign->{'savedsql'} ),
     'script_name' => $script_name
   );
 

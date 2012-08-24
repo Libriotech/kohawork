@@ -190,6 +190,20 @@
   <p>Based on report: [% sign.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% sign.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
   <p>SQL:</p>
   <pre id="sql_output">[% sign.savedsql %]</pre>
+  <h2>Records</h2>
+  <table>
+  <thead>
+    <tr>
+    <th>biblionumber</th>
+    <th>title</th>
+    </tr>
+  </thead>
+  <tbody>
+  [% FOREACH r IN records %]
+    <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td>
+  [% END %]
+  </tbody>
+  </table>
 
 [% ELSE %]
 

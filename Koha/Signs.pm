@@ -19,6 +19,7 @@ GetAllDecks
 DeleteDeck
 AttachSignToDeck
 GetSignsAttachedToDeck
+RunSQL
 );
 
 my $dbh = C4::Context->dbh;
@@ -165,6 +166,18 @@ sub GetSignsAttachedToDeck {
                ORDER BY s.name";
   my $sth = $dbh->prepare($query);
   $sth->execute( $deck_id );
+  return $sth->fetchall_arrayref({});
+
+}
+
+sub RunSQL {
+
+  my ( $query ) = @_;
+
+  return unless $query;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute();
   return $sth->fetchall_arrayref({});
 
 }
