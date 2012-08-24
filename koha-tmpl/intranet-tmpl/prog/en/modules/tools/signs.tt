@@ -188,7 +188,7 @@
 
   <h1>[% sign.name %]</h1>
   <p>Based on report: [% sign.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% sign.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
-  <p>SQL:</p>
+  <h2>SQL</h2>
   <pre id="sql_output">[% sign.savedsql %]</pre>
   <h2>Records</h2>
   <table>
