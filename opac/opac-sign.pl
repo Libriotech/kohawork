@@ -40,8 +40,18 @@ my $deck_id = $query->param('deck') || '';
 
 if ( C4::Context->preference("OPACDigitalSigns") ) {
   if ( $deck_id ne '' ) {
+
+    my $signs = GetSignsAttachedToDeck( $deck_id );
+    my @changedsigns;
+
+    # Add records to the signs
+    foreach my $sign ( @{$signs} ) {
+      $sign->{'records'} = RunSQL( $sign->{'savedsql'} );
+      push(@changedsigns, $sign);
+    }
+
     $template->{VARS}->{'deck'}  = GetDeck( $deck_id );
-    $template->{VARS}->{'signs'} = GetSignsAttachedToDeck( $deck_id );
+    $template->{VARS}->{'signs'} = \@changedsigns;
   }
 } else {
   $template->{VARS}->{'enabled'} = 0;

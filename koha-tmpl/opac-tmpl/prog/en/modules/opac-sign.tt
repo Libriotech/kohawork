@@ -51,7 +51,11 @@
 		        <h1>[% s.name %]</h1>
           </div>
           <div data-role="content">
-            <p>Page content goes here.</p>
+            <ul data-role="listview">
+            [% FOREACH r IN s.records %]
+              <li><a href="#biblio[% r.biblionumber %]">[% r.biblionumber %] [% r.title %]</a></li>
+            [% END %]
+            </ul>
           </div>
           <div data-role="footer">
             <h4>Page Footer</h4>
