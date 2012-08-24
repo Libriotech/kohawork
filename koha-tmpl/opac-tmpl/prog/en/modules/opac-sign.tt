@@ -16,7 +16,7 @@
 
     <h2>[% deck.name %]</h2>
 
-    [% IF ( signs )  %]
+    [% IF ( signs.0 )  %]
       [% FOREACH s IN signs %]
         <p>[% s.name %]</p>
       [% END %]
