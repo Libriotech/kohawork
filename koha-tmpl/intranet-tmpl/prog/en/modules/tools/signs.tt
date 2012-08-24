@@ -184,6 +184,11 @@
     </form>
   </div>
 
+[% ELSIF op == 'view_sign' %]
+
+  <h1>[% sign.name %]</h1>
+  <p>Based on report: [% sign.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% sign.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
+
 [% ELSE %]
 
   <h1>Digital signs</h1>
@@ -236,7 +241,7 @@
     <tbody>
     [% FOREACH s IN signs %]
     [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-    <td>[% s.name %]</td>
+    <td><a href="?op=view_sign&amp;sign_id=[% s.sign_id %]">[% s.name %]</a></td>
     <td title="ID: [% s.saved_sql_id %]">[% s.report_name %]</td>
     <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
     <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>

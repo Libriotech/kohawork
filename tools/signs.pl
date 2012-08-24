@@ -92,6 +92,14 @@ if ( $op eq 'add_sign' ) {
   }
   print $cgi->redirect($script_name);
 
+} elsif ( $op eq 'view_sign' && $sign_id ne '') {
+
+  $template->param(
+    'op'          => 'view_sign',
+    'sign'        => GetSign( $sign_id ),
+    'script_name' => $script_name
+  );
+
 } elsif ( $op eq 'del_sign' ) {
 
   my $sign = GetSign( $sign_id );
