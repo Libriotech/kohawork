@@ -201,7 +201,7 @@
     </thead>
     <tbody>
     [% FOREACH r IN records %]
-      <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td>
+      <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td></tr>
     [% END %]
     </tbody>
     </table>
