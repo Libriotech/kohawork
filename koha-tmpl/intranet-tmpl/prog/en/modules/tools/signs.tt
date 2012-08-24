@@ -191,19 +191,23 @@
   <h2>SQL</h2>
   <pre id="sql_output">[% sign.savedsql %]</pre>
   <h2>Records</h2>
-  <table>
-  <thead>
-    <tr>
-    <th>biblionumber</th>
-    <th>title</th>
-    </tr>
-  </thead>
-  <tbody>
-  [% FOREACH r IN records %]
-    <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td>
+  [% IF ( records.0 ) %]
+    <table>
+    <thead>
+      <tr>
+      <th>biblionumber</th>
+      <th>title</th>
+      </tr>
+    </thead>
+    <tbody>
+    [% FOREACH r IN records %]
+      <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td>
+    [% END %]
+    </tbody>
+    </table>
+  [% ELSE %]
+    <p>No records found.</p>
   [% END %]
-  </tbody>
-  </table>
 
 [% ELSE %]
 
