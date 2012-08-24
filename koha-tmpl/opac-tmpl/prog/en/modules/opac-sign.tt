@@ -1,8 +1,9 @@
 <html>
 <head>
-<script language="JavaScript">
-
-</script>
+<title>[% IF ( deck )  %][% deck.name %] - Koha[% ELSE %]Koha digital signs[% END %]</title>
+<meta name="generator" content="Koha [% Version %]" /> <!-- leave this for stats -->
+<link rel="shortcut icon" href="[% IF ( OpacFavicon ) %][% OpacFavicon %][% ELSE %][% themelang %]/includes/favicon.ico[% END %]" type="image/x-icon" />
+<script type="text/javascript" src="[% themelang %]/lib/jquery/jquery.js"></script>
 </head>
 <body>
 
