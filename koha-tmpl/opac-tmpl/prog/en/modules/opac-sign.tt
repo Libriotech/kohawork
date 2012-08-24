@@ -13,9 +13,19 @@
 [% ELSE %]
 
   [% IF ( deck )  %]
-    [% deck.name %]
+
+    <h2>[% deck.name %]</h2>
+
+    [% IF ( signs )  %]
+      [% FOREACH s IN signs %]
+        <p>[% s.name %]</p>
+      [% END %]
+    [% ELSE %]
+      <p>No signs attached to this deck.</p>
+    [% END %]
+
   [% ELSE %]
-    Oops!
+    <p>Oops!</p>
   [% END %]
 
 [% END %]
