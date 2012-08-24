@@ -39,20 +39,33 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
 my $deck_id = $query->param('deck') || '';
 
 if ( C4::Context->preference("OPACDigitalSigns") ) {
+
   if ( $deck_id ne '' ) {
 
     my $signs = GetSignsAttachedToDeck( $deck_id );
     my @changedsigns;
+    my %uniquerecords;
 
     # Add records to the signs
     foreach my $sign ( @{$signs} ) {
-      $sign->{'records'} = RunSQL( $sign->{'savedsql'} );
+      my $records = RunSQL( $sign->{'savedsql'} );
+      $sign->{'records'} = $records;
       push(@changedsigns, $sign);
+      # Create a hash of unique records
+      foreach my $rec ( @{$records} ) {
+        if ( !$uniquerecords{$rec->{'biblionumber'}} ) {
+          # This would be the place to add expensive processing of each record
+          $uniquerecords{$rec->{'biblionumber'}} = $rec;
+        }
+      }
     }
 
     $template->{VARS}->{'deck'}  = GetDeck( $deck_id );
     $template->{VARS}->{'signs'} = \@changedsigns;
+    $template->{VARS}->{'records'} = \%uniquerecords;
+
   }
+
 } else {
   $template->{VARS}->{'enabled'} = 0;
 }
