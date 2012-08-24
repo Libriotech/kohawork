@@ -47,7 +47,7 @@ sub GetSign {
 
   return unless $sign_id;
 
-  my $query = "SELECT s.*, sq.report_name as report_name
+  my $query = "SELECT s.*, sq.report_name, sq.savedsql
                FROM signs AS s, saved_sql AS sq
                WHERE s.saved_sql_id = sq.id
                  AND s.sign_id = ?";
@@ -59,7 +59,7 @@ sub GetSign {
 
 sub GetAllSigns {
 
-  my $query = "SELECT s.*, sq.report_name as report_name
+  my $query = "SELECT s.*, sq.report_name, sq.savedsql
                FROM signs AS s, saved_sql AS sq
                WHERE s.saved_sql_id = sq.id
                ORDER BY s.name";
