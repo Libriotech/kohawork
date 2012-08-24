@@ -38,6 +38,7 @@ CREATE TABLE signs_to_decks (
 
 -- Sample data for testing
 -- TODO Delete before submitting patch
+-- mysqldump -u koha -p koha --complete-insert --skip-quote-names --tables <tablename>
 
 INSERT INTO saved_sql
 ( id, borrowernumber,  date_created,          last_modified,         savedsql,                                                           last_run,  report_name,    type,  notes, cache_expiry, public ) VALUES
@@ -92,3 +93,5 @@ INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 20, 1, 'sign with rep
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 21, 1, 'sign with report 21' );
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 22, 1, 'sign with report 22' );
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 23, 1, 'sign with report 23' );
+
+INSERT INTO signs_to_decks (deck_id, sign_id) VALUES (1,1),(1,5),(1,14),(1,19);

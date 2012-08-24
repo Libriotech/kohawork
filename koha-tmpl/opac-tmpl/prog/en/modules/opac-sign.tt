@@ -3,7 +3,14 @@
 <title>[% IF ( deck )  %][% deck.name %] - Koha[% ELSE %]Koha digital signs[% END %]</title>
 <meta name="generator" content="Koha [% Version %]" /> <!-- leave this for stats -->
 <link rel="shortcut icon" href="[% IF ( OpacFavicon ) %][% OpacFavicon %][% ELSE %][% themelang %]/includes/favicon.ico[% END %]" type="image/x-icon" />
-<script type="text/javascript" src="[% themelang %]/lib/jquery/jquery.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+[%# FIXME Use the JQM files from JQM in early stages of development, to be replaced with a local version later %]
+[%# <script type="text/javascript" src="[% themelang % ]/lib/jquery/jquery.js"></script> %]
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+
 </head>
 <body>
 
@@ -18,8 +25,36 @@
     <h2>[% deck.name %]</h2>
 
     [% IF ( signs.0 )  %]
+
+      <div data-role="page" id="index">
+        <div data-role="header">
+	        <h1>Signs in this deck</h1>
+        </div>
+        <div data-role="content">
+          <ul data-role="listview">
+          [% FOREACH s IN signs %]
+            <li><a href="#sign_[% s.sign_id %]">[% s.name %]</a></li>
+          [% END %]
+          </ul>
+        </div>
+        <div data-role="footer">
+          <h4>Page Footer</h4>
+        </div>
+      </div>
+
       [% FOREACH s IN signs %]
-        <p>[% s.name %]</p>
+        <div data-role="page" id="sign_[% s.sign_id %]">
+          <div data-role="header">
+            <a href="#index" data-rel="back">Back</a>
+		        <h1>[% s.name %]</h1>
+          </div>
+          <div data-role="content">
+            <p>Page content goes here.</p>
+          </div>
+          <div data-role="footer">
+            <h4>Page Footer</h4>
+          </div>
+        </div>
       [% END %]
     [% ELSE %]
       <p>No signs attached to this deck.</p>
