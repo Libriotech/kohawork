@@ -61,6 +61,23 @@
             <h4>Page Footer</h4>
           </div>
         </div>
+
+        [%# Iterate through the records, creating one page for each %]
+        [% FOREACH r IN s.records %]
+          <div data-role="page" id="biblio[% r.biblionumber %]">
+            <div data-role="header">
+              <a href="#sign_[% s.sign_id %]" data-rel="back">Back</a>
+		          <h1>[% r.title %]</h1>
+            </div>
+            <div data-role="content">
+              <p>Details here</p>
+            </div>
+            <div data-role="footer">
+              <h4>Page Footer</h4>
+            </div>
+          </div>
+        [% END %]
+
       [% END %]
     [% ELSE %]
       <p>No signs attached to this deck.</p>
