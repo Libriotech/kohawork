@@ -48,6 +48,6 @@ INSERT INTO saved_sql
 INSERT INTO decks ( deck_id, branchcode, name ) VALUES ( 1, 'CPL', 'Signs for the main library' );
 
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 1, 1, 'Newest titles' );
-INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 2, 2, 'Newest titles' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 2, 2, 'Titles from 2012' );
 
 INSERT INTO signs_to_decks (deck_id, sign_id) VALUES (1,1),(1,2);
