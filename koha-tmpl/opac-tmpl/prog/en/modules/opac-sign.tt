@@ -33,6 +33,7 @@
 	        <h1>Signs in this deck</h1>
         </div>
         <div data-role="content">
+          <p>FIXME This page is only a convenience - the first page shown should be the first page of the first sign.</p>
           <ul data-role="listview">
           [% FOREACH s IN signs %]
             <li><a href="#sign_[% s.sign_id %]">[% s.name %]</a></li>
@@ -52,6 +53,7 @@
 		        <h1>[% s.name %]</h1>
           </div>
           <div data-role="content">
+            <p>FIXME This should be a grid of covers, not a list of titles.</p>
             <ul data-role="listview">
             [% FOREACH r IN s.records %]
               <li><a href="#biblio[% r.biblionumber %]">[% r.biblionumber %] [% r.title %]</a></li>
