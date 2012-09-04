@@ -1,0 +1,14 @@
+<p>Title: [% record.field('245').subfield('a') %][% IF record.field('245').subfield('b') %] : [% record.field('245').subfield('b') %][% END %]</p>
+
+[% IF record.field('260').subfield('b') %]
+<p>Publisher: [% record.field('260').subfield('b') %]</p>
+[% END %]
+
+[%- IF record.field('700') %]
+  <p>Authors:</p>
+  <ul>
+  [%- FOREACH f IN record.field('700') %]
+    <li>[% f.subfield('a') %]</li>
+  [%- END %]
+  </ul>
+[%- END %]

@@ -11,7 +11,26 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+<script>
 
+$(document).ready(function() {
+
+  // Walk through all pages of all the signs, fetching record details
+  $( '.record' ).each( function(index) {
+    // this.id will be on the form biblio_x, we only want the x part
+    biblionumber = this.id.substring( 7 );
+    $( this ).find( "div[data-role='content']" ).load( 'opac-sign.pl', { biblionumber: biblionumber }, function(response, status, xhr) {
+      if (status == "error") {
+        var msg = "Sorry but there was an error: ";
+        $("#error").html(msg + xhr.status + " " + xhr.statusText);
+      }
+      $( '#indexdebug' ).append( index + '=ok' + ' ' );
+    });
+  });
+
+});
+
+</script>
 </head>
 <body>
 
@@ -39,6 +58,7 @@
             <li><a href="#sign_[% s.sign_id %]">[% s.name %]</a></li>
           [% END %]
           </ul>
+          <p id="indexdebug">Debug: </p>
         </div>
         <div data-role="footer">
           <h4>Page Footer</h4>
@@ -56,7 +76,7 @@
             <p>FIXME This should be a grid of covers, not a list of titles.</p>
             <ul data-role="listview">
             [% FOREACH r IN s.records %]
-              <li><a href="#biblio[% r.biblionumber %]">[% r.biblionumber %] [% r.title %]</a></li>
+              <li><a href="#biblio_[% r.biblionumber %]">[% r.biblionumber %] [% r.title %]</a></li>
             [% END %]
             </ul>
           </div>
@@ -68,7 +88,7 @@
 
       [%# Iterate through the unique records, creating one page for each %]
       [% FOREACH biblionumber = records.keys %]
-        <div data-role="page" id="biblio[% biblionumber %]">
+        <div data-role="page" id="biblio_[% biblionumber %]" class="record">
           <div data-role="header">
             <a href="#" data-rel="back">Back</a>
 	          <h1>[% records.$biblionumber.title %]</h1>
