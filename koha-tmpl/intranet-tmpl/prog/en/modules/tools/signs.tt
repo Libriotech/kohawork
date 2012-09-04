@@ -11,6 +11,7 @@
 
 	    yuiToolbar();
 
+      // Signs
       $("#table_signs").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
         headers: {
@@ -23,11 +24,13 @@
         size:          20
       });
 
+      // Decks
       $("#table_decks").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
         headers: {
          2: { sorter: false},
-         3: { sorter: false}
+         3: { sorter: false},
+         4: { sorter: false}
        }
       }).tablesorterPager({
         container:     $("#pagertable_decks"),
