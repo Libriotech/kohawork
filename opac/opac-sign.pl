@@ -22,25 +22,29 @@ use warnings;
 
 use CGI;
 use C4::Auth;
+use C4::Biblio;
 use C4::Output;
 use Koha::Signs;
 
 my $query = new CGI;
-my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
-    {
-        template_name   => "opac-sign.tt",
-        query           => $query,
-        type            => "opac",
-        authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
-        flagsrequired => { borrow => 1 },
-    }
-);
-
-my $deck_id = $query->param('deck') || '';
+my $deck_id      = $query->param('deck')         || '';
+my $biblionumber = $query->param('biblionumber') || '' || $query->param('bib');
+my ( $template, $borrowernumber, $cookie );
 
 if ( C4::Context->preference("OPACDigitalSigns") ) {
 
+  # Display a deck of signs
   if ( $deck_id ne '' ) {
+
+    ( $template, $borrowernumber, $cookie ) = get_template_and_user(
+        {
+            template_name   => "opac-sign.tt",
+            query           => $query,
+            type            => "opac",
+            authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
+            flagsrequired => { borrow => 1 },
+        }
+    );
 
     my $signs = GetSignsAttachedToDeck( $deck_id );
     my @changedsigns;
@@ -63,6 +67,32 @@ if ( C4::Context->preference("OPACDigitalSigns") ) {
     $template->{VARS}->{'deck'}  = GetDeck( $deck_id );
     $template->{VARS}->{'signs'} = \@changedsigns;
     $template->{VARS}->{'records'} = \%uniquerecords;
+
+  # Display a single record, for AJAXing into a sign
+  } elsif ( $biblionumber ne '' ) {
+
+    binmode STDOUT, ':encoding(UTF-8)'; # Non-ASCII is broken without this
+
+    # FIXME? Templates can only be file names, not "templates as strings"
+    # my $tpl = "[% record.field('245').subfield('a') %]";
+
+    ( $template, $borrowernumber, $cookie ) = get_template_and_user(
+        {
+            template_name   => "opac-sign-detail.tt",
+            query           => $query,
+            type            => "opac",
+            authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
+            flagsrequired => { borrow => 1 },
+        }
+    );
+
+    my $record = GetMarcBiblio($biblionumber);
+    if ( ! $record ) {
+      print $query->redirect("/cgi-bin/koha/errors/404.pl"); # escape early
+      exit;
+    }
+
+    $template->{VARS}->{'record'} = $record;
 
   }
 
