@@ -587,3 +587,8 @@ OPAC:
                   yes: Enable
                   no: Disable
             - "digital signs in the OPAC. Please note: Digital signs are not linked to from the OPAC by default, so you will have to load the relevant URL by hand on displays where you want to use them."
+        -
+            - "Use the following template to format MARC records for display in the digital signs:"
+            - pref: OPACDigitalSignsRecordTemplate
+              type: textarea
+              class: code

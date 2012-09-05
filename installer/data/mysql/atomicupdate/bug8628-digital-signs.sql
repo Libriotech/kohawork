@@ -6,6 +6,20 @@ DELETE FROM permissions WHERE code = 'edit_digital_signs';
 TRUNCATE saved_sql;
 
 INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSigns',1,'Turn digital signs in the OPAC on or off.','YesNo');
+INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsRecordTemplate',"<p>Title: [% record.field('245').subfield('a') %][% IF record.field('245').subfield('b') %] : [% record.field('245').subfield('b') %][% END %]</p>
+
+[% IF record.field('260').subfield('b') %]
+<p>Publisher: [% record.field('260').subfield('b') %]</p>
+[% END %]
+
+[%- IF record.field('700') %]
+  <p>Authors:</p>
+  <ul>
+  [%- FOREACH f IN record.field('700') %]
+    <li>[% f.subfield('a') %]</li>
+  [%- END %]
+  </ul>
+[%- END %]",'Template for formatting MARC records for display in digital signs.','Textarea');
 
 INSERT INTO permissions (module_bit, code, description) VALUES (13, 'edit_digital_signs', 'Create and edit digital signs for the OPAC');
 
