@@ -17,25 +17,27 @@ $(document).ready(function() {
 
   // Find the number of unique records and dsiplay a loading message
   num_records = $( '.record' ).length;
-  records_loaded = 0;
-  $.mobile.showPageLoadingMsg( "b", 'Loading ' + num_records + ' records...', true );
+  if ( num_records > 0 ) {
+    records_loaded = 0;
+    $.mobile.showPageLoadingMsg( "b", 'Loading ' + num_records + ' records...', true );
 
-  // Walk through all pages of all the signs, fetching record details
-  $( '.record' ).each( function(index) {
-    // this.id will be on the form biblio_x, we only want the x part
-    biblionumber = this.id.substring( 7 );
-    $( this ).find( "div[data-role='content']" ).load( 'opac-sign.pl', { biblionumber: biblionumber }, function(response, status, xhr) {
-      if (status == "error") {
-        var msg = "Sorry but there was an error: ";
-        $("#error").html(msg + xhr.status + " " + xhr.statusText);
-      }
-      records_loaded = records_loaded + 1;
-      // Hide the loading message if all records are loaded
-      if ( records_loaded == num_records ) {
-        $.mobile.hidePageLoadingMsg();
-      }
+    // Walk through all pages of all the signs, fetching record details
+    $( '.record' ).each( function(index) {
+      // this.id will be on the form biblio_x, we only want the x part
+      biblionumber = this.id.substring( 7 );
+      $( this ).find( "div[data-role='content']" ).load( 'opac-sign.pl', { biblionumber: biblionumber }, function(response, status, xhr) {
+        if (status == "error") {
+          var msg = "Sorry but there was an error: ";
+          $("#error").html(msg + xhr.status + " " + xhr.statusText);
+        }
+        records_loaded = records_loaded + 1;
+        // Hide the loading message if all records are loaded
+        if ( records_loaded == num_records ) {
+          $.mobile.hidePageLoadingMsg();
+        }
+      });
     });
-  });
+  }
 
 });
 
@@ -49,6 +51,7 @@ $(document).ready(function() {
   <p>Digital signs are not enabled!</p>
 [% ELSE %]
 
+  [%# Display a deck, all its signs and all records  %]
   [% IF ( deck )  %]
 
     <h2>[% deck.name %]</h2>
@@ -113,9 +116,25 @@ $(document).ready(function() {
     [% ELSE %]
       <p>No signs attached to this deck.</p>
     [% END %]
+  [% END %]
 
-  [% ELSE %]
-    <p>Oops!</p>
+  [%# Display a list of all decks, as a default %]
+  [% IF ( decks )  %]
+    <div data-role="page" id="alldecks">
+      <div data-role="header" data-position="fixed">
+        <h1>All decks</h1>
+      </div>
+      <div data-role="content">
+        <ul data-role="listview">
+        [% FOREACH d IN decks %]
+          <li><a href="?deck=[% d.deck_id %]" data-ajax="false">[% d.name %]</a></li>
+        [% END %]
+        </ul>
+      </div>
+      <div data-role="footer" data-position="fixed">
+        <h4>Page Footer</h4>
+      </div>
+    </div>
   [% END %]
 
 [% END %]
