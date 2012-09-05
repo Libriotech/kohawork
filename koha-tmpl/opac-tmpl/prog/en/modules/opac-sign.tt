@@ -15,6 +15,11 @@
 
 $(document).ready(function() {
 
+  // Find the number of unique records and dsiplay a loading message
+  num_records = $( '.record' ).length;
+  records_loaded = 0;
+  $.mobile.showPageLoadingMsg( "b", 'Loading ' + num_records + ' records...', true );
+
   // Walk through all pages of all the signs, fetching record details
   $( '.record' ).each( function(index) {
     // this.id will be on the form biblio_x, we only want the x part
@@ -24,7 +29,11 @@ $(document).ready(function() {
         var msg = "Sorry but there was an error: ";
         $("#error").html(msg + xhr.status + " " + xhr.statusText);
       }
-      $( '#indexdebug' ).append( index + '=ok' + ' ' );
+      records_loaded = records_loaded + 1;
+      // Hide the loading message if all records are loaded
+      if ( records_loaded == num_records ) {
+        $.mobile.hidePageLoadingMsg();
+      }
     });
   });
 
