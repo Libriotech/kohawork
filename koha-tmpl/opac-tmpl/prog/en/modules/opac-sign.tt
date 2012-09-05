@@ -67,7 +67,6 @@ $(document).ready(function() {
             <li><a href="#sign_[% s.sign_id %]">[% s.name %]</a></li>
           [% END %]
           </ul>
-          <p id="indexdebug">Debug: </p>
         </div>
         <div data-role="footer">
           <h4>Page Footer</h4>
