@@ -73,9 +73,6 @@ if ( C4::Context->preference("OPACDigitalSigns") ) {
 
     binmode STDOUT, ':encoding(UTF-8)'; # Non-ASCII is broken without this
 
-    # FIXME? Templates can only be file names, not "templates as strings"
-    # my $tpl = "[% record.field('245').subfield('a') %]";
-
     ( $template, $borrowernumber, $cookie ) = get_template_and_user(
         {
             template_name   => "opac-sign-detail.tt",
@@ -91,8 +88,11 @@ if ( C4::Context->preference("OPACDigitalSigns") ) {
       print $query->redirect("/cgi-bin/koha/errors/404.pl"); # escape early
       exit;
     }
-
     $template->{VARS}->{'record'} = $record;
+
+    # Get the template from the syspref and make sure it is interpreted as a
+    # template string, not a filename
+    $template->filename( \C4::Context->preference("OPACDigitalSignsRecordTemplate") );
 
   }
 
