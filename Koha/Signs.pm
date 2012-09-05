@@ -19,6 +19,7 @@ GetAllDecks
 DeleteDeck
 AttachSignToDeck
 GetSignsAttachedToDeck
+DetachSignFromDeck
 RunSQL
 );
 
@@ -168,6 +169,17 @@ sub GetSignsAttachedToDeck {
   my $sth = $dbh->prepare($query);
   $sth->execute( $deck_id );
   return $sth->fetchall_arrayref({});
+
+}
+
+sub DetachSignFromDeck {
+
+  my ( $deck_id, $sign_id ) = @_;
+
+  return unless $deck_id || $sign_id;
+
+  my $sth = $dbh->prepare('DELETE FROM signs_to_decks WHERE deck_id = ? AND sign_id = ?');
+  return $sth->execute( $deck_id, $sign_id );
 
 }
 

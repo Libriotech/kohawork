@@ -156,6 +156,12 @@ if ( $op eq 'add_sign' ) {
 
   print $cgi->redirect($script_name . '?op=edit_signs&deck_id=' . $deck_id);
 
+} elsif ( $op eq 'detach_sign_from_deck' && $deck_id ne '' && $sign_id ne '' ) {
+
+  DetachSignFromDeck( $deck_id, $sign_id );
+
+  print $cgi->redirect($script_name . '?op=edit_signs&deck_id=' . $deck_id);
+
 } elsif ( $op eq 'save_deck' ) {
 
   if ($cgi->param('deck_id')) {

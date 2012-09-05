@@ -144,11 +144,11 @@
   <h2>Signs already attached to this deck</h2>
   <table>
   <thead>
-  <tr><th>Name</th></tr>
+  <tr><th>Name</th><th>Detach</th></tr>
   </thead>
   <tbody>
   [% FOREACH s IN attached %]
-    <tr><td>[% s.name %]</td></tr>
+    <tr><td>[% s.name %]</td><td><a href="?op=detach_sign_from_deck&deck_id=[% deck.deck_id %]&sign_id=[% s.sign_id %]">Detach</a></td></tr>
   [% END %]
   </tbody>
   </table>
