@@ -142,11 +142,16 @@
   <p>Library: [% deck.branchname %]</p>
 
   <h2>Signs already attached to this deck</h2>
-  <ol>
+  <table>
+  <thead>
+  <tr><th>Name</th></tr>
+  </thead>
+  <tbody>
   [% FOREACH s IN attached %]
-    <li>[% s.name %]</li>
+    <tr><td>[% s.name %]</td></tr>
   [% END %]
-  </ol>
+  </tbody>
+  </table>
 
   <h2>Attach a new sign to this deck</h2>
   <form action="[% script_name %]" name="decksignform" method="post">
