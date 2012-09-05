@@ -57,7 +57,7 @@ $(document).ready(function() {
 
       [%# Build an index page, listing all the signs %]
       <div data-role="page" id="index">
-        <div data-role="header">
+        <div data-role="header" data-position="fixed">
 	        <h1>Signs in this deck</h1>
         </div>
         <div data-role="content">
@@ -68,7 +68,7 @@ $(document).ready(function() {
           [% END %]
           </ul>
         </div>
-        <div data-role="footer">
+        <div data-role="footer" data-position="fixed">
           <h4>Page Footer</h4>
         </div>
       </div>
@@ -76,7 +76,7 @@ $(document).ready(function() {
       [%# Iterate through the signs, creating one front page for each %]
       [% FOREACH s IN signs %]
         <div data-role="page" id="sign_[% s.sign_id %]">
-          <div data-role="header">
+          <div data-role="header" data-position="fixed">
             <a href="#index" data-rel="back">Back</a>
 		        <h1>[% s.name %]</h1>
           </div>
@@ -88,7 +88,7 @@ $(document).ready(function() {
             [% END %]
             </ul>
           </div>
-          <div data-role="footer">
+          <div data-role="footer" data-position="fixed">
             <h4>Page Footer</h4>
           </div>
         </div>
@@ -97,14 +97,14 @@ $(document).ready(function() {
       [%# Iterate through the unique records, creating one page for each %]
       [% FOREACH biblionumber = records.keys %]
         <div data-role="page" id="biblio_[% biblionumber %]" class="record">
-          <div data-role="header">
+          <div data-role="header" data-position="fixed">
             <a href="#" data-rel="back">Back</a>
 	          <h1>[% records.$biblionumber.title %]</h1>
           </div>
           <div data-role="content">
             <p>Details here</p>
           </div>
-          <div data-role="footer">
+          <div data-role="footer" data-position="fixed">
             <h4>Page Footer</h4>
           </div>
         </div>
