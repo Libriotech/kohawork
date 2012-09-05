@@ -7,20 +7,25 @@ use base qw( Exporter );
 
 # set the version for version checking
 our @EXPORT = qw(
-AddSign
-EditSign
-GetSign
-GetAllSigns
-DeleteSign
-AddDeck
-EditDeck
-GetDeck
-GetAllDecks
-DeleteDeck
-AttachSignToDeck
-GetSignsAttachedToDeck
-DetachSignFromDeck
-RunSQL
+
+  AddSign
+  EditSign
+  GetSign
+  GetAllSigns
+  DeleteSign
+
+  AddDeck
+  EditDeck
+  GetDeck
+  GetAllDecks
+  DeleteDeck
+
+  AttachSignToDeck
+  GetSignsAttachedToDeck
+  DetachSignFromDeck
+
+  RunSQL
+
 );
 
 my $dbh = C4::Context->dbh;
