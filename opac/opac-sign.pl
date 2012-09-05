@@ -29,22 +29,21 @@ use Koha::Signs;
 my $query = new CGI;
 my $deck_id      = $query->param('deck')         || '';
 my $biblionumber = $query->param('biblionumber') || '' || $query->param('bib');
-my ( $template, $borrowernumber, $cookie );
+
+my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
+  {
+    template_name   => "opac-sign.tt",
+    query           => $query,
+    type            => "opac",
+    authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
+    flagsrequired => { borrow => 1 },
+  }
+);
 
 if ( C4::Context->preference("OPACDigitalSigns") ) {
 
   # Display a deck of signs
   if ( $deck_id ne '' ) {
-
-    ( $template, $borrowernumber, $cookie ) = get_template_and_user(
-        {
-            template_name   => "opac-sign.tt",
-            query           => $query,
-            type            => "opac",
-            authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
-            flagsrequired => { borrow => 1 },
-        }
-    );
 
     my $signs = GetSignsAttachedToDeck( $deck_id );
     my @changedsigns;
@@ -73,16 +72,6 @@ if ( C4::Context->preference("OPACDigitalSigns") ) {
 
     binmode STDOUT, ':encoding(UTF-8)'; # Non-ASCII is broken without this
 
-    ( $template, $borrowernumber, $cookie ) = get_template_and_user(
-        {
-            template_name   => "opac-sign-detail.tt",
-            query           => $query,
-            type            => "opac",
-            authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
-            flagsrequired => { borrow => 1 },
-        }
-    );
-
     my $record = GetMarcBiblio($biblionumber);
     if ( ! $record ) {
       print $query->redirect("/cgi-bin/koha/errors/404.pl"); # escape early
@@ -93,6 +82,11 @@ if ( C4::Context->preference("OPACDigitalSigns") ) {
     # Get the template from the syspref and make sure it is interpreted as a
     # template string, not a filename
     $template->filename( \C4::Context->preference("OPACDigitalSignsRecordTemplate") );
+
+  # As a default, display a list of all decks
+  } else {
+
+    $template->{VARS}->{'decks'}  = GetAllDecks();
 
   }
 
