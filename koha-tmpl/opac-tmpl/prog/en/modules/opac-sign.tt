@@ -58,32 +58,18 @@ $(document).ready(function() {
 
     [% IF ( signs.0 )  %]
 
-      [%# Build an index page, listing all the signs %]
-      <div data-role="page" id="index">
-        <div data-role="header" data-position="fixed">
-	        <h1>Signs in this deck</h1>
-        </div>
-        <div data-role="content">
-          <p>FIXME This page is only a convenience - the first page shown should be the first page of the first sign.</p>
-          <ul data-role="listview">
-          [% FOREACH s IN signs %]
-            <li><a href="#sign_[% s.sign_id %]">[% s.name %]</a></li>
-          [% END %]
-          </ul>
-        </div>
-        <div data-role="footer" data-position="fixed">
-          <h4>Page Footer</h4>
-        </div>
-      </div>
-
       [%# Iterate through the signs, creating one front page for each %]
       [% FOREACH s IN signs %]
         <div data-role="page" id="sign_[% s.sign_id %]">
           <div data-role="header" data-position="fixed">
-            <a href="#index" data-rel="back">Back</a>
-		        <h1>[% s.name %]</h1>
+            <div style="text-align: center;">
+            [% FOREACH sign IN signs %]
+              <a href="#sign_[% sign.sign_id %]" data-role="button">[% sign.name %]</a>
+            [% END %]
+            </div>
           </div>
           <div data-role="content">
+            <h1>[% s.name %]</h1>
             [% FOREACH r IN s.records %]
               <a href="#biblio_[% r.biblionumber %]" title="[% r.title %]"><img src="opac-cover.pl?biblionumber=[% r.biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></a>
             [% END %]
@@ -98,10 +84,14 @@ $(document).ready(function() {
       [% FOREACH biblionumber = records.keys %]
         <div data-role="page" id="biblio_[% biblionumber %]" class="record">
           <div data-role="header" data-position="fixed">
-            <a href="#" data-rel="back">Back</a>
-	          <h1>[% records.$biblionumber.title %]</h1>
+            <div style="text-align: center;">
+            [% FOREACH s IN signs %]
+              <a href="#sign_[% s.sign_id %]" data-role="button">[% s.name %]</a>
+            [% END %]
+            </div>
           </div>
           <div data-role="content">
+	          <h1>[% records.$biblionumber.title %]</h1>
             <div class="coverimg"><img src="opac-cover.pl?biblionumber=[% biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></div>
             <div class="recorddescription"></div>
           </div>
@@ -116,7 +106,7 @@ $(document).ready(function() {
     [% END %]
   [% END %]
 
-  [%# Display a list of all decks, as a default %]
+  [%# Display a list of all decks, as a default. Links use data-ajax="false" so decks will replace the first page, not be AJAXed in. %]
   [% IF ( decks )  %]
     <div data-role="page" id="alldecks">
       <div data-role="header" data-position="fixed">
