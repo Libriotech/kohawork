@@ -25,7 +25,7 @@ $(document).ready(function() {
     $( '.record' ).each( function(index) {
       // this.id will be on the form biblio_x, we only want the x part
       biblionumber = this.id.substring( 7 );
-      $( this ).find( "div[data-role='content']" ).load( 'opac-sign.pl', { biblionumber: biblionumber }, function(response, status, xhr) {
+      $( this ).find( ".recorddescription" ).load( 'opac-sign.pl', { biblionumber: biblionumber }, function(response, status, xhr) {
         if (status == "error") {
           var msg = "Sorry but there was an error: ";
           $("#error").html(msg + xhr.status + " " + xhr.statusText);
@@ -84,12 +84,9 @@ $(document).ready(function() {
 		        <h1>[% s.name %]</h1>
           </div>
           <div data-role="content">
-            <p>FIXME This should be a grid of covers, not a list of titles.</p>
-            <ul data-role="listview">
             [% FOREACH r IN s.records %]
-              <li><a href="#biblio_[% r.biblionumber %]">[% r.biblionumber %] [% r.title %]</a></li>
+              <a href="#biblio_[% r.biblionumber %]" title="[% r.title %]"><img src="opac-cover.pl?biblionumber=[% r.biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></a>
             [% END %]
-            </ul>
           </div>
           <div data-role="footer" data-position="fixed">
             <h4>Page Footer</h4>
@@ -105,7 +102,8 @@ $(document).ready(function() {
 	          <h1>[% records.$biblionumber.title %]</h1>
           </div>
           <div data-role="content">
-            <p>Details here</p>
+            <div class="coverimg"><img src="opac-cover.pl?biblionumber=[% biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></div>
+            <div class="recorddescription"></div>
           </div>
           <div data-role="footer" data-position="fixed">
             <h4>Page Footer</h4>
