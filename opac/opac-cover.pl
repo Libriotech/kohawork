@@ -96,6 +96,8 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
       print $query->redirect( $url );
     }
 
+    # FIXME What to do when there is no ISBN?
+
   }
 
 # }
