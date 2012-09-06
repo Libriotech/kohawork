@@ -58,12 +58,14 @@ INSERT INTO saved_sql
 ( id, borrowernumber,  date_created,          last_modified,         savedsql,                                                                                               last_run,  report_name,       type,  notes, cache_expiry, public ) VALUES
 ( 1,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY biblionumber DESC LIMIT 20',                            NULL,     'Newest titles',    1,     NULL,  300,          1 ),
 ( 2,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE copyrightdate = 2012 ORDER BY biblionumber DESC LIMIT 20', NULL,     'Titles from 2012', 1,     NULL,  300,          1 ),
-( 3,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 );
+( 3,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 ),
+( 4,  51,             '2012-09-04 12:55:33', '2012-09-04 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE title LIKE "%Perl%" OR title LIKE "%PHP%" ORDER BY RAND() DESC', NULL, 'Tech books',     1, NULL, 300,          1 );
 
 INSERT INTO decks ( deck_id, branchcode, name ) VALUES ( 1, 'CPL', 'Signs for the main library' );
 
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 1, 1, 'Newest titles' );
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 2, 2, 'Titles from 2012' );
 INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 3, 3, 'Random titles' );
+INSERT INTO signs ( sign_id, saved_sql_id, name ) VALUES ( 4, 4, 'Tech books' );
 
-INSERT INTO signs_to_decks (deck_id, sign_id) VALUES (1,1),(1,2),(1,3);
+INSERT INTO signs_to_decks (deck_id, sign_id) VALUES (1,1),(1,2),(1,3),(1,4);
