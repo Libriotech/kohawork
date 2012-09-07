@@ -26,7 +26,7 @@ $(document).ready(function() {
     $( '.record' ).each( function(index) {
       // this.id will be on the form biblio_x, we only want the x part
       biblionumber = this.id.substring( 7 );
-      $( this ).find( ".recorddescription" ).load( 'opac-sign.pl', { biblionumber: biblionumber }, function(response, status, xhr) {
+      $( this ).find( ".recorddescription" ).load( 'opac-sign.pl?biblionumber=' + biblionumber, function(response, status, xhr) {
         if (status == "error") {
           var msg = "Sorry but there was an error: ";
           $("#error").html(msg + xhr.status + " " + xhr.statusText);
