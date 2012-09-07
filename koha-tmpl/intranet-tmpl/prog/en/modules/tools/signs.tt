@@ -32,7 +32,8 @@
         headers: {
          2: { sorter: false},
          3: { sorter: false},
-         4: { sorter: false}
+         4: { sorter: false},
+         5: { sorter: false}
        }
       }).tablesorterPager({
         container:     $("#pagertable_decks"),
@@ -106,7 +107,7 @@
 
 [% ELSIF op == 'deck_form' %]
 
-  [% IF ( sign.sign_id ) %]
+  [% IF ( deck.deck_id ) %]
   <h1>Edit deck</h1>
   [% ELSE %]
   <h1>Add deck</h1>
@@ -128,6 +129,16 @@
           [% ELSE %]
             <option value="[% b.value %]">[% b.branchname %]</option>
           [% END %]
+        [% END %]
+      </select>
+    </li>
+    <li><label for="webapp">Web-app</label>
+      <select name="webapp" id="webapp">
+        <option value="0">Display as a normal page</option>
+        [% IF ( deck.webapp ) %]
+        <option value="1" selected="selected">Display as a Web-app</option>
+        [% ELSE %]
+        <option value="1">Display as a Web-app</option>
         [% END %]
       </select>
     </li>
@@ -241,6 +252,7 @@
       <tr>
       <th>Name</th>
       <th>Library</th>
+      <th>Web-app</th>
       <th>Edit</th>
       <th>Edit signs</th>
       <th>Delete</th>
@@ -251,6 +263,7 @@
       [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
       <td>[% d.name %]</td>
       <td>[% d.branchname %]</td>
+      <td>[% IF ( d.webapp ) %]Yes[% ELSE %]No[% END %]</td>
       <td><a href="?op=edit_deck&amp;deck_id=[% d.deck_id %]">Edit</a></td>
       <td><a href="?op=edit_signs&amp;deck_id=[% d.deck_id %]">Edit signs</a></td>
       <td><a href="?op=del_deck&amp;deck_id=[% d.deck_id %]">Delete</a></td>

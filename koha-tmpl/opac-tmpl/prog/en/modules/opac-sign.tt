@@ -5,6 +5,7 @@
 <meta name="generator" content="Koha [% Version %]" /> <!-- leave this for stats -->
 <link rel="shortcut icon" href="[% IF ( OpacFavicon ) %][% OpacFavicon %][% ELSE %][% themelang %]/includes/favicon.ico[% END %]" type="image/x-icon" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+[% IF ( deck.webapp ) %]<meta name="apple-mobile-web-app-capable" content="yes" />[% END %]
 
 [%# FIXME Use the JQM files from JQM in early stages of development, to be replaced with a local version later %]
 [%# <script type="text/javascript" src="[% themelang % ]/lib/jquery/jquery.js"></script> %]
