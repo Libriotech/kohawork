@@ -165,9 +165,9 @@ if ( $op eq 'add_sign' ) {
 } elsif ( $op eq 'save_deck' ) {
 
   if ($cgi->param('deck_id')) {
-    EditDeck( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('deck_id') );
+    EditDeck( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('deck_id') );
   } else {
-    AddDeck( $cgi->param('branchcode'), $cgi->param('name'),  );
+    AddDeck(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp') );
   }
   print $cgi->redirect($script_name);
 

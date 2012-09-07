@@ -91,19 +91,19 @@ sub DeleteSign {
 
 sub AddDeck {
 
-  my ( $branchcode, $name ) = @_;
+  my ( $branchcode, $name, $webapp ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO decks SET branchcode = ?, name = ?");
-  return $sth->execute( $branchcode, $name );
+  my $sth=$dbh->prepare("INSERT INTO decks SET branchcode = ?, name = ?, webapp = ?");
+  return $sth->execute( $branchcode, $name, $webapp );
 
 }
 
 sub EditDeck {
 
-  my ( $branchcode, $name, $deck_id ) = @_;
+  my ( $branchcode, $name, $webapp, $deck_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE decks SET branchcode = ?, name = ? WHERE deck_id = ?");
-  return $sth->execute( $branchcode, $name, $deck_id );
+  my $sth = $dbh->prepare("UPDATE decks SET branchcode = ?, name = ?, webapp = ? WHERE deck_id = ?");
+  return $sth->execute( $branchcode, $name, $webapp, $deck_id );
 
 }
 
