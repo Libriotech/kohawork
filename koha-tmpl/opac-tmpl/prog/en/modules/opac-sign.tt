@@ -45,17 +45,12 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-
-<h1>Signs</h1>
-
 [% IF ( enabled == 0 )  %]
   <p>Digital signs are not enabled!</p>
 [% ELSE %]
 
   [%# Display a deck, all its signs and all records  %]
   [% IF ( deck )  %]
-
-    <h2>[% deck.name %]</h2>
 
     [% IF ( signs.0 )  %]
 
