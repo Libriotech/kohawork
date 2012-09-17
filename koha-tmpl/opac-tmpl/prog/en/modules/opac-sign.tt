@@ -12,37 +12,6 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
-<script>
-
-$(document).ready(function() {
-
-  // Find the number of unique records and dsiplay a loading message
-  num_records = $( '.record' ).length;
-  if ( num_records > 0 ) {
-    records_loaded = 0;
-    $.mobile.showPageLoadingMsg( "b", 'Loading ' + num_records + ' records...', true );
-
-    // Walk through all pages of all the signs, fetching record details
-    $( '.record' ).each( function(index) {
-      // this.id will be on the form biblio_x, we only want the x part
-      biblionumber = this.id.substring( 7 );
-      $( this ).find( ".recorddescription" ).load( 'opac-sign.pl?biblionumber=' + biblionumber, function(response, status, xhr) {
-        if (status == "error") {
-          var msg = "Sorry but there was an error: ";
-          $("#error").html(msg + xhr.status + " " + xhr.statusText);
-        }
-        records_loaded = records_loaded + 1;
-        // Hide the loading message if all records are loaded
-        if ( records_loaded == num_records ) {
-          $.mobile.hidePageLoadingMsg();
-        }
-      });
-    });
-  }
-
-});
-
-</script>
 </head>
 <body>
 [% IF ( enabled == 0 )  %]
@@ -88,7 +57,11 @@ $(document).ready(function() {
             <div data-role="content">
 	            <h1>[% r.title %]</h1>
               <div class="coverimg"><img src="opac-cover.pl?biblionumber=[% r.biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></div>
-              <div class="recorddescription"></div>
+              <div class="recorddescription">
+              [%# Copy the MARC object from r.marc into record, to make it easier to write the template in the syspref %]
+              [% SET record = r.marc %]
+              [% recordtemplate | eval %]
+              </div>
             </div>
             <div data-role="footer" data-position="fixed" style="text-align: center;">
               <a href="#biblio_[% loop.prev.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% loop.prev.biblionumber %]" style="max-height: 150px;"></a>

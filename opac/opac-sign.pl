@@ -25,6 +25,7 @@ use C4::Auth;
 use C4::Biblio;
 use C4::Output;
 use Koha::Signs;
+use Data::Dumper; # FIXME Debug only
 
 my $query = new CGI;
 my $deck_id      = $query->param('deck')         || '';
@@ -42,51 +43,36 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
 
 if ( C4::Context->preference("OPACDigitalSigns") ) {
 
+  $template->{VARS}->{'recordtemplate'}  = C4::Context->preference("OPACDigitalSignsRecordTemplate");
+
   # Display a deck of signs
   if ( $deck_id ne '' ) {
 
     my $signs = GetSignsAttachedToDeck( $deck_id );
     my @changedsigns;
-    my %uniquerecords;
 
     # Add records to the signs
     foreach my $sign ( @{$signs} ) {
+
       my $records = RunSQL( $sign->{'savedsql'} );
-      $sign->{'records'} = $records;
-      push(@changedsigns, $sign);
-      # Create a hash of unique records
+      my @processed_records;
       foreach my $rec ( @{$records} ) {
-        if ( !$uniquerecords{$rec->{'biblionumber'}} ) {
-          # This would be the place to add expensive processing of each record
-          $uniquerecords{$rec->{'biblionumber'}} = $rec;
+        my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
+        if ( ! $marc ) {
+          next;
         }
+        # FIXME Cache the processed records (more than one sign can have the same record)
+        $rec->{'marc'} = $marc;
+        push( @processed_records, $rec );
       }
+      $sign->{'records'} = \@processed_records;
+      push( @changedsigns, $sign );
+
     }
 
     $template->{VARS}->{'deck'}  = GetDeck( $deck_id );
     $template->{VARS}->{'signs'} = \@changedsigns;
-    $template->{VARS}->{'records'} = \%uniquerecords;
-
-  # Display a single record, for AJAXing into a sign
-  } elsif ( $biblionumber ne '' ) {
-
-    binmode STDOUT, ':encoding(UTF-8)'; # Non-ASCII is broken without this
-
-    my $record = GetMarcBiblio($biblionumber);
-    if ( ! $record ) {
-      print $query->redirect("/cgi-bin/koha/errors/404.pl"); # escape early
-      exit;
-    }
-    $template->{VARS}->{'record'} = $record;
-
-    # Get the template from the syspref and make sure it is interpreted as a
-    # template string, not a filename
-    $template->filename( \C4::Context->preference("OPACDigitalSignsRecordTemplate") );
-
-  # As a default, display a list of all decks
-  } else {
-
-    $template->{VARS}->{'decks'}  = GetAllDecks();
+    # $template->{VARS}->{'records'} = \%uniquerecords;
 
   }
 
