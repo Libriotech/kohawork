@@ -45,6 +45,7 @@
           </div>
         </div>
 
+        [% SET records = s.records %]
         [% FOREACH r IN s.records %]
           <div data-role="page" id="biblio_[% r.biblionumber %]" class="record">
             <div data-role="header" data-position="fixed">
@@ -64,9 +65,28 @@
               </div>
             </div>
             <div data-role="footer" data-position="fixed" style="text-align: center;">
-              <a href="#biblio_[% loop.prev.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% loop.prev.biblionumber %]" style="max-height: 150px;"></a>
+
+              [%# First record %]
+              [% IF ( loop.first ) %]
+                <a href="#biblio_[% records.${loop.max}.biblionumber %]" data-role="button" data-inline="true" data-mini="true" data-iconpos="notext" data-icon="arrow-l"></a>
+                <a href="#biblio_[% records.${loop.max}.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% records.${loop.max}.biblionumber %]" style="max-height: 150px;"></a>
+              [% ELSE %]
+                <a href="#biblio_[% loop.prev.biblionumber %]" data-role="button" data-inline="true" data-mini="true" data-iconpos="notext" data-icon="arrow-l"></a>
+                <a href="#biblio_[% loop.prev.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% loop.prev.biblionumber %]" style="max-height: 150px;"></a>
+              [% END %]
+
+              [%# This record %]
               <img src="opac-cover.pl?biblionumber=[% r.biblionumber %]" style="max-height: 150px; border: 15px solid white;">
-              <a href="#biblio_[% loop.next.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% loop.next.biblionumber %]" style="max-height: 150px;"></a>
+
+              [%# Last record %]
+              [% IF ( loop.last ) %]
+                <a href="#biblio_[% records.0.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% records.0.biblionumber %]" style="max-height: 150px;"></a>
+                <a href="#biblio_[% records.0.biblionumber %]" data-role="button" data-inline="true" data-mini="true" data-iconpos="notext" data-icon="arrow-r"></a>
+              [% ELSE %]
+                <a href="#biblio_[% loop.next.biblionumber %]"><img src="opac-cover.pl?biblionumber=[% loop.next.biblionumber %]" style="max-height: 150px;"></a>
+                <a href="#biblio_[% loop.next.biblionumber %]" data-role="button" data-inline="true" data-mini="true" data-iconpos="notext" data-icon="arrow-r"></a>
+              [% END %]
+
             </div>
           </div>
         [% END %]
