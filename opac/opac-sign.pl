@@ -27,23 +27,23 @@ use C4::Output;
 use Koha::Signs;
 use Data::Dumper; # FIXME Debug only
 
-my $query = new CGI;
+# binmode STDOUT, ':encoding(UTF-8)'; # Non-ASCII is broken without this
+
+my $query = CGI->new;
 my $deck_id      = $query->param('deck')         || '';
 my $biblionumber = $query->param('biblionumber') || '' || $query->param('bib');
 
-my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
-  {
-    template_name   => "opac-sign.tt",
-    query           => $query,
-    type            => "opac",
-    authnotrequired => ( C4::Context->preference("OpacPublic") ? 1 : 0 ),
-    flagsrequired => { borrow => 1 },
-  }
-);
+my ( $template, $borrowernumber, $cookie ) = get_template_and_user({
+  'template_name'   => 'opac-sign.tt',
+  'query'           => $query,
+  'type'            => 'opac',
+  'authnotrequired' => ( C4::Context->preference('OpacPublic') ? 1 : 0 ),
+  'flagsrequired'   => { borrow => 1 },
+});
 
-if ( C4::Context->preference("OPACDigitalSigns") ) {
+if ( C4::Context->preference('OPACDigitalSigns') ) {
 
-  $template->{VARS}->{'recordtemplate'}  = C4::Context->preference("OPACDigitalSignsRecordTemplate");
+  $template->{VARS}->{'recordtemplate'}  = C4::Context->preference('OPACDigitalSignsRecordTemplate');
 
   # Display a deck of signs
   if ( $deck_id ne '' ) {
@@ -63,10 +63,10 @@ if ( C4::Context->preference("OPACDigitalSigns") ) {
         }
         # FIXME Cache the processed records (more than one sign can have the same record)
         $rec->{'marc'} = $marc;
-        push( @processed_records, $rec );
+        push @processed_records, $rec;
       }
       $sign->{'records'} = \@processed_records;
-      push( @changedsigns, $sign );
+      push @changedsigns, $sign;
 
     }
 
