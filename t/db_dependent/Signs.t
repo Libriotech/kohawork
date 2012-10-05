@@ -13,39 +13,39 @@ my $name2   = 'some other name';
 my $name3   = 'a changed name';
 my $report1 = 1;
 
-# AddSign
-ok( AddSign( $name1, $report1 ), "AddSign" );
+# AddStream
+ok( AddStream( $name1, $report1 ), "AddStream" );
 
 # Find the sign_id of the sign we just added, for use in further tests
-my $query = "SELECT sign_id FROM signs WHERE saved_sql_id = '$report1' AND name = '$name1'";
+my $query = "SELECT sign_stream_id FROM sign_streams WHERE saved_sql_id = '$report1' AND name = '$name1'";
 my $sth = $dbh->prepare($query);
 $sth->execute();
-my ( $sign_id ) = $sth->fetchrow_array();
+my ( $sign_stream_id ) = $sth->fetchrow_array();
 
-# GetSign
+# GetStream
 my $sign;
-ok( $sign = GetSign( $sign_id ), "GetSign (sign_id = $sign_id) ok" );
+ok( $sign = GetStream( $sign_stream_id ), "GetStream (sign_stream_id = $sign_stream_id) ok" );
 like( $sign->{'saved_sql_id'}, qr/$report1/, "GetSign saved_sql_id ok" );
 like( $sign->{'name'},         qr/$name1/,   "GetSign name ok" );
 
-# GetAllSigns
-my $signs;
-ok( $signs = GetAllSigns, "GetAllSigns ok" );
-my $num_of_signs = @{$signs};
-cmp_ok( $num_of_signs, ">", 0, "GetAllSigns found at least one map" );
-foreach my $sign ( @{$signs} ) {
-  if ( $sign->{'sign_id'} == $sign_id ) {
-    like( $sign->{'saved_sql_id'}, qr/$report1/, "GetAllSigns found a sign with our saved_sql_id" );
-    like( $sign->{'name'},         qr/$name1/,   "GetAllSigns found a sign with our name" );
+# GetAllStreams
+my $streams;
+ok( $streams = GetAllStreams, "GetAllStreams ok" );
+my $num_of_streams = @{$streams};
+cmp_ok( $num_of_streams, ">", 0, "GetAllStreams found at least one stream" );
+foreach my $stream ( @{$streams} ) {
+  if ( $stream->{'sign_stream_id'} == $sign_stream_id ) {
+    like( $stream->{'saved_sql_id'}, qr/$report1/, "GetAllStreams found a sign with our saved_sql_id" );
+    like( $stream->{'name'},         qr/$name1/,   "GetAllStreams found a sign with our name" );
   }
 }
 
-# EditSign
-my $editedsign;
-ok( EditSign( $name3, $report1, $sign_id ), "EditSign ok" );
-ok( $editedsign = GetSign( $sign_id ), "GetSign on edited sign ok" );
-like( $editedsign->{'saved_sql_id'}, qr/$report1/, "saved_sql_id from GetSign on edited sign ok" );
-like( $editedsign->{'name'},         qr/$name3/,   "name from GetSign on edited sign ok" );
+# EditStream
+my $editedstream;
+ok( EditStream( $name3, $report1, $sign_stream_id ), "EditStream ok" );
+ok( $editedstream = GetStream( $sign_stream_id ), "GetStream on edited sign ok" );
+like( $editedstream->{'saved_sql_id'}, qr/$report1/, "saved_sql_id from GetStream on edited sign ok" );
+like( $editedstream->{'name'},         qr/$name3/,   "name from GetStream on edited sign ok" );
 
-# DeleteSign
-ok( DeleteSign( $sign_id ), "DeleteSign ok" );
+# DeleteStream
+ok( DeleteStream( $sign_stream_id ), "DeleteStream ok" );

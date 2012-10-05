@@ -8,21 +8,21 @@ use base qw( Exporter );
 # set the version for version checking
 our @EXPORT = qw(
 
+  AddStream
+  EditStream
+  GetStream
+  GetAllStreams
+  DeleteStream
+
   AddSign
   EditSign
   GetSign
   GetAllSigns
   DeleteSign
 
-  AddDeck
-  EditDeck
-  GetDeck
-  GetAllDecks
-  DeleteDeck
-
-  AttachSignToDeck
-  GetSignsAttachedToDeck
-  DetachSignFromDeck
+  AttachStreamToSign
+  GetStreamsAttachedToSign
+  DetachStreamFromSign
 
   RunSQL
 
@@ -30,44 +30,46 @@ our @EXPORT = qw(
 
 my $dbh = C4::Context->dbh;
 
-sub AddSign {
+# Streams
+
+sub AddStream {
 
   my ( $name, $report ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, saved_sql_id = ?");
+  my $sth=$dbh->prepare("INSERT INTO sign_streams SET name = ?, saved_sql_id = ?");
   return $sth->execute( $name, $report );
 
 }
 
-sub EditSign {
+sub EditStream {
 
-  my ( $name, $report, $sign_id ) = @_;
+  my ( $name, $report, $sign_stream_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE signs SET name = ?, saved_sql_id = ? WHERE sign_id = ?");
-  return $sth->execute( $name, $report, $sign_id );
+  my $sth = $dbh->prepare("UPDATE sign_streams SET name = ?, saved_sql_id = ? WHERE sign_stream_id = ?");
+  return $sth->execute( $name, $report, $sign_stream_id );
 
 }
 
-sub GetSign {
+sub GetStream {
 
   my ( $sign_id ) = @_;
 
   return unless $sign_id;
 
   my $query = "SELECT s.*, sq.report_name, sq.savedsql
-               FROM signs AS s, saved_sql AS sq
+               FROM sign_streams AS s, saved_sql AS sq
                WHERE s.saved_sql_id = sq.id
-                 AND s.sign_id = ?";
+                 AND s.sign_stream_id = ?";
   my $sth = $dbh->prepare($query);
   $sth->execute($sign_id);
   return $sth->fetchrow_hashref();
 
 }
 
-sub GetAllSigns {
+sub GetAllStreams {
 
   my $query = "SELECT s.*, sq.report_name, sq.savedsql
-               FROM signs AS s, saved_sql AS sq
+               FROM sign_streams AS s, saved_sql AS sq
                WHERE s.saved_sql_id = sq.id
                ORDER BY s.name";
   my $sth = $dbh->prepare($query);
@@ -76,14 +78,14 @@ sub GetAllSigns {
 
 }
 
-sub DeleteSign {
+sub DeleteStream {
 
-  my ( $sign_id ) = @_;
+  my ( $sign_stream_id ) = @_;
 
-  return unless $sign_id;
+  return unless $sign_stream_id;
 
-  my $sth = $dbh->prepare('DELETE FROM signs WHERE sign_id = ?');
-  return $sth->execute($sign_id);
+  my $sth = $dbh->prepare('DELETE FROM sign_streams WHERE sign_stream_id = ?');
+  return $sth->execute($sign_stream_id);
 
 }
 
