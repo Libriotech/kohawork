@@ -59,16 +59,16 @@ my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     }
 );
 
-my $op      = $cgi->param('op') || '';
-my $sign_id = $cgi->param('sign_id') || '';
-my $deck_id = $cgi->param('deck_id') || '';
+my $op        = $cgi->param('op') || '';
+my $sign_id   = $cgi->param('sign_id') || '';
+my $stream_id = $cgi->param('stream_id') || '';
 
-if ( $op eq 'add_sign' ) {
+if ( $op eq 'add_stream' ) {
 
   # TODO Check that there are reports that can be used
 
   $template->param(
-    'op'         => 'sign_form',
+    'op'         => 'stream_form',
     'reports'    => get_saved_reports,
   );
 
@@ -131,41 +131,41 @@ if ( $op eq 'add_sign' ) {
     'branches'    => GetBranchesLoop
   );
 
-} elsif ( $op eq 'edit_deck' && $deck_id ne '') {
+} elsif ( $op eq 'edit_deck' && $sign_id ne '') {
 
   $template->param(
     'op'          => 'deck_form',
-    'deck'        => GetDeck( $deck_id ),
+    'deck'        => GetDeck( $sign_id ),
     'branches'    => GetBranchesLoop,
     'script_name' => $script_name
   );
 
-} elsif ( $op eq 'edit_signs' && $deck_id ne '') {
+} elsif ( $op eq 'edit_signs' && $sign_id ne '') {
 
   $template->param(
     'op'          => 'edit_signs',
-    'deck'        => GetDeck( $deck_id ),
+    'deck'        => GetDeck( $sign_id ),
     'signs'       => GetAllSigns(),
-    'attached'    => GetSignsAttachedToDeck( $deck_id ),
+    'attached'    => GetSignsAttachedToDeck( $sign_id ),
     'script_name' => $script_name
   );
 
-} elsif ( $op eq 'attach_sign_to_deck' && $deck_id ne '' && $sign_id ne '' ) {
+} elsif ( $op eq 'attach_sign_to_deck' && $sign_id ne '' && $sign_id ne '' ) {
 
-  AttachSignToDeck( $deck_id, $sign_id );
+  AttachSignToDeck( $sign_id, $sign_id );
 
-  print $cgi->redirect($script_name . '?op=edit_signs&deck_id=' . $deck_id);
+  print $cgi->redirect($script_name . '?op=edit_signs&sign_id=' . $sign_id);
 
-} elsif ( $op eq 'detach_sign_from_deck' && $deck_id ne '' && $sign_id ne '' ) {
+} elsif ( $op eq 'detach_sign_from_deck' && $sign_id ne '' && $sign_id ne '' ) {
 
-  DetachSignFromDeck( $deck_id, $sign_id );
+  DetachSignFromDeck( $sign_id, $sign_id );
 
-  print $cgi->redirect($script_name . '?op=edit_signs&deck_id=' . $deck_id);
+  print $cgi->redirect($script_name . '?op=edit_signs&sign_id=' . $sign_id);
 
 } elsif ( $op eq 'save_deck' ) {
 
-  if ($cgi->param('deck_id')) {
-    EditDeck( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('deck_id') );
+  if ($cgi->param('sign_id')) {
+    EditDeck( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('sign_id') );
   } else {
     AddDeck(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp') );
   }
@@ -173,7 +173,7 @@ if ( $op eq 'add_sign' ) {
 
 } elsif ( $op eq 'del_deck' ) {
 
-  my $deck = GetDeck( $deck_id );
+  my $deck = GetDeck( $sign_id );
 
   $template->param(
     'op' => 'del_deck',
@@ -183,7 +183,7 @@ if ( $op eq 'add_sign' ) {
 
 } elsif ( $op eq 'del_deck_ok' ) {
 
-  DeleteDeck( $deck_id );
+  DeleteDeck( $sign_id );
 
   $template->param(
     'op' => 'del_deck_ok',
@@ -195,9 +195,9 @@ if ( $op eq 'add_sign' ) {
   # TODO Check the setting of OPACDigitalSigns, give a warning if it is off
 
   $template->param(
-    'decks' => GetAllDecks(),
-    'signs' => GetAllSigns(),
-    'else' => 1
+    'streams' => GetAllStreams(),
+    'signs'   => GetAllSigns(),
+    'else'    => 1
   );
 
 }
