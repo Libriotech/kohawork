@@ -11,10 +11,10 @@
 
 	    yuiToolbar();
 
-	    $("#decks_and_signs").tabs();
+	    $("#signs_and_streams").tabs();
 
       // Signs
-      $("#table_signs").tablesorter({
+      $("#table_streams").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
         headers: {
          2: { sorter: false},
@@ -27,7 +27,7 @@
       });
 
       // Decks
-      $("#table_decks").tablesorter({
+      $("#table_signs").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
         headers: {
          2: { sorter: false},
@@ -45,8 +45,8 @@
 
 	// YUI Toolbar Functions
 	function yuiToolbar() {
-	    new YAHOO.widget.Button("newdeck");
 	    new YAHOO.widget.Button("newsign");
+	    new YAHOO.widget.Button("newstream");
 	}
 
 //]]>
@@ -67,27 +67,27 @@
 [% IF ( else ) %]
   <div id="toolbar">
     <ul class="toolbar">
-      <li><a id="newdeck" href="?op=add_deck">New deck</a></li>
       <li><a id="newsign" href="?op=add_sign">New sign</a></li>
+      <li><a id="newstream" href="?op=add_stream">New stream</a></li>
     </ul>
   </div>
 [% END %]
 
-[% IF op == 'sign_form' %]
+[% IF op == 'stream_form' %]
 
-  [% IF ( sign.sign_id ) %]
-  <h1>Edit sign</h1>
+  [% IF ( stream.sign_stream_id ) %]
+  <h1>Edit stream</h1>
   [% ELSE %]
-  <h1>Add sign</h1>
+  <h1>Add stream</h1>
   [% END %]
-  <form action="[% script_name %]" name="signform" method="post">
-  <input type="hidden" name="op" value="save_sign" />
-  [% IF ( sign.sign_id ) %]
-  <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
+  <form action="[% script_name %]" name="streamform" method="post">
+  <input type="hidden" name="op" value="save_stream" />
+  [% IF ( stream.sign_stream_id ) %]
+  <input type="hidden" name="sign_stream_id" value="[% stream.sign_stream_id %]" />
   [% END %]
   <fieldset class="rows">
     <ol>
-    <li><label for="name">Name</label><input type="text" name="name" value="[% sign.name %]" /></li>
+    <li><label for="name">Name</label><input type="text" name="name" value="[% stream.name %]" /></li>
     <li><label for="report">Report</label>
       <select name="report" id="report">
         <option value="">Choose report</option>
@@ -234,20 +234,20 @@
 
   <h1>Digital signs</h1>
 
-  <div id="decks_and_signs" class="toptabs">
+  <div id="signs_and_streams" class="toptabs">
 
     <ul>
-      <li><a href="#deckstab">Decks</a></li>
       <li><a href="#signstab">Signs</a></li>
+      <li><a href="#streamstab">Streams</a></li>
     </ul>
 
-  <div id="deckstab">
+  <div id="signstab">
 
     [% IF decks %]
-      <div id="pagertable_decks">
+      <div id="pagertable_signs">
         [% INCLUDE 'table-pager.inc' perpage='20' %]
       </div>
-      <table id="table_decks" class="tablesorter">
+      <table id="table_signs" class="tablesorter">
       <thead>
       <tr>
       <th>Name</th>
@@ -259,30 +259,30 @@
       </tr>
       </thead>
       <tbody>
-      [% FOREACH d IN decks %]
+      [% FOREACH s IN signs %]
       [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-      <td>[% d.name %]</td>
-      <td>[% d.branchname %]</td>
-      <td>[% IF ( d.webapp ) %]Yes[% ELSE %]No[% END %]</td>
-      <td><a href="?op=edit_deck&amp;deck_id=[% d.deck_id %]">Edit</a></td>
-      <td><a href="?op=edit_signs&amp;deck_id=[% d.deck_id %]">Edit signs</a></td>
-      <td><a href="?op=del_deck&amp;deck_id=[% d.deck_id %]">Delete</a></td>
+      <td>[% s.name %]</td>
+      <td>[% s.branchname %]</td>
+      <td>[% IF ( s.webapp ) %]Yes[% ELSE %]No[% END %]</td>
+      <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
+      <td><a href="?op=edit_streams&amp;sign_id=[% s.sign_id %]">Edit streams</a></td>
+      <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
       </tr>
       [% END %]
       </tbody>
       </table>
     [% ELSE %]
-      <p>No decks defined!</p>
+      <p>No signs defined!</p>
     [% END %]
 
   </div>
-  <div id="signstab">
+  <div id="streamstab">
 
-    [% IF signs %]
-      <div id="pagertable_signs">
+    [% IF streams %]
+      <div id="pagertable_streams">
         [% INCLUDE 'table-pager.inc' perpage='20' %]
       </div>
-      <table id="table_signs" class="tablesorter">
+      <table id="table_streams" class="tablesorter">
       <thead>
       <tr>
       <th>Name</th>
@@ -292,18 +292,18 @@
       </tr>
       </thead>
       <tbody>
-      [% FOREACH s IN signs %]
+      [% FOREACH s IN streams %]
       [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-      <td><a href="?op=view_sign&amp;sign_id=[% s.sign_id %]">[% s.name %]</a></td>
+      <td><a href="?op=view_stream&amp;stream_id=[% s.stream_id %]">[% s.name %]</a></td>
       <td title="ID: [% s.saved_sql_id %]">[% s.report_name %]</td>
-      <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
-      <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
+      <td><a href="?op=edit_stream&amp;stream_id=[% s.stream_id %]">Edit</a></td>
+      <td><a href="?op=del_stream&amp;stream_id=[% s.stream_id %]">Delete</a></td>
       </tr>
       [% END %]
       </tbody>
       </table>
     [% ELSE %]
-      <p>No signs defined!</p>
+      <p>No streams defined!</p>
     [% END %]
 
   </div>
