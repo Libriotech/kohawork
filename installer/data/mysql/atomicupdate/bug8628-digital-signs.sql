@@ -25,6 +25,7 @@ INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDig
 INSERT INTO permissions (module_bit, code, description) VALUES (13, 'edit_digital_signs', 'Create and edit digital signs for the OPAC');
 
 -- TODO Add these tables to kohasctructure.sql
+DROP TABLE IF EXISTS signs_to_streams;
 DROP TABLE IF EXISTS sign_streams;
 CREATE TABLE sign_streams (
   sign_stream_id int(11) NOT NULL auto_increment,    -- primary key, used to identify streams
@@ -42,7 +43,6 @@ CREATE TABLE signs (
   PRIMARY KEY (sign_id),
   CONSTRAINT signs_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode) -- ON DELETE CASCADE
 );
-DROP TABLE IF EXISTS signs_to_streams;
 CREATE TABLE signs_to_streams (
   sign_stream_id int(11) NOT NULL, -- foreign key from the decks sign_streams table
   sign_id int(11) NOT NULL,        -- foreign key from the signs table
@@ -50,7 +50,6 @@ CREATE TABLE signs_to_streams (
   CONSTRAINT signs_to_streams_ibfk_1 FOREIGN KEY (sign_stream_id) REFERENCES sign_streams (sign_stream_id) ON DELETE CASCADE,
   CONSTRAINT signs_to_streams_ibfk_2 FOREIGN KEY (sign_id) REFERENCES signs (sign_id) ON DELETE CASCADE
 );
-
 
 -- Sample data for testing
 -- TODO Delete before submitting patch

@@ -89,104 +89,104 @@ sub DeleteStream {
 
 }
 
-# Decks
+# Signs
 
-sub AddDeck {
+sub AddSign {
 
   my ( $branchcode, $name, $webapp ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO decks SET branchcode = ?, name = ?, webapp = ?");
+  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?, webapp = ?");
   return $sth->execute( $branchcode, $name, $webapp );
 
 }
 
-sub EditDeck {
+sub EditSign {
 
-  my ( $branchcode, $name, $webapp, $deck_id ) = @_;
+  my ( $branchcode, $name, $webapp, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE decks SET branchcode = ?, name = ?, webapp = ? WHERE deck_id = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $deck_id );
+  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ?, webapp = ? WHERE sign_id = ?");
+  return $sth->execute( $branchcode, $name, $webapp, $sign_id );
 
 }
 
-sub GetDeck {
+sub GetSign {
 
-  my ( $deck_id ) = @_;
+  my ( $sign_id ) = @_;
 
-  return unless $deck_id;
+  return unless $sign_id;
 
-  my $query = "SELECT d.*, b.branchname
-               FROM decks as d LEFT JOIN branches as b
-               ON d.branchcode = b.branchcode
-               WHERE d.deck_id = ?";
+  my $query = "SELECT s.*, b.branchname
+               FROM signs as s LEFT JOIN branches as b
+               ON s.branchcode = b.branchcode
+               WHERE s.sign_id = ?";
   my $sth = $dbh->prepare($query);
-  $sth->execute($deck_id);
+  $sth->execute($sign_id);
   return $sth->fetchrow_hashref();
 
 }
 
-sub GetAllDecks {
+sub GetAllSigns {
 
-  my $query = "SELECT d.*, b.branchname
-               FROM decks as d LEFT JOIN branches as b
-               ON d.branchcode = b.branchcode
-               ORDER BY b.branchname, d.name";
+  my $query = "SELECT s.*, b.branchname
+               FROM signs as s LEFT JOIN branches as b
+               ON s.branchcode = b.branchcode
+               ORDER BY s.name";
   my $sth = $dbh->prepare($query);
   $sth->execute();
   return $sth->fetchall_arrayref({});
 
 }
 
-sub DeleteDeck {
+sub DeleteSign {
 
-  my ( $deck_id ) = @_;
+  my ( $sign_id ) = @_;
 
-  return unless $deck_id;
+  return unless $sign_id;
 
-  my $sth = $dbh->prepare('DELETE FROM decks WHERE deck_id = ?');
-  return $sth->execute($deck_id);
+  my $sth = $dbh->prepare('DELETE FROM signs WHERE sign_id = ?');
+  return $sth->execute($sign_id);
 
 }
 
 # Signs attached to decks
 
-sub AttachSignToDeck {
+sub AttachStreamToSign {
 
-  my ( $deck_id, $sign_id ) = @_;
+  my ( $sign_stream_id, $sign_id ) = @_;
 
-  return unless $deck_id || $sign_id;
+  return unless $sign_stream_id || $sign_id;
 
-  my $sth = $dbh->prepare('INSERT INTO signs_to_decks SET deck_id = ?, sign_id = ?');
-  return $sth->execute($deck_id, $sign_id);
+  my $sth = $dbh->prepare( 'INSERT INTO signs_to_streams SET sign_stream_id = ?, sign_id = ?' );
+  return $sth->execute( $sign_stream_id, $sign_id );
 
 }
 
-sub GetSignsAttachedToDeck {
+sub GetStreamsAttachedToSign {
 
-  my ( $deck_id ) = @_;
+  my ( $sign_id ) = @_;
 
-  return unless $deck_id;
+  return unless $sign_id;
 
-  my $query = "SELECT s.*, sq.report_name, sq.savedsql
-               FROM signs AS s, signs_to_decks AS sd, saved_sql AS sq
-               WHERE s.sign_id = sd.sign_id
+  my $query = 'SELECT s.*, sq.report_name, sq.savedsql
+               FROM sign_streams AS s, signs_to_streams AS sts, saved_sql AS sq
+               WHERE s.sign_stream_id = sts.sign_stream_id
                  AND s.saved_sql_id = sq.id
-                 AND sd.deck_id = ?
-               ORDER BY s.name";
-  my $sth = $dbh->prepare($query);
-  $sth->execute( $deck_id );
+                 AND sts.sign_id = ?
+               ORDER BY s.name';
+  my $sth = $dbh->prepare( $query );
+  $sth->execute( $sign_id );
   return $sth->fetchall_arrayref({});
 
 }
 
-sub DetachSignFromDeck {
+sub DetachStreamFromSign {
 
-  my ( $deck_id, $sign_id ) = @_;
+  my ( $sign_stream_id, $sign_id ) = @_;
 
-  return unless $deck_id || $sign_id;
+  return unless $sign_stream_id || $sign_id;
 
-  my $sth = $dbh->prepare('DELETE FROM signs_to_decks WHERE deck_id = ? AND sign_id = ?');
-  return $sth->execute( $deck_id, $sign_id );
+  my $sth = $dbh->prepare( 'DELETE FROM signs_to_streams WHERE sign_stream_id = ? AND sign_id = ?' );
+  return $sth->execute( $sign_stream_id, $sign_id );
 
 }
 
