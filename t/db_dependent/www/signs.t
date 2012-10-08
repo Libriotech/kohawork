@@ -174,8 +174,6 @@ $agent->submit_form_ok({
 }, 'attach stream to sign' );
 $agent->content_like( qr/<td>$stream_name<\/td>/, 'content contains stream name in a table cell' );
 
-__END__
-
 # TODO Check the sign and stream in the OPAC
 
 # TODO Detach stream from sign
