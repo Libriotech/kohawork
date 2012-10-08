@@ -80,7 +80,7 @@
   [% ELSE %]
   <h1>Add stream</h1>
   [% END %]
-  <form action="[% script_name %]" name="streamform" method="post">
+  <form action="[% script_name %]" name="streamform" id="streamform" method="post">
   <input type="hidden" name="op" value="save_stream" />
   [% IF ( stream.sign_stream_id ) %]
   <input type="hidden" name="sign_stream_id" value="[% stream.sign_stream_id %]" />
@@ -105,7 +105,7 @@
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
-[% ELSIF op == 'deck_form' %]
+[% ELSIF op == 'sign_form' %]
 
   [% IF ( deck.deck_id ) %]
   <h1>Edit deck</h1>
@@ -182,35 +182,35 @@
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
-[% ELSIF op == 'del_sign' %]
+[% ELSIF op == 'del_stream' %]
 
   <div class="dialog alert">
-    <h3>Confirm deletion of sign <span class="ex">'[% sign.name %]'</span>?</h3>
+    <h3>Confirm deletion of stream <span class="ex">'[% stream.name %]'</span>?</h3>
     <form action="[% script_name %]" method="post">
-    <input type="hidden" name="op" value="del_sign_ok" />
-    <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
-    <input type="submit" class="approve" value="Yes, Delete this sign" /></form>
+    <input type="hidden" name="op" value="del_stream_ok" />
+    <input type="hidden" name="sign_stream_id" value="[% stream.sign_stream_id %]" />
+    <input type="submit" class="approve" value="Yes, Delete this stream" /></form>
 
     <form action="[% script_name %]" method="get">
     <input type="submit" value="No, do not delete" class="deny" />
     </form>
     </div>
 
-[% ELSIF op == 'del_sign_ok' %]
+[% ELSIF op == 'del_stream_ok' %]
 
   <div class="dialog message">
-    <h3>Sign deleted</h3>
+    <h3>Stream deleted</h3>
     <form action="[% script_name %]" method="get">
     <input type="submit" value="OK" class="approve" />
     </form>
   </div>
 
-[% ELSIF op == 'view_sign' %]
+[% ELSIF op == 'view_stream' %]
 
-  <h1>[% sign.name %]</h1>
-  <p>Based on report: [% sign.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% sign.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
+  <h1>[% stream.name %]</h1>
+  <p>Based on report: [% stream.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% stream.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
   <h2>SQL</h2>
-  <pre id="sql_output">[% sign.savedsql %]</pre>
+  <pre id="sql_output">[% stream.savedsql %]</pre>
   <h2>Records</h2>
   [% IF ( records.0 ) %]
     <table>
@@ -243,7 +243,7 @@
 
   <div id="signstab">
 
-    [% IF decks %]
+    [% IF signs %]
       <div id="pagertable_signs">
         [% INCLUDE 'table-pager.inc' perpage='20' %]
       </div>
@@ -294,10 +294,10 @@
       <tbody>
       [% FOREACH s IN streams %]
       [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-      <td><a href="?op=view_stream&amp;stream_id=[% s.stream_id %]">[% s.name %]</a></td>
+      <td><a href="?op=view_stream&amp;sign_stream_id=[% s.sign_stream_id %]">[% s.name %]</a></td>
       <td title="ID: [% s.saved_sql_id %]">[% s.report_name %]</td>
-      <td><a href="?op=edit_stream&amp;stream_id=[% s.stream_id %]">Edit</a></td>
-      <td><a href="?op=del_stream&amp;stream_id=[% s.stream_id %]">Delete</a></td>
+      <td><a href="?op=edit_stream&amp;sign_stream_id=[% s.sign_stream_id %]">Edit</a></td>
+      <td><a href="?op=del_stream&amp;sign_stream_id=[% s.sign_stream_id %]">Delete</a></td>
       </tr>
       [% END %]
       </tbody>
