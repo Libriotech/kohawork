@@ -28,6 +28,8 @@ my $password = $ENV{KOHA_PASS};
 my $intranet = $ENV{KOHA_INTRANET_URL};
 my $opac     = $ENV{KOHA_OPAC_URL};
 
+my $stream_name = 'some dummy stream name';
+
 BAIL_OUT("You must set the environment variable KOHA_INTRANET_URL to ".
          "point this test to your staff client. If you do not have ".
          "KOHA_CONF set, you must also set KOHA_USER and KOHA_PASS for ".
@@ -61,3 +63,24 @@ $agent->content_like( qr/New stream/,    'content contains New stream' );
 $agent->follow_link_ok( { url_regex => qr/op=add_stream/i }, 'open Add stream page' );
 $agent->content_like( qr/Add stream/, 'content contains Add stream' );
 $agent->content_like( qr/Report/,     'content contains Report' );
+
+# my @report_selects = $agent->grep_selects({
+#   # type => qr/option/,
+#   id   => qr/^report$/,
+# });
+# diag( Dumper @report_selects );
+
+$agent->submit_form_ok({
+  form_id => 'streamform',
+  fields  => {
+    'op'     => 'save_stream',
+    'name'   => $stream_name,
+    'report' => 1, # FIXME Make this dynamic
+  }
+}, 'add a new stream' );
+$agent->content_like( qr/$stream_name/, 'content contains new stream name' );
+
+# Stream detail page
+$agent->follow_link_ok( { text => $stream_name, n => 1 }, 'detail page for stream' );
+$agent->content_like( qr/$stream_name/, 'detail page contains stream name' );
+$agent->content_like( qr/Based on report/, 'detail page contains Based on report' );
