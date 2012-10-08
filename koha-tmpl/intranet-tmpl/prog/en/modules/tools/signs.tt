@@ -13,7 +13,7 @@
 
 	    $("#signs_and_streams").tabs();
 
-      // Signs
+      // Streams
       $("#table_streams").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
         headers: {
@@ -21,12 +21,12 @@
          3: { sorter: false}
        }
       }).tablesorterPager({
-        container:     $("#pagertable_signs"),
+        container:     $("#pagertable_streams"),
         positionFixed: false,
         size:          20
       });
 
-      // Decks
+      // Signs
       $("#table_signs").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
         headers: {
@@ -36,7 +36,7 @@
          5: { sorter: false}
        }
       }).tablesorterPager({
-        container:     $("#pagertable_decks"),
+        container:     $("#pagertable_signs"),
         positionFixed: false,
         size:          20
       });
@@ -90,9 +90,11 @@
     <li><label for="name">Name</label><input type="text" name="name" value="[% stream.name %]" /></li>
     <li><label for="report">Report</label>
       <select name="report" id="report">
+        [% UNLESS ( stream.sign_stream_id ) %]
         <option value="">Choose report</option>
+        [% END %]
         [% FOREACH report IN reports %]
-          [% IF ( report.id == sign.saved_sql_id ) %]
+          [% IF ( report.id == stream.saved_sql_id ) %]
             <option value="[% report.id %]" selected="selected">[% report.report_name %]</option>
           [% ELSE %]
             <option value="[% report.id %]">[% report.report_name %]</option>
@@ -107,24 +109,24 @@
 
 [% ELSIF op == 'sign_form' %]
 
-  [% IF ( deck.deck_id ) %]
-  <h1>Edit deck</h1>
+  [% IF ( sign.sign_id ) %]
+  <h1>Edit sign</h1>
   [% ELSE %]
-  <h1>Add deck</h1>
+  <h1>Add sign</h1>
   [% END %]
-  <form action="[% script_name %]" name="deckform" method="post">
-  <input type="hidden" name="op" value="save_deck" />
-  [% IF ( deck.deck_id ) %]
-  <input type="hidden" name="deck_id" value="[% deck.deck_id %]" />
+  <form action="[% script_name %]" name="signform" id="signform" method="post">
+  <input type="hidden" name="op" value="save_sign" />
+  [% IF ( sign.sign_id ) %]
+  <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
   [% END %]
   <fieldset class="rows">
     <ol>
-    <li><label for="name">Name</label><input type="text" name="name" value="[% deck.name %]" /></li>
+    <li><label for="name">Name</label><input type="text" name="name" value="[% sign.name %]" /></li>
     <li><label for="branchcode">Library</label>
       <select name="branchcode" id="branchcode">
         <option value="">Choose a library</option>
         [% FOREACH b IN branches %]
-          [% IF ( deck.branchcode == b.value ) %]
+          [% IF ( sign.branchcode == b.value ) %]
             <option value="[% b.value %]" selected="selected">[% b.branchname %]</option>
           [% ELSE %]
             <option value="[% b.value %]">[% b.branchname %]</option>
@@ -135,7 +137,7 @@
     <li><label for="webapp">Web-app</label>
       <select name="webapp" id="webapp">
         <option value="0">Display as a normal page</option>
-        [% IF ( deck.webapp ) %]
+        [% IF ( sign.webapp ) %]
         <option value="1" selected="selected">Display as a Web-app</option>
         [% ELSE %]
         <option value="1">Display as a Web-app</option>
@@ -147,33 +149,33 @@
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
 
-[% ELSIF op == 'edit_signs' %]
+[% ELSIF op == 'edit_streams' %]
 
-  <h1>Edit signs attached to [% deck.name %]</h1>
-  <p>Library: [% deck.branchname %]</p>
+  <h1>Edit streams attached to [% sign.name %]</h1>
+  <p>Library: [% sign.branchname %]</p>
 
-  <h2>Signs already attached to this deck</h2>
+  <h2>Streams already attached to this sign</h2>
   <table>
   <thead>
   <tr><th>Name</th><th>Detach</th></tr>
   </thead>
   <tbody>
   [% FOREACH s IN attached %]
-    <tr><td>[% s.name %]</td><td><a href="?op=detach_sign_from_deck&deck_id=[% deck.deck_id %]&sign_id=[% s.sign_id %]">Detach</a></td></tr>
+    <tr><td>[% s.name %]</td><td><a href="?op=detach_stream_from_sign&sign_id=[% sign.sign_id %]&sign_stream_id=[% s.sign_stream_id %]">Detach</a></td></tr>
   [% END %]
   </tbody>
   </table>
 
-  <h2>Attach a new sign to this deck</h2>
-  <form action="[% script_name %]" name="decksignform" method="post">
-  <input type="hidden" name="op" value="attach_sign_to_deck" />
-  <input type="hidden" name="deck_id" value="[% deck.deck_id %]" />
+  <h2>Attach a new stream to this sign</h2>
+  <form action="[% script_name %]" name="attach_stream_to_sign_form" id="attach_stream_to_sign_form" method="post">
+  <input type="hidden" name="op" value="attach_stream_to_sign" />
+  <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
   <fieldset class="rows">
     <ol>
-    <li><label for="sign">Choose a sign to attach</label>
-      <select name="sign_id" id="sign">
-        [% FOREACH s IN signs %]
-          <option value="[% s.sign_id %]">[% s.name %]</option>
+    <li><label for="stream">Choose a stream to attach</label>
+      <select name="sign_stream_id" id="stream">
+        [% FOREACH s IN streams %]
+          <option value="[% s.sign_stream_id %]">[% s.name %]</option>
         [% END %]
       </select>
     </li>
@@ -186,12 +188,12 @@
 
   <div class="dialog alert">
     <h3>Confirm deletion of stream <span class="ex">'[% stream.name %]'</span>?</h3>
-    <form action="[% script_name %]" method="post">
+    <form action="[% script_name %]" id ="confirm_stream_delete_form" method="post">
     <input type="hidden" name="op" value="del_stream_ok" />
     <input type="hidden" name="sign_stream_id" value="[% stream.sign_stream_id %]" />
     <input type="submit" class="approve" value="Yes, Delete this stream" /></form>
 
-    <form action="[% script_name %]" method="get">
+    <form action="[% script_name %]" id="cancel_stream_delete_form" method="get">
     <input type="submit" value="No, do not delete" class="deny" />
     </form>
     </div>
@@ -204,6 +206,34 @@
     <input type="submit" value="OK" class="approve" />
     </form>
   </div>
+
+[% ELSIF op == 'del_sign' %]
+
+  <div class="dialog alert">
+    <h3>Confirm deletion of sign <span class="ex">'[% sign.name %]'</span>?</h3>
+    <form action="[% script_name %]" id ="confirm_sign_delete_form" method="post">
+    <input type="hidden" name="op" value="del_sign_ok" />
+    <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
+    <input type="submit" class="approve" value="Yes, Delete this sign" /></form>
+
+    <form action="[% script_name %]" id="cancel_sign_delete_form" method="get">
+    <input type="submit" value="No, do not delete" class="deny" />
+    </form>
+    </div>
+
+[% ELSIF op == 'del_sign_ok' %]
+
+  <div class="dialog message">
+    <h3>Sign deleted</h3>
+    <form action="[% script_name %]" method="get">
+    <input type="submit" value="OK" class="approve" />
+    </form>
+  </div>
+
+[% ELSIF op == 'view_sign' %]
+
+  <h1>[% sign.name %]</h1>
+  [%# FIXME - Add more content for the sign %]
 
 [% ELSIF op == 'view_stream' %]
 
@@ -261,7 +291,7 @@
       <tbody>
       [% FOREACH s IN signs %]
       [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-      <td>[% s.name %]</td>
+      <td><a href="?op=view_sign&amp;sign_id=[% s.sign_id %]">[% s.name %]</a></td>
       <td>[% s.branchname %]</td>
       <td>[% IF ( s.webapp ) %]Yes[% ELSE %]No[% END %]</td>
       <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
