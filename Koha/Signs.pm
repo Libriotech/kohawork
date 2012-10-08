@@ -148,7 +148,7 @@ sub DeleteSign {
 
 }
 
-# Signs attached to decks
+# Streams attached to signs
 
 sub AttachStreamToSign {
 

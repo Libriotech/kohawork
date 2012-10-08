@@ -17,8 +17,11 @@
 #
 
 use Modern::Perl;
-use Test::More qw(no_plan); # TODO Set the number
+use Test::More qw( no_plan ); # TODO Set the number?
 use Test::WWW::Mechanize;
+use URI;
+use CGI;
+use Digest::MD5 qw( md5_hex );
 use Data::Dumper;
 
 use C4::Context;
@@ -28,7 +31,10 @@ my $password = $ENV{KOHA_PASS};
 my $intranet = $ENV{KOHA_INTRANET_URL};
 my $opac     = $ENV{KOHA_OPAC_URL};
 
-my $stream_name = 'some dummy stream name';
+# Include a has of time() in names to make them unique between runs
+my $md5 = md5_hex( time() );
+my $stream_name = "stream $md5";
+my $sign_name   = "sign $md5";
 
 BAIL_OUT("You must set the environment variable KOHA_INTRANET_URL to ".
          "point this test to your staff client. If you do not have ".
@@ -59,7 +65,8 @@ $agent->content_like( qr/Digital signs/, 'content contains Digital signs' );
 $agent->content_like( qr/New sign/,      'content contains New sign' );
 $agent->content_like( qr/New stream/,    'content contains New stream' );
 
-# Add stream
+### Add stream
+
 $agent->follow_link_ok( { url_regex => qr/op=add_stream/i }, 'open Add stream page' );
 $agent->content_like( qr/Add stream/, 'content contains Add stream' );
 $agent->content_like( qr/Report/,     'content contains Report' );
@@ -84,3 +91,129 @@ $agent->content_like( qr/$stream_name/, 'content contains new stream name' );
 $agent->follow_link_ok( { text => $stream_name, n => 1 }, 'detail page for stream' );
 $agent->content_like( qr/$stream_name/, 'detail page contains stream name' );
 $agent->content_like( qr/Based on report/, 'detail page contains Based on report' );
+
+# Find the $sign_stream_id of the stream we just created
+my $uri = $agent->uri();
+my $query = CGI->new( $uri->query );
+my $sign_stream_id = $query->param( 'sign_stream_id' );
+diag ( 'sign_stream_id: ', $sign_stream_id );
+
+# Go back to the main digital signs page
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+
+### Edit stream
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/edit_stream.*$sign_stream_id/i }, 'click on Edit for stream' );
+$agent->content_like( qr/$stream_name/, 'content contains stream name' );
+$agent->submit_form_ok({
+  form_id => 'streamform',
+  fields  => {
+    'op'             => 'save_stream',
+    'sign_stream_id' => $sign_stream_id,
+    'name'           => $stream_name,
+    'report'         => 2, # FIXME Make this dynamic
+  }
+}, 'edit stream' );
+$agent->content_like( qr/$stream_name/, 'content contains stream name' );
+
+### Create sign
+
+$agent->follow_link_ok( { url_regex => qr/op=add_sign/i }, 'open Add sign page' );
+$agent->content_like( qr/Add sign/, 'content contains Add sign' );
+$agent->submit_form_ok({
+  form_id => 'signform',
+  fields  => {
+    'op'         => 'save_sign',
+    'name'       => $sign_name,
+    'branchcode' => 'CPL', # FIXME Make this dynamic
+    'webapp'     => 1,
+  }
+}, 'add a new sign' );
+$agent->content_like( qr/$sign_name/, 'content contains new sign name' );
+
+# Sign detail page
+$agent->follow_link_ok( { text => $sign_name, n => 1 }, 'detail page for sign' );
+$agent->content_like( qr/$sign_name/, 'detail page contains sign name' );
+
+# Find the $sign_id of the sign we just created
+my $signuri = $agent->uri();
+my $signquery = CGI->new( $signuri->query );
+my $sign_id = $signquery->param( 'sign_id' );
+diag ( 'sign_id: ', $sign_id );
+
+### Edit sign
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/edit_sign.*$sign_id/i }, 'click on Edit for sign' );
+$agent->content_like( qr/$sign_name/, 'content contains sign name' );
+$agent->submit_form_ok({
+  form_id => 'signform',
+  fields  => {
+    'op'         => 'save_sign',
+    'sign_id'    => $sign_id,
+    'name'       => $sign_name,
+    'branchcode' => 'CPL', # FIXME Make this dynamic
+    'webapp'     => 0,
+  }
+}, 'edit sign' );
+$agent->content_like( qr/$sign_name/, 'content contains sign name' );
+
+# TODO Attach stream to sign
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id/i }, 'click on Edit streams' );
+$agent->content_like( qr/Edit streams attached to $sign_name/, 'content contains Edit streams attached to sign name' );
+$agent->submit_form_ok({
+  form_id => 'attach_stream_to_sign_form',
+  fields  => {
+    'op'             => 'attach_stream_to_sign',
+    'sign_id'        => $sign_id,
+    'sign_stream_id' => $sign_stream_id,
+  }
+}, 'attach stream to sign' );
+$agent->content_like( qr/<td>$stream_name<\/td>/, 'content contains stream name in a table cell' );
+
+__END__
+
+# TODO Check the sign and stream in the OPAC
+
+# TODO Detach stream from sign
+
+### Delete sign
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/del_sign.*$sign_id/i }, 'click on Delete for sign' );
+$agent->content_like( qr/Confirm deletion of sign/, 'page contains Confirm deletion of sign' );
+$agent->content_like( qr/$sign_name/, 'content contains sign name' );
+
+# TODO Cancel delete
+
+# Confirm delete
+$agent->submit_form_ok({
+  form_id => 'confirm_sign_delete_form',
+  fields  => {
+    'op'      => 'del_sign_ok',
+    'sign_id' => $sign_id,
+  }
+}, 'confirm delete of sign' );
+$agent->content_like( qr/Sign deleted/, 'sign deleted' );
+
+### Delete stream
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/del_stream.*$sign_stream_id/i }, 'click on Delete for stream' );
+$agent->content_like( qr/Confirm deletion of stream/, 'page contains Confirm deletion of stream' );
+$agent->content_like( qr/$stream_name/, 'content contains stream name' );
+
+# TODO Cancel delete
+
+# Confirm delete
+$agent->submit_form_ok({
+  form_id => 'confirm_stream_delete_form',
+  fields  => {
+    'op'             => 'del_stream_ok',
+    'sign_stream_id' => $sign_stream_id,
+  }
+}, 'confirm delete of stream' );
+$agent->content_like( qr/Stream deleted/, 'stream deleted' );

@@ -30,14 +30,14 @@ DROP TABLE IF EXISTS sign_streams;
 CREATE TABLE sign_streams (
   sign_stream_id int(11) NOT NULL auto_increment,    -- primary key, used to identify streams
   saved_sql_id int(11) NOT NULL,              -- foreign key from the saved_sql table
-  name varchar(32),                           -- name/title of the sign
+  name varchar(64),                           -- name/title of the sign
   PRIMARY KEY (sign_stream_id),
   CONSTRAINT sign_streams_ibfk_1 FOREIGN KEY (saved_sql_id) REFERENCES saved_sql (id) ON DELETE CASCADE
 );
 DROP TABLE IF EXISTS signs;
 CREATE TABLE signs (
   sign_id int(11) NOT NULL auto_increment,    -- primary key, used to identify signs
-  name varchar(32),                           -- name/title of the deck
+  name varchar(64),                           -- name/title of the deck
   branchcode varchar(10) NOT NULL default '', -- foreign key from the branches table
   webapp int(1) NOT NULL default 0,           -- display as web app or normal page
   PRIMARY KEY (sign_id),

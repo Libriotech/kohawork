@@ -124,73 +124,82 @@ if ( $op eq 'add_stream' ) {
     'script_name' => $script_name,
   );
 
-# Decks
+# Signs
 
-} elsif ( $op eq 'add_deck' ) {
+} elsif ( $op eq 'add_sign' ) {
 
   $template->param(
-    'op'         => 'deck_form',
+    'op'         => 'sign_form',
     'branches'    => GetBranchesLoop
   );
 
-} elsif ( $op eq 'edit_deck' && $sign_id ne '') {
+} elsif ( $op eq 'edit_sign' && $sign_id ne '' ) {
 
   $template->param(
-    'op'          => 'deck_form',
-    'deck'        => GetDeck( $sign_id ),
+    'op'          => 'sign_form',
+    'sign'        => GetSign( $sign_id ),
     'branches'    => GetBranchesLoop,
     'script_name' => $script_name
   );
 
-} elsif ( $op eq 'edit_signs' && $sign_id ne '') {
-
-  $template->param(
-    'op'          => 'edit_signs',
-    'deck'        => GetDeck( $sign_id ),
-    'signs'       => GetAllSigns(),
-    'attached'    => GetSignsAttachedToDeck( $sign_id ),
-    'script_name' => $script_name
-  );
-
-} elsif ( $op eq 'attach_sign_to_deck' && $sign_id ne '' && $sign_id ne '' ) {
-
-  AttachSignToDeck( $sign_id, $sign_id );
-
-  print $cgi->redirect($script_name . '?op=edit_signs&sign_id=' . $sign_id);
-
-} elsif ( $op eq 'detach_sign_from_deck' && $sign_id ne '' && $sign_id ne '' ) {
-
-  DetachSignFromDeck( $sign_id, $sign_id );
-
-  print $cgi->redirect($script_name . '?op=edit_signs&sign_id=' . $sign_id);
-
-} elsif ( $op eq 'save_deck' ) {
+} elsif ( $op eq 'save_sign' ) {
 
   if ($cgi->param('sign_id')) {
-    EditDeck( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('sign_id') );
+    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('sign_id') );
   } else {
-    AddDeck(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp') );
+    AddSign(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp') );
   }
   print $cgi->redirect($script_name);
 
-} elsif ( $op eq 'del_deck' ) {
-
-  my $deck = GetDeck( $sign_id );
+} elsif ( $op eq 'view_sign' && $sign_id ne '' ) {
 
   $template->param(
-    'op' => 'del_deck',
-    'deck' => $deck,
+    'op'          => 'view_sign',
+    'sign'        => GetSign( $sign_id ),
     'script_name' => $script_name,
   );
 
-} elsif ( $op eq 'del_deck_ok' ) {
 
-  DeleteDeck( $sign_id );
+} elsif ( $op eq 'del_sign' && $sign_id ne '' ) {
 
   $template->param(
-    'op' => 'del_deck_ok',
+    'op'          => 'del_sign',
+    'sign'        => GetSign( $sign_id ),
     'script_name' => $script_name,
   );
+
+} elsif ( $op eq 'del_sign_ok' ) {
+
+  DeleteSign( $sign_id );
+
+  $template->param(
+    'op'          => 'del_sign_ok',
+    'script_name' => $script_name,
+  );
+
+# Signs and streams
+
+} elsif ( $op eq 'edit_streams' && $sign_id ne '') {
+
+  $template->param(
+    'op'          => 'edit_streams',
+    'sign'        => GetSign( $sign_id ),
+    'streams'     => GetAllStreams(),
+    'attached'    => GetStreamsAttachedToSign( $sign_id ),
+    'script_name' => $script_name
+  );
+
+} elsif ( $op eq 'attach_stream_to_sign' && $sign_stream_id ne '' && $sign_id ne '' ) {
+
+  AttachStreamToSign( $sign_stream_id, $sign_id );
+
+  print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
+
+} elsif ( $op eq 'detach_stream_from_sign' && $sign_stream_id ne '' && $sign_id ne '' ) {
+
+  DetachStreamFromSign( $sign_stream_id, $sign_id );
+
+  print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
 
 } else {
 
