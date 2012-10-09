@@ -27,11 +27,10 @@ use C4::Output;
 use Koha::Signs;
 use Data::Dumper; # FIXME Debug only
 
-# binmode STDOUT, ':encoding(UTF-8)'; # Non-ASCII is broken without this
+# binmode STDOUT, ':encoding(UTF-8)'; # FIXME Non-ASCII is broken without this
 
-my $query = CGI->new;
-my $deck_id      = $query->param('deck')         || '';
-my $biblionumber = $query->param('biblionumber') || '' || $query->param('bib');
+my $query   = CGI->new;
+my $sign_id = $query->param('sign')         || '';
 
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user({
   'template_name'   => 'opac-sign.tt',
@@ -45,16 +44,16 @@ if ( C4::Context->preference('OPACDigitalSigns') ) {
 
   $template->{VARS}->{'recordtemplate'}  = C4::Context->preference('OPACDigitalSignsRecordTemplate');
 
-  # Display a deck of signs
-  if ( $deck_id ne '' ) {
+  # Display a sign with streams
+  if ( $sign_id ne '' ) {
 
-    my $signs = GetSignsAttachedToDeck( $deck_id );
-    my @changedsigns;
+    my $streams = GetStreamsAttachedToSign( $sign_id );
+    my @changedstreams;
 
-    # Add records to the signs
-    foreach my $sign ( @{$signs} ) {
+    # Add records to the streams
+    foreach my $stream ( @{$streams} ) {
 
-      my $records = RunSQL( $sign->{'savedsql'} );
+      my $records = RunSQL( $stream->{'savedsql'} );
       my @processed_records;
       foreach my $rec ( @{$records} ) {
         my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
@@ -65,14 +64,17 @@ if ( C4::Context->preference('OPACDigitalSigns') ) {
         $rec->{'marc'} = $marc;
         push @processed_records, $rec;
       }
-      $sign->{'records'} = \@processed_records;
-      push @changedsigns, $sign;
+      $stream->{'records'} = \@processed_records;
+      push @changedstreams, $stream;
 
     }
 
-    $template->{VARS}->{'deck'}  = GetDeck( $deck_id );
-    $template->{VARS}->{'signs'} = \@changedsigns;
-    # $template->{VARS}->{'records'} = \%uniquerecords;
+    $template->{VARS}->{'sign'}  = GetSign( $sign_id );
+    $template->{VARS}->{'streams'} = \@changedstreams;
+
+  } else {
+
+    $template->{VARS}->{'signs'}  = GetAllSigns();
 
   }
 
