@@ -44,7 +44,8 @@ BAIL_OUT("You must set the environment variable KOHA_INTRANET_URL to ".
 $intranet =~ s#/$##;
 $opac     =~ s#/$##;
 
-my $agent = Test::WWW::Mechanize->new( autocheck => 1 );
+my $agent     = Test::WWW::Mechanize->new( autocheck => 1 );
+my $opacagent = Test::WWW::Mechanize->new( autocheck => 1 );
 
 # Log in to the Koha staff client
 $agent->get_ok( "$intranet/cgi-bin/koha/mainpage.pl", 'connect to intranet' );
@@ -82,7 +83,7 @@ $agent->submit_form_ok({
   fields  => {
     'op'     => 'save_stream',
     'name'   => $stream_name,
-    'report' => 1, # FIXME Make this dynamic
+    'report' => 1, # FIXME Make this dynamic?
   }
 }, 'add a new stream' );
 $agent->content_like( qr/$stream_name/, 'content contains new stream name' );
@@ -142,6 +143,32 @@ my $signquery = CGI->new( $signuri->query );
 my $sign_id = $signquery->param( 'sign_id' );
 diag ( 'sign_id: ', $sign_id );
 
+### Attach stream to sign
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id$/i }, 'click on Edit streams' );
+$agent->content_like( qr/Edit streams attached to $sign_name/, 'content contains Edit streams attached to sign name' );
+$agent->submit_form_ok({
+  form_id => 'attach_stream_to_sign_form',
+  fields  => {
+    'op'             => 'attach_stream_to_sign',
+    'sign_id'        => $sign_id,
+    'sign_stream_id' => $sign_stream_id,
+  }
+}, 'attach stream to sign' );
+$agent->content_like( qr/<td>$stream_name<\/td>/, 'content contains stream name in a table cell' );
+
+### Check the sign and stream in the OPAC
+
+$opacagent->get_ok( "$opac/cgi-bin/koha/opac-sign.pl", 'front page for signs in the opac' );
+$opacagent->content_like( qr/$sign_name/, 'OPAC front page contains sign name' );
+$opacagent->content_like( qr/viewport/, 'OPAC content contains viewport' );
+$opacagent->follow_link_ok( { url_regex => qr/sign=$sign_id$/i }, 'go to our sign' );
+$opacagent->content_like( qr/$sign_name/, 'sign contains sign name' );
+$opacagent->content_like( qr/$stream_name/, 'sign contains stream name' );
+$opacagent->content_like( qr/viewport/, 'OPAC content contains viewport' );
+$opacagent->content_contains( 'apple-mobile-web-app-capable', 'OPAC content contains apple-mobile-web-app-capable' );
+
 ### Edit sign
 
 $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
@@ -159,24 +186,46 @@ $agent->submit_form_ok({
 }, 'edit sign' );
 $agent->content_like( qr/$sign_name/, 'content contains sign name' );
 
-# TODO Attach stream to sign
+# Check the OPAC
+$opacagent->reload();
+$opacagent->content_lacks( 'apple-mobile-web-app-capable', 'OPAC content lacks apple-mobile-web-app-capable' );
+
+### Detach stream from sign
 
 $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
-$agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id/i }, 'click on Edit streams' );
-$agent->content_like( qr/Edit streams attached to $sign_name/, 'content contains Edit streams attached to sign name' );
+$agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id$/i }, 'click on Edit streams' );
+$agent->content_contains( "<td>$stream_name</td>", 'content contains stream name in a table cell' );
+$agent->follow_link_ok( { url_regex => qr/detach_stream_from_sign&sign_id=$sign_id&sign_stream_id=$sign_stream_id/i }, 'click on Detach' );
+$agent->content_lacks( "<td>$stream_name</td>", 'content lacks stream name in a table cell' );
+
+# Check the OPAC
+$opacagent->reload();
+$opacagent->content_lacks( $stream_name, 'OPAC content lacks stream name' );
+
+### Delete stream
+
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/del_stream.*$sign_stream_id/i }, 'click on Delete for stream' );
+$agent->content_like( qr/Confirm deletion of stream/, 'page contains Confirm deletion of stream' );
+$agent->content_like( qr/$stream_name/, 'content contains stream name' );
+
+# TODO Cancel delete
+
+# Confirm delete
 $agent->submit_form_ok({
-  form_id => 'attach_stream_to_sign_form',
+  form_id => 'confirm_stream_delete_form',
   fields  => {
-    'op'             => 'attach_stream_to_sign',
-    'sign_id'        => $sign_id,
+    'op'             => 'del_stream_ok',
     'sign_stream_id' => $sign_stream_id,
   }
-}, 'attach stream to sign' );
-$agent->content_like( qr/<td>$stream_name<\/td>/, 'content contains stream name in a table cell' );
+}, 'confirm delete of stream' );
+$agent->content_like( qr/Stream deleted/, 'stream deleted' );
 
-# TODO Check the sign and stream in the OPAC
+# Check the Edit streams page
 
-# TODO Detach stream from sign
+$agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
+$agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id$/i }, 'click on Edit streams' );
+$agent->content_lacks( "<td>$stream_name</td>", 'content lacks stream name in a table cell' );
 
 ### Delete sign
 
@@ -197,21 +246,5 @@ $agent->submit_form_ok({
 }, 'confirm delete of sign' );
 $agent->content_like( qr/Sign deleted/, 'sign deleted' );
 
-### Delete stream
-
 $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
-$agent->follow_link_ok( { url_regex => qr/del_stream.*$sign_stream_id/i }, 'click on Delete for stream' );
-$agent->content_like( qr/Confirm deletion of stream/, 'page contains Confirm deletion of stream' );
-$agent->content_like( qr/$stream_name/, 'content contains stream name' );
-
-# TODO Cancel delete
-
-# Confirm delete
-$agent->submit_form_ok({
-  form_id => 'confirm_stream_delete_form',
-  fields  => {
-    'op'             => 'del_stream_ok',
-    'sign_stream_id' => $sign_stream_id,
-  }
-}, 'confirm delete of stream' );
-$agent->content_like( qr/Stream deleted/, 'stream deleted' );
+$agent->content_lacks( $sign_name, 'digital signs lacks sign name' );
