@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>[% IF ( deck )  %][% deck.name %] - Koha[% ELSE %]Koha digital signs[% END %]</title>
+<title>[% IF ( sign )  %][% sign.name %] - Koha[% ELSE %]Koha digital signs[% END %]</title>
 <meta name="generator" content="Koha [% Version %]" /> <!-- leave this for stats -->
 <link rel="shortcut icon" href="[% IF ( OpacFavicon ) %][% OpacFavicon %][% ELSE %][% themelang %]/includes/favicon.ico[% END %]" type="image/x-icon" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-[% IF ( deck.webapp ) %]<meta name="apple-mobile-web-app-capable" content="yes" />[% END %]
+[% IF ( sign.webapp ) %]<meta name="apple-mobile-web-app-capable" content="yes" />[% END %]
 
 [%# FIXME Use the JQM files from JQM in early stages of development, to be replaced with a local version later %]
 [%# <script type="text/javascript" src="[% themelang % ]/lib/jquery/jquery.js"></script> %]
@@ -18,19 +18,19 @@
   <p>Digital signs are not enabled!</p>
 [% ELSE %]
 
-  [%# Display a deck, all its signs and all records  %]
-  [% IF ( deck )  %]
+  [%# Display a sign, all its streams and all records  %]
+  [% IF ( sign )  %]
 
-    [% IF ( signs.0 )  %]
+    [% IF ( streams.0 )  %]
 
       [%# Iterate through the signs, creating one front page for each %]
-      [% FOREACH s IN signs %]
+      [% FOREACH s IN streams %]
 
         <div data-role="page" id="sign_[% s.sign_id %]">
           <div data-role="header" data-position="fixed">
             <div style="text-align: center;">
-            [% FOREACH sign IN signs %]
-              <a href="#sign_[% sign.sign_id %]" data-role="button">[% sign.name %]</a>
+            [% FOREACH stream IN streams %]
+              <a href="#stream_[% stream.sign_stream_id %]" data-role="button">[% stream.name %]</a>
             [% END %]
             </div>
           </div>
@@ -50,8 +50,8 @@
           <div data-role="page" id="biblio_[% r.biblionumber %]" class="record">
             <div data-role="header" data-position="fixed">
               <div style="text-align: center;">
-              [% FOREACH s IN signs %]
-                <a href="#sign_[% s.sign_id %]" data-role="button">[% s.name %]</a>
+              [% FOREACH s IN streams %]
+                <a href="#sign_[% s.sign_stream_id %]" data-role="button">[% s.name %]</a>
               [% END %]
               </div>
             </div>
@@ -94,20 +94,20 @@
       [% END %]
 
     [% ELSE %]
-      <p>No signs attached to this deck.</p>
+      <p>No signs attached to this sign.</p>
     [% END %]
   [% END %]
 
-  [%# Display a list of all decks, as a default. Links use data-ajax="false" so decks will replace the first page, not be AJAXed in. %]
-  [% IF ( decks )  %]
-    <div data-role="page" id="alldecks">
+  [%# Display a list of all signs, as a default. Links use data-ajax="false" so signs will replace the first page, not be AJAXed in. %]
+  [% IF ( signs )  %]
+    <div data-role="page" id="allsigns">
       <div data-role="header" data-position="fixed">
-        <h1>All decks</h1>
+        <h1>All signs</h1>
       </div>
       <div data-role="content">
         <ul data-role="listview">
-        [% FOREACH d IN decks %]
-          <li><a href="?deck=[% d.deck_id %]" data-ajax="false">[% d.name %]</a></li>
+        [% FOREACH sign IN signs %]
+          <li><a href="?sign=[% sign.sign_id %]" data-ajax="false">[% sign.name %]</a></li>
         [% END %]
         </ul>
       </div>
