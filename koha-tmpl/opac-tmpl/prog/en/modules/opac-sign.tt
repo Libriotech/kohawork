@@ -23,10 +23,10 @@
 
     [% IF ( streams.0 )  %]
 
-      [%# Iterate through the signs, creating one front page for each %]
+      [%# Iterate through the streams, creating one front page for each %]
       [% FOREACH s IN streams %]
 
-        <div data-role="page" id="sign_[% s.sign_id %]">
+        <div data-role="page" id="stream_[% s.sign_stream_id %]">
           <div data-role="header" data-position="fixed">
             <div style="text-align: center;">
             [% FOREACH stream IN streams %]
@@ -51,7 +51,7 @@
             <div data-role="header" data-position="fixed">
               <div style="text-align: center;">
               [% FOREACH s IN streams %]
-                <a href="#sign_[% s.sign_stream_id %]" data-role="button">[% s.name %]</a>
+                <a href="#stream_[% s.sign_stream_id %]" data-inline="true" data-role="button">[% s.name %]</a>
               [% END %]
               </div>
             </div>
