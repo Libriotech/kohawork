@@ -6002,6 +6002,13 @@ if ( C4::Context->preference("Version") < TransformToNum($DBversion) ) {
     SetVersion($DBversion);
 }
 
+$DBversion = "3.09.00.XXX";
+if ( C4::Context->preference("Version") < TransformToNum($DBversion) ) {
+    $dbh->do("INSERT INTO systempreferences (variable,value,explanation,options,type) VALUES('alphabet','A B C D E F G H I J K L M N O P Q R S T U V W X Y Z','Alphabet that can be expanded into browse links, e.g. on Home > Patrons',NULL,'free')");
+    print "Upgrade to $DBversion done (Bug 2832 - Add alphabet syspref)\n";
+    SetVersion($DBversion);
+}
+
 =head1 FUNCTIONS
 
 =head2 TableExists($table)
