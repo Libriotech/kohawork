@@ -30,7 +30,7 @@
           <div data-role="header" data-position="fixed">
             <div style="text-align: center;">
             [% FOREACH stream IN streams %]
-              <a href="#stream_[% stream.sign_stream_id %]" data-role="button">[% stream.name %]</a>
+              <a href="#stream_[% stream.sign_stream_id %]" data-inline="true" data-role="button">[% stream.name %]</a>
             [% END %]
             </div>
           </div>
