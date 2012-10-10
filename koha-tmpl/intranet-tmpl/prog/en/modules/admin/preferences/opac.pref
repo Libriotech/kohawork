@@ -631,3 +631,14 @@ OPAC:
             - pref: OPACDigitalSignsRecordTemplate
               type: textarea
               class: code
+        -
+            - "Include the following CSS in all digital signs:"
+            - pref: OPACDigitalSignsCSS
+              type: textarea
+              class: code
+            - (If you use this option to create custom swatches you might have to adjust the list of available swatches with the OPACDigitalSignsSwatches preference)
+        -
+            - Make it possible to choose one of the swatches
+            - pref: OPACDigitalSignsSwatches
+              class: long
+            - when creating a new sign.

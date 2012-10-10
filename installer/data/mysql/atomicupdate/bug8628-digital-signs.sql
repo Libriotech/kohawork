@@ -3,6 +3,8 @@
 -- DEBUG TODO Delete before submitting patch
 DELETE FROM systempreferences WHERE variable = 'OPACDigitalSigns';
 DELETE FROM systempreferences WHERE variable = 'OPACDigitalSignsRecordTemplate';
+DELETE FROM systempreferences WHERE variable = 'OPACDigitalSignsCSS';
+DELETE FROM systempreferences WHERE variable = 'OPACDigitalSignsSwatches';
 DELETE FROM permissions WHERE code = 'edit_digital_signs';
 DELETE FROM saved_sql;
 
@@ -21,6 +23,8 @@ INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDig
   [%- END %]
   </ul>
 [%- END %]",'Template for formatting MARC records for display in digital signs.','Textarea');
+INSERT INTO systempreferences (variable,explanation,type) VALUES ('OPACDigitalSignsCSS','Extra CSS to be included in all signs','Textarea');
+INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsSwatches','abcde','List the swatches that can be chosen when creating a new sign','free');
 
 INSERT INTO permissions (module_bit, code, description) VALUES (13, 'edit_digital_signs', 'Create and edit digital signs for the OPAC');
 
@@ -40,6 +44,7 @@ CREATE TABLE signs (
   name varchar(64),                           -- name/title of the deck
   branchcode varchar(10) NOT NULL default '', -- foreign key from the branches table
   webapp int(1) NOT NULL default 0,           -- display as web app or normal page
+  swatch char(1) NOT NULL default '',         -- swatches determine the colors of page elements
   PRIMARY KEY (sign_id),
   CONSTRAINT signs_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode) -- ON DELETE CASCADE
 );

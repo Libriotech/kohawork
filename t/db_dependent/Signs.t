@@ -56,9 +56,11 @@ my $sign_branchcode     = 'CPL';
 my $sign_name           = 'some unlikely sign name';
 my $sign_webapp         = 0;
 my $sign_webapp_changed = 0;
+my $sign_swatch         = '';
+my $sign_swatch_changed = 'c';
 
 # AddSign
-ok( AddSign( $sign_branchcode, $sign_name, $sign_webapp ), "AddSign" );
+ok( AddSign( $sign_branchcode, $sign_name, $sign_webapp, $sign_swatch ), "AddSign" );
 
 # Find the sign_id of the sign we just added, for use in further tests
 my $signquery = "SELECT sign_id FROM signs WHERE branchcode = ? AND name = ? AND webapp = ?";
@@ -72,6 +74,7 @@ ok( $sign = GetSign( $sign_id ), "GetSign (sign_id = $sign_id) ok" );
 like( $sign->{'branchcode'}, qr/$sign_branchcode/, "GetSign branchcode ok" );
 like( $sign->{'name'},       qr/$sign_name/,       "GetSign name ok" );
 like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetSign webapp ok" );
+like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetSign swatch ok" );
 
 # GetAllSigns
 my $signs;
@@ -83,16 +86,18 @@ foreach my $sign ( @{$signs} ) {
     like( $sign->{'branchcode'}, qr/$sign_branchcode/, "GetAllSigns branchcode ok" );
     like( $sign->{'name'},       qr/$sign_name/,       "GetAllSigns name ok" );
     like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetAllSigns webapp ok" );
+    like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetSign swatch ok" );
   }
 }
 
 # EditSign
 my $editedsign;
-ok( EditSign( $sign_branchcode, $sign_name, $sign_webapp_changed, $sign_id ), "EditSign ok" );
+ok( EditSign( $sign_branchcode, $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_id ), "EditSign ok" );
 ok( $editedsign = GetSign( $sign_id ), "GetSign on edited sign ok" );
 like( $editedsign->{'branchcode'}, qr/$sign_branchcode/,     "GetSign after EditSign branchcode ok" );
 like( $editedsign->{'name'},       qr/$sign_name/,           "GetSign after EditSign name ok" );
 like( $editedsign->{'webapp'},     qr/$sign_webapp_changed/, "GetSign after EditSign webapp ok" );
+like( $editedsign->{'swatch'},     qr/$sign_swatch_changed/, "GetSign after EditSign swatch ok" );
 
 ### Attaching streams to signs
 

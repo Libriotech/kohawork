@@ -129,6 +129,7 @@ $agent->submit_form_ok({
     'name'       => $sign_name,
     'branchcode' => 'CPL', # FIXME Make this dynamic
     'webapp'     => 1,
+    'swatch'     => 'a',
   }
 }, 'add a new sign' );
 $agent->content_like( qr/$sign_name/, 'content contains new sign name' );
@@ -168,6 +169,7 @@ $opacagent->content_like( qr/$sign_name/, 'sign contains sign name' );
 $opacagent->content_like( qr/$stream_name/, 'sign contains stream name' );
 $opacagent->content_like( qr/viewport/, 'OPAC content contains viewport' );
 $opacagent->content_contains( 'apple-mobile-web-app-capable', 'OPAC content contains apple-mobile-web-app-capable' );
+$opacagent->content_contains( '<div data-role="page" data-theme="a" id="stream_' . $sign_stream_id . '">', 'OPAC content contains data-theme = a' );
 
 ### Edit sign
 
@@ -182,6 +184,7 @@ $agent->submit_form_ok({
     'name'       => $sign_name,
     'branchcode' => 'CPL', # FIXME Make this dynamic
     'webapp'     => 0,
+    'swatch'     => 'c',
   }
 }, 'edit sign' );
 $agent->content_like( qr/$sign_name/, 'content contains sign name' );
@@ -189,6 +192,7 @@ $agent->content_like( qr/$sign_name/, 'content contains sign name' );
 # Check the OPAC
 $opacagent->reload();
 $opacagent->content_lacks( 'apple-mobile-web-app-capable', 'OPAC content lacks apple-mobile-web-app-capable' );
+$opacagent->content_contains( '<div data-role="page" data-theme="c" id="stream_' . $sign_stream_id . '">', 'OPAC content contains data-theme = c' );
 
 ### Detach stream from sign
 
