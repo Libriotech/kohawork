@@ -129,8 +129,9 @@ if ( $op eq 'add_stream' ) {
 } elsif ( $op eq 'add_sign' ) {
 
   $template->param(
-    'op'         => 'sign_form',
-    'branches'    => GetBranchesLoop
+    'op'       => 'sign_form',
+    'branches' => GetBranchesLoop,
+    'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
   );
 
 } elsif ( $op eq 'edit_sign' && $sign_id ne '' ) {
@@ -139,15 +140,16 @@ if ( $op eq 'add_stream' ) {
     'op'          => 'sign_form',
     'sign'        => GetSign( $sign_id ),
     'branches'    => GetBranchesLoop,
-    'script_name' => $script_name
+    'script_name' => $script_name,
+    'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
   );
 
 } elsif ( $op eq 'save_sign' ) {
 
   if ($cgi->param('sign_id')) {
-    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('sign_id') );
+    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('sign_id') );
   } else {
-    AddSign(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp') );
+    AddSign(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch') );
   }
   print $cgi->redirect($script_name);
 

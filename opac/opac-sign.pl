@@ -42,7 +42,8 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user({
 
 if ( C4::Context->preference('OPACDigitalSigns') ) {
 
-  $template->{VARS}->{'recordtemplate'}  = C4::Context->preference('OPACDigitalSignsRecordTemplate');
+  $template->{VARS}->{'recordtemplate'}      = C4::Context->preference('OPACDigitalSignsRecordTemplate');
+  $template->{VARS}->{'OPACDigitalSignsCSS'} = C4::Context->preference( 'OPACDigitalSignsCSS' );
 
   # Display a sign with streams
   if ( $sign_id ne '' ) {
@@ -69,8 +70,8 @@ if ( C4::Context->preference('OPACDigitalSigns') ) {
 
     }
 
-    $template->{VARS}->{'sign'}  = GetSign( $sign_id );
-    $template->{VARS}->{'streams'} = \@changedstreams;
+    $template->{VARS}->{'sign'}                = GetSign( $sign_id );
+    $template->{VARS}->{'streams'}             = \@changedstreams;
 
   } else {
 
