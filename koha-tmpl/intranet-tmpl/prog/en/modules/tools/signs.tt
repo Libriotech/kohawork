@@ -262,7 +262,7 @@
   <h1>[% stream.name %]</h1>
   <p>Based on report: [% stream.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% stream.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
   <h2>SQL</h2>
-  <pre id="sql_output">[% stream.savedsql %]</pre>
+  <pre id="sql_output">[% stream.savedsql | html %]</pre>
   <h2>Records</h2>
   [% IF ( records.0 ) %]
     <table>
