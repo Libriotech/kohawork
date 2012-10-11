@@ -173,16 +173,20 @@
   <p>Library: [% sign.branchname %]</p>
 
   <h2>Streams already attached to this sign</h2>
-  <table>
-  <thead>
-  <tr><th>Name</th><th>Detach</th></tr>
-  </thead>
-  <tbody>
-  [% FOREACH s IN attached %]
-    <tr><td>[% s.name %]</td><td><a href="?op=detach_stream_from_sign&sign_id=[% sign.sign_id %]&sign_stream_id=[% s.sign_stream_id %]">Detach</a></td></tr>
+  [% IF ( attached.size ) %]
+    <table>
+    <thead>
+    <tr><th>Name</th><th>Detach</th></tr>
+    </thead>
+    <tbody>
+    [% FOREACH s IN attached %]
+      <tr><td>[% s.name %]</td><td><a href="?op=detach_stream_from_sign&sign_id=[% sign.sign_id %]&sign_stream_id=[% s.sign_stream_id %]">Detach</a></td></tr>
+    [% END %]
+    </tbody>
+    </table>
+  [% ELSE %]
+    <p>There are no streams attached to this sign, yet.</p>
   [% END %]
-  </tbody>
-  </table>
 
   <h2>Attach a new stream to this sign</h2>
   <form action="[% script_name %]" name="attach_stream_to_sign_form" id="attach_stream_to_sign_form" method="post">
