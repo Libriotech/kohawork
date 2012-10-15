@@ -100,10 +100,15 @@ if ( $op eq 'add_stream' ) {
 
   my $stream = GetStream( $sign_stream_id );
 
+  if ( $stream->{'savedsql'} =~ m/<</ ) {
+    $template->param( 'has_params' => 1 );
+  } else {
+    $template->param( 'records' => RunSQL( $stream->{'savedsql'} ) );
+  }
+
   $template->param(
     'op'          => 'view_stream',
     'stream'      => $stream,
-    'records'     => RunSQL( $stream->{'savedsql'} ),
     'script_name' => $script_name
   );
 

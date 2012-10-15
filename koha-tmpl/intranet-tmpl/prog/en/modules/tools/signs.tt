@@ -290,7 +290,9 @@
   <h2>SQL</h2>
   <pre id="sql_output">[% stream.savedsql | html %]</pre>
   <h2>Records</h2>
-  [% IF ( records.0 ) %]
+  [% IF ( has_params ) %]
+    <p>This stream takes parameters, so displaying records here does not make sense.</p>
+  [% ELSIF ( records.0 ) %]
     <table>
     <thead>
       <tr>
