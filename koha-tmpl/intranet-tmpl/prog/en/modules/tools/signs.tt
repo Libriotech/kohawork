@@ -223,6 +223,11 @@
   <input type="hidden" name="sign_to_stream_id" value="[% sign_to_stream_id %]" />
   <input type="hidden" name="sign_id" value="[% sign_id %]" />
   <fieldset class="rows">
+    [% IF ( params ) %]
+      <legend id="save_params_lgd">Edit parameters</legend>
+    [% ELSE %]
+      <legend id="save_params_lgd">Add parameters</legend>
+    [% END %]
     <ol>
     <li><label for="stream">Parameters</label>
       <input type="text" size="60" name="parameters" id="parameters" value="[% params %]" />

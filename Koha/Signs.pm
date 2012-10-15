@@ -168,7 +168,7 @@ sub AttachStreamToSign {
 sub AddParamsForAttachedStream {
 
   my ( $sign_to_stream_id, $params ) = @_;
-  return unless $sign_to_stream_id && $params;
+  return unless $sign_to_stream_id;
   my $sth = $dbh->prepare( 'UPDATE signs_to_streams SET params = ? WHERE sign_to_stream_id = ?' );
   return $sth->execute( $params, $sign_to_stream_id );
 
