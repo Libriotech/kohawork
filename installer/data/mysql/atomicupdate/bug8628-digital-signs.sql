@@ -6,7 +6,9 @@ DELETE FROM systempreferences WHERE variable = 'OPACDigitalSignsRecordTemplate';
 DELETE FROM systempreferences WHERE variable = 'OPACDigitalSignsCSS';
 DELETE FROM systempreferences WHERE variable = 'OPACDigitalSignsSwatches';
 DELETE FROM permissions WHERE code = 'edit_digital_signs';
+DELETE from saved_reports;
 DELETE FROM saved_sql;
+DELETE FROM authorised_values WHERE category = 'REPORT_GROUP' AND authorised_value = 'SIG';
 
 INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSigns',1,'Turn digital signs in the OPAC on or off.','YesNo');
 INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsRecordTemplate',"<p>Title: [% record.field('245').subfield('a') %][% IF record.field('245').subfield('b') %] : [% record.field('245').subfield('b') %][% END %]</p>
@@ -60,12 +62,13 @@ CREATE TABLE signs_to_streams (
 -- TODO Delete before submitting patch
 -- mysqldump -u koha -p koha --complete-insert --skip-quote-names --tables <tablename>
 
+INSERT INTO authorised_values SET category = 'REPORT_GROUP', authorised_value = 'SIG', lib = 'Digital signs';
 INSERT INTO saved_sql
-( id, borrowernumber,  date_created,          last_modified,         savedsql,                                                                                               last_run,  report_name,       type,  notes, cache_expiry, public ) VALUES
-( 1,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY biblionumber DESC LIMIT 20',                            NULL,     'Newest titles',    1,     NULL,  300,          1 ),
-( 2,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE copyrightdate = 2012 ORDER BY biblionumber DESC LIMIT 20', NULL,     'Titles from 2012', 1,     NULL,  300,          1 ),
-( 3,  51,             '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 ),
-( 4,  51,             '2012-09-04 12:55:33', '2012-09-04 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE title LIKE "%Perl%" OR title LIKE "%PHP%" ORDER BY RAND() DESC', NULL, 'Tech books',     1, NULL, 300,          1 );
+( id, borrowernumber,  report_group, date_created,          last_modified,         savedsql,                                                                                               last_run,  report_name,       type,  notes, cache_expiry, public ) VALUES
+( 1,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY biblionumber DESC LIMIT 20',                            NULL,     'Newest titles',    1,     NULL,  300,          1 ),
+( 2,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE copyrightdate = 2012 ORDER BY biblionumber DESC LIMIT 20', NULL,     'Titles from 2012', 1,     NULL,  300,          1 ),
+( 3,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 ),
+( 4,  51,             'SIG',         '2012-09-04 12:55:33', '2012-09-04 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE title LIKE "%Perl%" OR title LIKE "%PHP%" ORDER BY RAND() DESC', NULL, 'Tech books',     1, NULL, 300,          1 );
 
 INSERT INTO signs ( sign_id, branchcode, name, webapp ) VALUES ( 1, 'CPL', 'Signs for the main library', 1 );
 
