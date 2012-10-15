@@ -194,6 +194,7 @@ sub ReplaceParamsInSQL {
   my ( $sql, $params ) = @_;
   foreach my $param ( split /&/, $params ) {
     my ( $key, $value ) = split /=/, $param;
+    # FIXME Handle spaces
     $sql =~ s/<<$key>>/$value/g;
   }
   return $sql;
