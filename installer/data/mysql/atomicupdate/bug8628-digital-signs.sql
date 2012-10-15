@@ -44,16 +44,18 @@ DROP TABLE IF EXISTS signs;
 CREATE TABLE signs (
   sign_id int(11) NOT NULL auto_increment,    -- primary key, used to identify signs
   name varchar(64),                           -- name/title of the deck
-  branchcode varchar(10) NOT NULL default '', -- foreign key from the branches table
-  webapp int(1) NOT NULL default 0,           -- display as web app or normal page
-  swatch char(1) NOT NULL default '',         -- swatches determine the colors of page elements
+  branchcode varchar(10) NOT NULL DEFAULT '', -- foreign key from the branches table
+  webapp int(1) NOT NULL DEFAULT 0,           -- display as web app or normal page
+  swatch char(1) NOT NULL DEFAULT '',         -- swatches determine the colors of page elements
   PRIMARY KEY (sign_id),
   CONSTRAINT signs_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode) -- ON DELETE CASCADE
 );
 CREATE TABLE signs_to_streams (
-  sign_stream_id int(11) NOT NULL, -- foreign key from the decks sign_streams table
-  sign_id int(11) NOT NULL,        -- foreign key from the signs table
-  PRIMARY KEY (sign_stream_id,sign_id),
+  sign_to_stream_id int(11) NOT NULL auto_increment, -- primary key, used to identify connections between signs and streams (the same stream can be attached to a sign more than once, with different parameters)
+  sign_stream_id int(11) NOT NULL,                   -- foreign key from the decks sign_streams table
+  sign_id int(11) NOT NULL,                          -- foreign key from the signs table
+  params varchar(255) NOT NULL DEFAULT '',           -- list of parameters for the SQL associated with the sign_stream
+  PRIMARY KEY (sign_to_stream_id),
   CONSTRAINT signs_to_streams_ibfk_1 FOREIGN KEY (sign_stream_id) REFERENCES sign_streams (sign_stream_id) ON DELETE CASCADE,
   CONSTRAINT signs_to_streams_ibfk_2 FOREIGN KEY (sign_id) REFERENCES signs (sign_id) ON DELETE CASCADE
 );
@@ -65,7 +67,7 @@ CREATE TABLE signs_to_streams (
 INSERT INTO authorised_values SET category = 'REPORT_GROUP', authorised_value = 'SIG', lib = 'Digital signs';
 INSERT INTO saved_sql
 ( id, borrowernumber,  report_group, date_created,          last_modified,         savedsql,                                                                                               last_run,  report_name,       type,  notes, cache_expiry, public ) VALUES
-( 1,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY biblionumber DESC LIMIT 20',                            NULL,     'Newest titles',    1,     NULL,  300,          1 ),
+( 1,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY biblionumber DESC LIMIT <<limit>>',                     NULL,     'Newest titles',    1,     NULL,  300,          1 ),
 ( 2,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE copyrightdate = 2012 ORDER BY biblionumber DESC LIMIT 20', NULL,     'Titles from 2012', 1,     NULL,  300,          1 ),
 ( 3,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 ),
 ( 4,  51,             'SIG',         '2012-09-04 12:55:33', '2012-09-04 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE title LIKE "%Perl%" OR title LIKE "%PHP%" ORDER BY RAND() DESC', NULL, 'Tech books',     1, NULL, 300,          1 );

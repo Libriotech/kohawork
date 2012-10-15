@@ -22,6 +22,8 @@ our @EXPORT = qw(
 
   AttachStreamToSign
   GetStreamsAttachedToSign
+  AddParamsForAttachedStream
+  GetParams
   DetachStreamFromSign
 
   RunSQL
@@ -150,6 +152,7 @@ sub DeleteSign {
 
 # Streams attached to signs
 
+# Returns the ID of the connection between sign and stream
 sub AttachStreamToSign {
 
   my ( $sign_stream_id, $sign_id ) = @_;
@@ -157,7 +160,31 @@ sub AttachStreamToSign {
   return unless $sign_stream_id || $sign_id;
 
   my $sth = $dbh->prepare( 'INSERT INTO signs_to_streams SET sign_stream_id = ?, sign_id = ?' );
-  return $sth->execute( $sign_stream_id, $sign_id );
+  $sth->execute( $sign_stream_id, $sign_id );
+  return $dbh->last_insert_id( undef, undef, 'signs_to_streams', 'sign_to_stream_id' );
+
+}
+
+sub AddParamsForAttachedStream {
+
+  my ( $sign_to_stream_id, $params ) = @_;
+  return unless $sign_to_stream_id && $params;
+  my $sth = $dbh->prepare( 'UPDATE signs_to_streams SET params = ? WHERE sign_to_stream_id = ?' );
+  return $sth->execute( $params, $sign_to_stream_id );
+
+}
+
+# Returns the string of params for a given stream-attached-to-sign
+sub GetParams {
+
+  my ( $sign_to_stream_id ) = @_;
+
+  return unless $sign_to_stream_id;
+
+  my $query = 'SELECT params FROM signs_to_streams WHERE sign_to_stream_id = ?';
+  my $sth = $dbh->prepare( $query );
+  $sth->execute( $sign_to_stream_id );
+  return $sth->fetchrow_array();
 
 }
 
@@ -167,7 +194,7 @@ sub GetStreamsAttachedToSign {
 
   return unless $sign_id;
 
-  my $query = 'SELECT s.*, sq.report_name, sq.savedsql
+  my $query = 'SELECT s.*, sts.sign_to_stream_id, sts.params, sq.report_name, sq.savedsql
                FROM sign_streams AS s, signs_to_streams AS sts, saved_sql AS sq
                WHERE s.sign_stream_id = sts.sign_stream_id
                  AND s.saved_sql_id = sq.id
@@ -181,12 +208,12 @@ sub GetStreamsAttachedToSign {
 
 sub DetachStreamFromSign {
 
-  my ( $sign_stream_id, $sign_id ) = @_;
+  my ( $sign_to_stream_id ) = @_;
 
-  return unless $sign_stream_id || $sign_id;
+  return unless $sign_to_stream_id;
 
-  my $sth = $dbh->prepare( 'DELETE FROM signs_to_streams WHERE sign_stream_id = ? AND sign_id = ?' );
-  return $sth->execute( $sign_stream_id, $sign_id );
+  my $sth = $dbh->prepare( 'DELETE FROM signs_to_streams WHERE sign_to_stream_id = ?' );
+  return $sth->execute( $sign_to_stream_id );
 
 }
 

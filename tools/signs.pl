@@ -59,9 +59,11 @@ my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     }
 );
 
-my $op             = $cgi->param('op') || '';
-my $sign_id        = $cgi->param('sign_id') || '';
-my $sign_stream_id = $cgi->param('sign_stream_id') || '';
+my $op                = $cgi->param('op') || '';
+my $sign_id           = $cgi->param('sign_id') || '';
+my $sign_stream_id    = $cgi->param('sign_stream_id') || '';
+my $sign_to_stream_id = $cgi->param('sign_to_stream_id') || '';
+my $parameters        = $cgi->param('parameters') || '';
 
 # Streams
 
@@ -193,14 +195,35 @@ if ( $op eq 'add_stream' ) {
 
 } elsif ( $op eq 'attach_stream_to_sign' && $sign_stream_id ne '' && $sign_id ne '' ) {
 
-  AttachStreamToSign( $sign_stream_id, $sign_id );
+  my $sign_to_stream_id = AttachStreamToSign( $sign_stream_id, $sign_id );
 
+  # Check if the SQL associated with the stream needs parameters
+  my $stream = GetStream( $sign_stream_id );
+  if ( $stream->{'savedsql'} =~ m/<</ ) {
+    print $cgi->redirect($script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id );
+  } else {
+    print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
+  }
+
+} elsif ( $op eq 'get_params' && $sign_to_stream_id ne '' && $sign_stream_id ne '' ) {
+
+  $template->param(
+    'op'                => 'get_params',
+    'stream'            => GetStream( $sign_stream_id ),
+    'sign_id'           => $sign_id,
+    'sign_to_stream_id' => $sign_to_stream_id,
+    'params'            => GetParams( $sign_to_stream_id ),
+    'script_name'       => $script_name,
+  );
+
+} elsif ( $op eq 'save_params' && $sign_to_stream_id ne '' ) {
+
+  AddParamsForAttachedStream( $sign_to_stream_id, $parameters );
   print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
 
-} elsif ( $op eq 'detach_stream_from_sign' && $sign_stream_id ne '' && $sign_id ne '' ) {
+} elsif ( $op eq 'detach_stream_from_sign' && $sign_to_stream_id ne '' ) {
 
-  DetachStreamFromSign( $sign_stream_id, $sign_id );
-
+  DetachStreamFromSign( $sign_to_stream_id );
   print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
 
 } else {
