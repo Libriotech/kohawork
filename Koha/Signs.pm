@@ -24,6 +24,7 @@ our @EXPORT = qw(
   GetStreamsAttachedToSign
   AddParamsForAttachedStream
   GetParams
+  ReplaceParamsInSQL
   DetachStreamFromSign
 
   RunSQL
@@ -185,6 +186,17 @@ sub GetParams {
   my $sth = $dbh->prepare( $query );
   $sth->execute( $sign_to_stream_id );
   return $sth->fetchrow_array();
+
+}
+
+sub ReplaceParamsInSQL {
+
+  my ( $sql, $params ) = @_;
+  foreach my $param ( split /&/, $params ) {
+    my ( $key, $value ) = split /=/, $param;
+    $sql =~ s/<<$key>>/$value/g;
+  }
+  return $sql;
 
 }
 

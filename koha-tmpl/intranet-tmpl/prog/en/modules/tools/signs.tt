@@ -215,8 +215,6 @@
 
   <h1>Parameters for [% stream.name %]</h1>
   <p>Based on report: [% stream.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% stream.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
-  <h2>SQL</h2>
-  <pre id="sql_output">[% stream.savedsql | html %]</pre>
 
   <form action="[% script_name %]" name="get_params" id="get_params" method="post">
   <input type="hidden" name="op" value="save_params" />
@@ -236,6 +234,18 @@
   </fieldset>
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
   </form>
+
+  <h2>Raw SQL</h2>
+  <pre id="sql_output">[% stream.savedsql | html %]</pre>
+
+  <h2>SQL with current parameters replaced</h2>
+  <pre id="sql_output">[% newsql | html %]</pre>
+  [% IF ( has_params ) %]
+    <p>Sorry, your SQL still contains placeholders. You need to add more parameters.</p>
+  [% ELSE %]
+    <h2>Records</h2>
+    [% INCLUDE display_records %]
+  [% END %]
 
 [% ELSIF op == 'del_stream' %]
 
@@ -295,25 +305,7 @@
   <h2>SQL</h2>
   <pre id="sql_output">[% stream.savedsql | html %]</pre>
   <h2>Records</h2>
-  [% IF ( has_params ) %]
-    <p>This stream takes parameters, so displaying records here does not make sense.</p>
-  [% ELSIF ( records.0 ) %]
-    <table>
-    <thead>
-      <tr>
-      <th>biblionumber</th>
-      <th>title</th>
-      </tr>
-    </thead>
-    <tbody>
-    [% FOREACH r IN records %]
-      <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td></tr>
-    [% END %]
-    </tbody>
-    </table>
-  [% ELSE %]
-    <p>No records found.</p>
-  [% END %]
+  [% INCLUDE display_records %]
 
 [% ELSE %]
 
@@ -408,3 +400,23 @@
 </div>
 </div>
 [% INCLUDE 'intranet-bottom.inc' %]
+
+[% BLOCK display_records %]
+  [% IF ( records.0 ) %]
+    <table>
+    <thead>
+      <tr>
+      <th>biblionumber</th>
+      <th>title</th>
+      </tr>
+    </thead>
+    <tbody>
+    [% FOREACH r IN records %]
+      <tr><td>[% r.biblionumber %]</td><td>[% r.title %]</td></tr>
+    [% END %]
+    </tbody>
+    </table>
+  [% ELSE %]
+    <p>No records found.</p>
+  [% END %]
+[% END %]
