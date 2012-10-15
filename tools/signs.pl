@@ -71,7 +71,7 @@ if ( $op eq 'add_stream' ) {
 
   $template->param(
     'op'         => 'stream_form',
-    'reports'    => get_saved_reports,
+    'reports'    => get_saved_reports( { group => 'SIG' } ),
   );
 
 } elsif ( $op eq 'edit_stream' && $sign_stream_id ne '') {
@@ -81,7 +81,7 @@ if ( $op eq 'add_stream' ) {
   $template->param(
     'op'          => 'stream_form',
     'stream'      => $stream,
-    'reports'     => get_saved_reports,
+    'reports'     => get_saved_reports( { group => 'SIG' } ),
     'script_name' => $script_name
   );
 
