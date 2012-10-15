@@ -176,11 +176,16 @@
   [% IF ( attached.size ) %]
     <table>
     <thead>
-    <tr><th>Name</th><th>Detach</th></tr>
+    <tr><th>Name</th><th>Parameters</th><th>Edit</th><th>Detach</th></tr>
     </thead>
     <tbody>
     [% FOREACH s IN attached %]
-      <tr><td>[% s.name %]</td><td><a href="?op=detach_stream_from_sign&sign_id=[% sign.sign_id %]&sign_stream_id=[% s.sign_stream_id %]">Detach</a></td></tr>
+      <tr>
+      <td>[% s.name %]</td>
+      <td>[% s.params %]</td>
+      <td><a href="?op=get_params&sign_to_stream_id=[% s.sign_to_stream_id %]&sign_stream_id=[% s.sign_stream_id %]&sign_id=[% sign.sign_id %]">Edit</a></td>
+      <td><a href="?op=detach_stream_from_sign&sign_id=[% sign.sign_id %]&sign_to_stream_id=[% s.sign_to_stream_id %]">Detach</a></td>
+      </tr>
     [% END %]
     </tbody>
     </table>
@@ -200,6 +205,27 @@
           <option value="[% s.sign_stream_id %]">[% s.name %]</option>
         [% END %]
       </select>
+    </li>
+    </ol>
+  </fieldset>
+  <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
+  </form>
+
+[% ELSIF op == 'get_params' %]
+
+  <h1>Parameters for [% stream.name %]</h1>
+  <p>Based on report: [% stream.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% stream.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
+  <h2>SQL</h2>
+  <pre id="sql_output">[% stream.savedsql | html %]</pre>
+
+  <form action="[% script_name %]" name="get_params" id="get_params" method="post">
+  <input type="hidden" name="op" value="save_params" />
+  <input type="hidden" name="sign_to_stream_id" value="[% sign_to_stream_id %]" />
+  <input type="hidden" name="sign_id" value="[% sign_id %]" />
+  <fieldset class="rows">
+    <ol>
+    <li><label for="stream">Parameters</label>
+      <input type="text" size="60" name="parameters" id="parameters" value="[% params %]" />
     </li>
     </ol>
   </fieldset>
