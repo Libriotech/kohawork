@@ -224,7 +224,7 @@ if ( $op eq 'add_stream' ) {
   $template->param(
     'op'                => 'get_params',
     'stream'            => $stream,
-    'sign_id'           => $sign_id,
+    'sign_id'           => $sign_id, # FIXME Get this from a subroutine?
     'sign_to_stream_id' => $sign_to_stream_id,
     'params'            => $params,
     'newsql'            => $newsql,

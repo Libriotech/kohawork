@@ -195,6 +195,7 @@ sub ReplaceParamsInSQL {
   foreach my $param ( split /&/, $params ) {
     my ( $key, $value ) = split /=/, $param;
     # FIXME Handle spaces
+    # FIXME How do we get our hands on the branchcode stored in the sign?
     $sql =~ s/<<$key>>/$value/g;
   }
   return $sql;
