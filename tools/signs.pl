@@ -212,12 +212,22 @@ if ( $op eq 'add_stream' ) {
 
 } elsif ( $op eq 'get_params' && $sign_to_stream_id ne '' && $sign_stream_id ne '' ) {
 
+  my $stream = GetStream( $sign_stream_id );
+  my $params = GetParams( $sign_to_stream_id );
+  my $newsql = ReplaceParamsInSQL( $stream->{'savedsql'}, $params );
+  if ( $newsql =~ m/<</ ) {
+    $template->param( 'has_params' => 1 );
+  } else {
+    $template->param( 'records' => RunSQL( $newsql ) );
+  }
+
   $template->param(
     'op'                => 'get_params',
-    'stream'            => GetStream( $sign_stream_id ),
+    'stream'            => $stream,
     'sign_id'           => $sign_id,
     'sign_to_stream_id' => $sign_to_stream_id,
-    'params'            => GetParams( $sign_to_stream_id ),
+    'params'            => $params,
+    'newsql'            => $newsql,
     'script_name'       => $script_name,
   );
 
