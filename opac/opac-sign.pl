@@ -54,7 +54,7 @@ if ( C4::Context->preference('OPACDigitalSigns') ) {
     # Add records to the streams
     foreach my $stream ( @{$streams} ) {
 
-      my $records = RunSQL( $stream->{'savedsql'} );
+      my $records = RunSQL( ReplaceParamsInSQL( $stream->{'savedsql'}, $stream->{'params'} ) );
       my @processed_records;
       foreach my $rec ( @{$records} ) {
         my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
