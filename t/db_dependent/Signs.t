@@ -1,18 +1,19 @@
-use Modern::Perl;
 use Test::More qw(no_plan); # TODO Set the number
-use Test::Exception;
 use C4::Context;
-use Data::Dumper; # FIXME Debug
+use Digest::MD5 qw( md5_hex );
+use Modern::Perl;
 
 BEGIN {use_ok('Koha::Signs') }
 use Koha::Signs;
 
 my $dbh = C4::Context->dbh;
 
-my $name1   = 'some unlikely name';
-my $name2   = 'some other name';
-my $name3   = 'a changed name';
-my $report1 = 1;
+my $md5 = md5_hex( time() );
+my $name1     = "some name $md5";
+my $name2     = "second name $md5";
+my $name3     = "third name $md5";
+my $report1   = 1;
+my $parameter = "limit=3&dummy=$md5";
 
 ### Streams
 
@@ -102,7 +103,18 @@ like( $editedsign->{'swatch'},     qr/$sign_swatch_changed/, "GetSign after Edit
 ### Attaching streams to signs
 
 # AttachStreamToSign
-ok( AttachStreamToSign( $sign_stream_id, $sign_id ), "AttachStreamToSign ok for sign_stream_id = $sign_stream_id, sign_id = $sign_id" );
+my $sign_to_stream_id;
+ok( $sign_to_stream_id = AttachStreamToSign( $sign_stream_id, $sign_id ), "AttachStreamToSign ok for sign_stream_id = $sign_stream_id, sign_id = $sign_id" );
+
+# AddParamsForAttachedStream
+ok( AddParamsForAttachedStream( $sign_to_stream_id, $parameter ), "AddParamsForAttachedStream ok for sign_to_stream_id = $sign_to_stream_id" );
+
+# GetParams
+is( GetParams( $sign_to_stream_id ), $parameter, "GetParams ok for sign_to_stream_id = $sign_to_stream_id" );
+
+# ReplaceParamsInSQL
+like ( $stream->{'savedsql'}, qr/<</, 'query contains <<' );
+unlike( ReplaceParamsInSQL( $stream->{'savedsql'}, $parameter ), qr/<</, 'ReplaceParamsInSQL removed << from query' );
 
 # GetStreamsAttachedToSign
 my $attatchedstreams;
