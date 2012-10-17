@@ -193,6 +193,7 @@ if ( $op eq 'add_stream' ) {
   $template->param(
     'op'          => 'edit_streams',
     'sign'        => GetSign( $sign_id ),
+    'sign_id'     => $sign_id,
     'streams'     => GetAllStreams(),
     'attached'    => GetStreamsAttachedToSign( $sign_id ),
     'script_name' => $script_name
@@ -205,12 +206,12 @@ if ( $op eq 'add_stream' ) {
   # Check if the SQL associated with the stream needs parameters
   my $stream = GetStream( $sign_stream_id );
   if ( $stream->{'savedsql'} =~ m/<</ ) {
-    print $cgi->redirect($script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id );
+    print $cgi->redirect( $script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id . '&sign_id=' . $sign_id );
   } else {
-    print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
+    print $cgi->redirect( $script_name . '?op=edit_streams&sign_id=' . $sign_id );
   }
 
-} elsif ( $op eq 'get_params' && $sign_to_stream_id ne '' && $sign_stream_id ne '' ) {
+} elsif ( $op eq 'get_params' && $sign_to_stream_id ne '' && $sign_stream_id ne '' && $sign_id ne '' ) {
 
   my $stream = GetStream( $sign_stream_id );
   my $params = GetParams( $sign_to_stream_id );
@@ -224,17 +225,17 @@ if ( $op eq 'add_stream' ) {
   $template->param(
     'op'                => 'get_params',
     'stream'            => $stream,
-    'sign_id'           => $sign_id, # FIXME Get this from a subroutine?
+    'sign_id'           => $sign_id,
     'sign_to_stream_id' => $sign_to_stream_id,
     'params'            => $params,
     'newsql'            => $newsql,
     'script_name'       => $script_name,
   );
 
-} elsif ( $op eq 'save_params' && $sign_to_stream_id ne '' ) {
+} elsif ( $op eq 'save_params' && $sign_to_stream_id ne '' && $sign_id ne '' ) {
 
   AddParamsForAttachedStream( $sign_to_stream_id, $parameters );
-  print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
+  print $cgi->redirect( $script_name . '?op=edit_streams&sign_id=' . $sign_id );
 
 } elsif ( $op eq 'detach_stream_from_sign' && $sign_to_stream_id ne '' ) {
 

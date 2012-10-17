@@ -47,6 +47,8 @@ $opac     =~ s#/$##;
 my $agent     = Test::WWW::Mechanize->new( autocheck => 1 );
 my $opacagent = Test::WWW::Mechanize->new( autocheck => 1 );
 
+diag( 'Random string: ' . $md5 );
+
 # Log in to the Koha staff client
 $agent->get_ok( "$intranet/cgi-bin/koha/mainpage.pl", 'connect to intranet' );
 $agent->form_name('loginform');
@@ -83,7 +85,7 @@ $agent->submit_form_ok({
   fields  => {
     'op'     => 'save_stream',
     'name'   => $stream_name,
-    'report' => 1, # FIXME Make this dynamic?
+    'report' => 2, # FIXME Make this dynamic?
   }
 }, 'add a new stream' );
 $agent->content_like( qr/$stream_name/, 'content contains new stream name' );
@@ -113,7 +115,7 @@ $agent->submit_form_ok({
     'op'             => 'save_stream',
     'sign_stream_id' => $sign_stream_id,
     'name'           => $stream_name,
-    'report'         => 2, # FIXME Make this dynamic
+    'report'         => 1, # FIXME Make this dynamic?
   }
 }, 'edit stream' );
 $agent->content_like( qr/$stream_name/, 'content contains stream name' );
@@ -157,6 +159,23 @@ $agent->submit_form_ok({
     'sign_stream_id' => $sign_stream_id,
   }
 }, 'attach stream to sign' );
+$agent->content_like( qr/Parameters for $stream_name/, 'content contains Parameters for stream name' );
+
+# Get the sign_to_stream_id
+my $signstreamuri = $agent->uri();
+my $signstreamquery = CGI->new( $signstreamuri->query );
+my $sign_to_stream_id = $signstreamquery->param( 'sign_to_stream_id' );
+diag ( 'sign_to_stream_id: ', $sign_to_stream_id );
+
+$agent->submit_form_ok({
+  form_id => 'get_params_form',
+  fields  => {
+    'op'                => 'save_params',
+    'sign_to_stream_id' => $sign_to_stream_id,
+    'parameters'        => 'limit=3',
+  }
+}, 'save params' );
+
 $agent->content_like( qr/<td>$stream_name<\/td>/, 'content contains stream name in a table cell' );
 
 ### Check the sign and stream in the OPAC
