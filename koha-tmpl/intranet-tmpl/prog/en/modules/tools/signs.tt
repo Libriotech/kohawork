@@ -305,7 +305,11 @@
   <h2>SQL</h2>
   <pre id="sql_output">[% stream.savedsql | html %]</pre>
   <h2>Records</h2>
-  [% INCLUDE display_records %]
+  [% IF ( has_params ) %]
+    <p>Sorry, the report this stream is based on has parameters and displaying it only makes sense after it has been attached to a sign and parameters have been added.</p>
+  [% ELSE %]
+    [% INCLUDE display_records %]
+  [% END %]
 
 [% ELSE %]
 
