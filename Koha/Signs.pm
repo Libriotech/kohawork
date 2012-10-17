@@ -192,6 +192,10 @@ sub GetParams {
 sub ReplaceParamsInSQL {
 
   my ( $sql, $params ) = @_;
+
+  return unless $sql || $params;
+  return $sql unless $sql =~ m/<</;
+
   foreach my $param ( split /&/, $params ) {
     my ( $key, $value ) = split /=/, $param;
     # FIXME Handle spaces
