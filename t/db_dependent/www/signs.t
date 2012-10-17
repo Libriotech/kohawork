@@ -199,7 +199,8 @@ $opacagent->content_contains( '<div data-role="page" data-theme="c" id="stream_'
 $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
 $agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id$/i }, 'click on Edit streams' );
 $agent->content_contains( "<td>$stream_name</td>", 'content contains stream name in a table cell' );
-$agent->follow_link_ok( { url_regex => qr/detach_stream_from_sign&sign_id=$sign_id&sign_stream_id=$sign_stream_id/i }, 'click on Detach' );
+# There should only be one attached stream, so click the first link labelled Detach
+$agent->follow_link_ok( { text => 'Detach' }, 'click on Detach' );
 $agent->content_lacks( "<td>$stream_name</td>", 'content lacks stream name in a table cell' );
 
 # Check the OPAC
