@@ -196,7 +196,7 @@
   <h2>Attach a new stream to this sign</h2>
   <form action="[% script_name %]" name="attach_stream_to_sign_form" id="attach_stream_to_sign_form" method="post">
   <input type="hidden" name="op" value="attach_stream_to_sign" />
-  <input type="hidden" name="sign_id" value="[% sign.sign_id %]" />
+  <input type="hidden" name="sign_id" value="[% sign_id %]" />
   <fieldset class="rows">
     <ol>
     <li><label for="stream">Choose a stream to attach</label>
@@ -216,7 +216,7 @@
   <h1>Parameters for [% stream.name %]</h1>
   <p>Based on report: [% stream.report_name %] | <a href="/cgi-bin/koha/reports/guided_reports.pl?reports=[% stream.saved_sql_id %]&phase=Edit SQL">Edit this report</a></p>
 
-  <form action="[% script_name %]" name="get_params" id="get_params" method="post">
+  <form action="[% script_name %]" name="get_params_form" id="get_params_form" method="post">
   <input type="hidden" name="op" value="save_params" />
   <input type="hidden" name="sign_to_stream_id" value="[% sign_to_stream_id %]" />
   <input type="hidden" name="sign_id" value="[% sign_id %]" />
