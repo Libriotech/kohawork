@@ -11,8 +11,6 @@
 
 	    yuiToolbar();
 
-	    $("#signs_and_streams").tabs();
-
       // Streams
       $("#table_streams").tablesorter({
         sortList: [[0,0]], // Default sort: first column, ascending order
@@ -315,83 +313,69 @@
 
   <h1>Digital signs</h1>
 
-  <div id="signs_and_streams" class="toptabs">
-
-    <ul>
-      <li><a href="#signstab">Signs</a></li>
-      <li><a href="#streamstab">Streams</a></li>
-    </ul>
-
-  <div id="signstab">
-
-    [% IF signs %]
-      <div id="pagertable_signs">
-        [% INCLUDE 'table-pager.inc' perpage='20' %]
-      </div>
-      <table id="table_signs" class="tablesorter">
-      <thead>
-      <tr>
-      <th>Name</th>
-      <th>Library</th>
-      <th>Web-app</th>
-      <th>Swatch</th>
-      <th>Edit</th>
-      <th>Edit signs</th>
-      <th>Delete</th>
-      </tr>
-      </thead>
-      <tbody>
-      [% FOREACH s IN signs %]
-      [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-      <td><a href="?op=view_sign&amp;sign_id=[% s.sign_id %]">[% s.name %]</a></td>
-      <td>[% s.branchname %]</td>
-      <td>[% IF ( s.webapp ) %]Yes[% ELSE %]No[% END %]</td>
-      <td>[% s.swatch %]</td>
-      <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
-      <td><a href="?op=edit_streams&amp;sign_id=[% s.sign_id %]">Edit streams</a></td>
-      <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
-      </tr>
-      [% END %]
-      </tbody>
-      </table>
-    [% ELSE %]
-      <p>No signs defined!</p>
+  [% IF signs %]
+    <h2>Signs</h2>
+    <div id="pagertable_signs">
+      [% INCLUDE 'table-pager.inc' perpage='20' %]
+    </div>
+    <table id="table_signs" class="tablesorter">
+    <thead>
+    <tr>
+    <th>Name</th>
+    <th>Library</th>
+    <th>Web-app</th>
+    <th>Swatch</th>
+    <th>Edit</th>
+    <th>Edit signs</th>
+    <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH s IN signs %]
+    [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
+    <td><a href="?op=view_sign&amp;sign_id=[% s.sign_id %]">[% s.name %]</a></td>
+    <td>[% s.branchname %]</td>
+    <td>[% IF ( s.webapp ) %]Yes[% ELSE %]No[% END %]</td>
+    <td>[% s.swatch %]</td>
+    <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
+    <td><a href="?op=edit_streams&amp;sign_id=[% s.sign_id %]">Edit streams</a></td>
+    <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
+    </tr>
     [% END %]
+    </tbody>
+    </table>
+  [% ELSE %]
+    <p>No signs defined!</p>
+  [% END %]
 
-  </div>
-  <div id="streamstab">
-
-    [% IF streams %]
-      <div id="pagertable_streams">
-        [% INCLUDE 'table-pager.inc' perpage='20' %]
-      </div>
-      <table id="table_streams" class="tablesorter">
-      <thead>
-      <tr>
-      <th>Name</th>
-      <th>Report</th>
-      <th>Edit</th>
-      <th>Delete</th>
-      </tr>
-      </thead>
-      <tbody>
-      [% FOREACH s IN streams %]
-      [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
-      <td><a href="?op=view_stream&amp;sign_stream_id=[% s.sign_stream_id %]">[% s.name %]</a></td>
-      <td title="ID: [% s.saved_sql_id %]">[% s.report_name %]</td>
-      <td><a href="?op=edit_stream&amp;sign_stream_id=[% s.sign_stream_id %]">Edit</a></td>
-      <td><a href="?op=del_stream&amp;sign_stream_id=[% s.sign_stream_id %]">Delete</a></td>
-      </tr>
-      [% END %]
-      </tbody>
-      </table>
-    [% ELSE %]
-      <p>No streams defined!</p>
+  [% IF streams %]
+    <h2>Streams</h2>
+    <div id="pagertable_streams">
+      [% INCLUDE 'table-pager.inc' perpage='20' %]
+    </div>
+    <table id="table_streams" class="tablesorter">
+    <thead>
+    <tr>
+    <th>Name</th>
+    <th>Report</th>
+    <th>Edit</th>
+    <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    [% FOREACH s IN streams %]
+    [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
+    <td><a href="?op=view_stream&amp;sign_stream_id=[% s.sign_stream_id %]">[% s.name %]</a></td>
+    <td title="ID: [% s.saved_sql_id %]">[% s.report_name %]</td>
+    <td><a href="?op=edit_stream&amp;sign_stream_id=[% s.sign_stream_id %]">Edit</a></td>
+    <td><a href="?op=del_stream&amp;sign_stream_id=[% s.sign_stream_id %]">Delete</a></td>
+    </tr>
     [% END %]
-
-  </div>
-
-  </div>
+    </tbody>
+    </table>
+  [% ELSE %]
+    <p>No streams defined!</p>
+  [% END %]
 
 [% END %]
 
