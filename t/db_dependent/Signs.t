@@ -120,7 +120,7 @@ unlike( ReplaceParamsInSQL( $stream->{'savedsql'}, $parameter ), qr/<</, 'Replac
 my $attatchedstreams;
 ok( $attatchedstreams = GetStreamsAttachedToSign( $sign_id ), "GetStreamsAttachedToSign ok for sign_id = $sign_id" );
 my $num_of_attached_streams = @{$attatchedstreams};
-cmp_ok( $num_of_attached_streams, ">", 0, "GetStreamsAttachedToSign found at least one stream" ) or diag( print Dumper $attatchedstreams, GetSign( $sign_id ), GetStream( $sign_stream_id ) );
+cmp_ok( $num_of_attached_streams, ">", 0, "GetStreamsAttachedToSign found at least one stream" );
 foreach my $attatchedstream ( @{$attatchedstreams} ) {
   if ( $attatchedstream->{'sign_stream_id'} == $sign_stream_id ) {
     like( $attatchedstream->{'saved_sql_id'}, qr/$report1/, "GetStreamsAttachedToSign found a sign with our saved_sql_id" );
