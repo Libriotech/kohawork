@@ -35,6 +35,7 @@ my $opac     = $ENV{KOHA_OPAC_URL};
 my $md5 = md5_hex( time() );
 my $stream_name = "stream $md5";
 my $sign_name   = "sign $md5";
+my $params      = 'limit=3';
 
 BAIL_OUT("You must set the environment variable KOHA_INTRANET_URL to ".
          "point this test to your staff client. If you do not have ".
@@ -172,11 +173,16 @@ $agent->submit_form_ok({
   fields  => {
     'op'                => 'save_params',
     'sign_to_stream_id' => $sign_to_stream_id,
-    'parameters'        => 'limit=3',
+    'parameters'        => $params,
   }
 }, 'save params' );
 
-$agent->content_like( qr/<td>$stream_name<\/td>/, 'content contains stream name in a table cell' );
+$agent->content_like( qr/Parameters for $stream_name/, 'content contains Parameters for stream name' );
+$agent->content_like( qr/$params/, 'content contains params' );
+
+diag( $agent->uri() );
+
+__END__
 
 ### Check the sign and stream in the OPAC
 
