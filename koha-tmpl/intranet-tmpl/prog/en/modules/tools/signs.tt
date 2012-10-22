@@ -175,14 +175,14 @@
   [% IF ( attached.size ) %]
     <table>
     <thead>
-    <tr><th>Name</th><th>Parameters</th><th>Edit</th><th>Detach</th></tr>
+    <tr><th>Name</th><th>Parameters</th><th>Edit parameters</th><th>Detach</th></tr>
     </thead>
     <tbody>
     [% FOREACH s IN attached %]
       <tr>
       <td>[% s.name %]</td>
       <td>[% s.params %]</td>
-      <td><a href="?op=get_params&sign_to_stream_id=[% s.sign_to_stream_id %]&sign_stream_id=[% s.sign_stream_id %]&sign_id=[% sign.sign_id %]">Edit</a></td>
+      <td>[% IF s.savedsql.match('<<') %]<a href="?op=get_params&sign_to_stream_id=[% s.sign_to_stream_id %]&sign_stream_id=[% s.sign_stream_id %]&sign_id=[% sign.sign_id %]">Edit parameters</a>[% END %]</td>
       <td><a href="?op=detach_stream_from_sign&sign_id=[% sign.sign_id %]&sign_to_stream_id=[% s.sign_to_stream_id %]">Detach</a></td>
       </tr>
     [% END %]
