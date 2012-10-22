@@ -180,10 +180,6 @@ $agent->submit_form_ok({
 $agent->content_like( qr/Parameters for $stream_name/, 'content contains Parameters for stream name' );
 $agent->content_like( qr/$params/, 'content contains params' );
 
-diag( $agent->uri() );
-
-__END__
-
 ### Check the sign and stream in the OPAC
 
 $opacagent->get_ok( "$opac/cgi-bin/koha/opac-sign.pl", 'front page for signs in the opac' );
