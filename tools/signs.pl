@@ -226,6 +226,7 @@ if ( $op eq 'add_stream' ) {
     'op'                => 'get_params',
     'stream'            => $stream,
     'sign_id'           => $sign_id,
+    'sign_stream_id'    => $sign_stream_id,
     'sign_to_stream_id' => $sign_to_stream_id,
     'params'            => $params,
     'newsql'            => $newsql,
@@ -235,7 +236,7 @@ if ( $op eq 'add_stream' ) {
 } elsif ( $op eq 'save_params' && $sign_to_stream_id ne '' && $sign_id ne '' ) {
 
   AddParamsForAttachedStream( $sign_to_stream_id, $parameters );
-  print $cgi->redirect( $script_name . '?op=edit_streams&sign_id=' . $sign_id );
+  print $cgi->redirect( $script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id . '&sign_id=' . $sign_id );
 
 } elsif ( $op eq 'detach_stream_from_sign' && $sign_to_stream_id ne '' ) {
 

@@ -218,6 +218,7 @@
   <form action="[% script_name %]" name="get_params_form" id="get_params_form" method="post">
   <input type="hidden" name="op" value="save_params" />
   <input type="hidden" name="sign_to_stream_id" value="[% sign_to_stream_id %]" />
+  <input type="hidden" name="sign_stream_id" value="[% sign_stream_id %]" />
   <input type="hidden" name="sign_id" value="[% sign_id %]" />
   <fieldset class="rows">
     [% IF ( params ) %]

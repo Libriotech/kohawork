@@ -79,4 +79,4 @@ INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 2, 2, '
 INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 3, 3, 'Random titles' );
 INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 4, 4, 'Tech books' );
 
-INSERT INTO signs_to_streams (sign_id, sign_stream_id) VALUES (1,1),(1,2),(1,3),(1,4);
+INSERT INTO signs_to_streams (sign_id, sign_stream_id, params) VALUES (1,1,'limit=10'),(1,2,''),(1,3,''),(1,4,'');
