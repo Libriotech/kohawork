@@ -154,9 +154,9 @@ if ( $op eq 'add_stream' ) {
 } elsif ( $op eq 'save_sign' ) {
 
   if ($cgi->param('sign_id')) {
-    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('idleafter'), $cgi->param('pagedelay'), $cgi->param('sign_id') );
+    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay'), $cgi->param('sign_id') );
   } else {
-    AddSign(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('idleafter'), $cgi->param('pagedelay') );
+    AddSign(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay') );
   }
   print $cgi->redirect($script_name);
 

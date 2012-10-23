@@ -96,19 +96,19 @@ sub DeleteStream {
 
 sub AddSign {
 
-  my ( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay ) = @_;
+  my ( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, idleafter = ?, pagedelay = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay );
+  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
+  return $sth->execute( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
 
 }
 
 sub EditSign {
 
-  my ( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay, $sign_id ) = @_;
+  my ( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay, $sign_id );
+  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
+  return $sth->execute( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id );
 
 }
 
