@@ -96,19 +96,19 @@ sub DeleteStream {
 
 sub AddSign {
 
-  my ( $branchcode, $name, $webapp, $swatch ) = @_;
+  my ( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $swatch );
+  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, idleafter = ?, pagedelay = ?");
+  return $sth->execute( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay );
 
 }
 
 sub EditSign {
 
-  my ( $branchcode, $name, $webapp, $swatch, $sign_id ) = @_;
+  my ( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ?, webapp = ?, swatch = ? WHERE sign_id = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $swatch, $sign_id );
+  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
+  return $sth->execute( $branchcode, $name, $webapp, $swatch, $idleafter, $pagedelay, $sign_id );
 
 }
 

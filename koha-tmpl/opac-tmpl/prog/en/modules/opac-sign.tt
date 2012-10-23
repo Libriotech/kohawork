@@ -17,9 +17,9 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
 [%- END -%]
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-[% IF ( sign ) %]
+[% IF ( sign && sign.idleafter > 0 ) %]
 [%#
-We only need this if we are displaying signs, not for the front page.
+We only need this if we are displaying signs, not for the front page. We can also skip it if idleafter = 0.
 See http://jquerymobile.com/demos/1.2.0/docs/api/globalconfig.html for info about the order in which things are loaded.
 %]
 <script>
@@ -27,8 +27,8 @@ See http://jquerymobile.com/demos/1.2.0/docs/api/globalconfig.html for info abou
 var ShowRecordsIntervalID;
 var WaitForIdleTimeoutID;
 var IsAnIdlePageChange = 0;
-var WaitBeforeIdle     = 5 * 1000;
-var WaitBetweenRecords = 5 * 1000;
+var WaitBeforeIdle     = [% sign.idleafter %] * 1000;
+var WaitBetweenRecords = [% sign.pagedelay %] * 1000;
 
 $(document).bind("mobileinit", function(){
 
