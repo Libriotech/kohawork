@@ -17,6 +17,75 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
 [%- END -%]
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+[% IF ( sign ) %]
+[%#
+We only need this if we are displaying signs, not for the front page.
+See http://jquerymobile.com/demos/1.2.0/docs/api/globalconfig.html for info about the order in which things are loaded.
+%]
+<script>
+
+var ShowRecordsIntervalID;
+var WaitForIdleTimeoutID;
+var IsAnIdlePageChange = 0;
+var WaitBeforeIdle     = 5 * 1000;
+var WaitBetweenRecords = 5 * 1000;
+
+$(document).bind("mobileinit", function(){
+
+  // Catch the pagebeforechange event
+  $(document).on( 'pagebeforechange',function(event, ui){
+    if ( IsAnIdlePageChange == 0 ) {
+      // This was initiated by a user, so reset all timeouts/intervals
+      window.clearTimeout( WaitForIdleTimeoutID );
+      window.clearInterval( ShowRecordsIntervalID );
+      // Start counting so we know when we are idle again
+      WaitForIdleTimeoutID = WaitForIdle();
+    } else  {
+      // This is the result of ShowRecords() turning pages automatically
+      // window.clearTimeout( WaitForIdleTimeoutID );
+    }
+  });
+
+  WaitForIdleTimeoutID = WaitForIdle();
+
+});
+
+function WaitForIdle() {
+
+  // Wait a set amount of time before starting automatic page turning
+  var IntID = window.setTimeout(function () {
+    ShowRecordsIntervalID = ShowRecords();
+  }, WaitBeforeIdle );
+
+  return IntID;
+
+}
+
+function ShowRecords() {
+
+  // Turn over pages in an infinite loop
+  var number_of_records = $('.record').length;
+  var t = 0;
+  if ( number_of_records > 0 ) {
+    var IntID = window.setInterval(function () {
+      IsAnIdlePageChange = 1;
+      var page = '#' + $('.record').slice(t).attr('id');
+      $.mobile.changePage( page );
+      IsAnIdlePageChange = 0;
+      t = t + 1;
+      // Go back to zero if we reached the max number of records, so we can loop infinitely
+      if ( t == number_of_records ) {
+        t = 0;
+      }
+    }, WaitBetweenRecords );
+  }
+
+  return IntID;
+
+}
+
+</script>
+[% END %]
 <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
 </head>
 <body>
