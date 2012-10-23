@@ -163,6 +163,17 @@
         [% END %]
       </select>
     </li>
+    <li><label for="transition">Transition</label>
+      <select name="transition" id="transition">
+        [% FOREACH transition IN [ 'none' 'fade' 'pop' 'flip' 'turn' 'flow' 'slidefade' 'slide' 'slideup' 'slidedown' ] %]
+          [% IF transition == sign.transition %]
+            <option value="[% transition %]" selected="selected">[% transition %]</option>
+          [% ELSE %]
+            <option value="[% transition %]">[% transition %]</option>
+          [% END %]
+        [% END %]
+      </select>
+    </li>
     </ol>
   </fieldset>
   <fieldset id="sign_autopage" class="rows">
@@ -340,6 +351,7 @@
     <th>Library</th>
     <th>Web-app</th>
     <th>Swatch</th>
+    <th>Transition</th>
     <th>Idle after</th>
     <th>Page delay</th>
     <th>Edit</th>
@@ -354,6 +366,7 @@
     <td>[% s.branchname %]</td>
     <td>[% IF ( s.webapp ) %]Yes[% ELSE %]No[% END %]</td>
     <td>[% s.swatch %]</td>
+    <td>[% s.transition %]</td>
     <td>[% s.idleafter %]</td>
     <td>[% s.pagedelay %]</td>
     <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>

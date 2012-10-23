@@ -40,6 +40,8 @@ my $idleafter   = '65';
 my $pagedelay   = '35';
 my $idleafter2  = '66';
 my $pagedelay2  = '36';
+my $transition  = 'slide';
+my $transition2  = 'pop';
 
 BAIL_OUT("You must set the environment variable KOHA_INTRANET_URL to ".
          "point this test to your staff client. If you do not have ".
@@ -139,6 +141,7 @@ $agent->submit_form_ok({
     'swatch'     => 'a',
     'idleafter'  => $idleafter,
     'pagedelay'  => $pagedelay,
+    'transition' => $transition,
   }
 }, 'add a new sign' );
 $agent->content_like( qr/$sign_name/, 'content contains new sign name' );
@@ -199,6 +202,7 @@ $opacagent->content_contains( 'apple-mobile-web-app-capable', 'OPAC content cont
 $opacagent->content_contains( '<div data-role="page" data-theme="a" id="stream_' . $sign_stream_id . '">', 'OPAC content contains data-theme = a' );
 $opacagent->content_contains( "WaitBeforeIdle     = $idleafter", 'OPAC content contains WaitBeforeIdle' );
 $opacagent->content_contains( "WaitBetweenRecords = $pagedelay", 'OPAC content contains WaitBetweenRecords' );
+$opacagent->content_contains( "defaultPageTransition: '$transition'", 'OPAC content contains defaultPageTransition' );
 
 ### Edit sign
 
@@ -216,6 +220,7 @@ $agent->submit_form_ok({
     'swatch'     => 'c',
     'idleafter'  => $idleafter2,
     'pagedelay'  => $pagedelay2,
+    'transition' => $transition2,
   }
 }, 'edit sign' );
 $agent->content_like( qr/$sign_name/, 'content contains sign name' );
@@ -226,6 +231,7 @@ $opacagent->content_lacks( 'apple-mobile-web-app-capable', 'OPAC content lacks a
 $opacagent->content_contains( '<div data-role="page" data-theme="c" id="stream_' . $sign_stream_id . '">', 'OPAC content contains data-theme = c' );
 $opacagent->content_contains( "WaitBeforeIdle     = $idleafter2", 'OPAC content contains edited WaitBeforeIdle' );
 $opacagent->content_contains( "WaitBetweenRecords = $pagedelay2", 'OPAC content contains edited WaitBetweenRecords' );
+$opacagent->content_contains( "defaultPageTransition: '$transition2'", 'OPAC content contains edited defaultPageTransition' );
 
 ### Detach stream from sign
 

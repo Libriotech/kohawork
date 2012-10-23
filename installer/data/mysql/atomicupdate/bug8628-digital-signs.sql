@@ -42,13 +42,14 @@ CREATE TABLE sign_streams (
 );
 DROP TABLE IF EXISTS signs;
 CREATE TABLE signs (
-  sign_id int(11) NOT NULL auto_increment,    -- primary key, used to identify signs
-  name varchar(64),                           -- name/title of the deck
-  branchcode varchar(10) NOT NULL DEFAULT '', -- foreign key from the branches table
-  webapp int(1) NOT NULL DEFAULT 0,           -- display as web app or normal page
-  swatch char(1) NOT NULL DEFAULT '',         -- swatches determine the colors of page elements
-  idleafter int(11) NOT NULL default 0,       -- seconds to wait before automatic page turning cicks in
-  pagedelay int(11) NOT NULL default 0,       -- seconds to wait before turning to a new page/record
+  sign_id int(11) NOT NULL auto_increment,     -- primary key, used to identify signs
+  name varchar(64),                            -- name/title of the deck
+  branchcode varchar(10) NOT NULL DEFAULT '',  -- foreign key from the branches table
+  webapp int(1) NOT NULL DEFAULT 0,            -- display as web app or normal page
+  transition char(16) NOT NULL DEFAULT 'none', -- transition to use between pages, must be one of the transitions defined by jQuery Mobile (see their docs)
+  swatch char(1) NOT NULL DEFAULT '',          -- swatches determine the colors of page elements
+  idleafter int(11) NOT NULL default 0,        -- seconds to wait before automatic page turning cicks in
+  pagedelay int(11) NOT NULL default 0,        -- seconds to wait before turning to a new page/record
   PRIMARY KEY (sign_id),
   CONSTRAINT signs_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode) -- ON DELETE CASCADE
 );
@@ -74,8 +75,8 @@ INSERT INTO saved_sql
 ( 3,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 ),
 ( 4,  51,             'SIG',         '2012-09-04 12:55:33', '2012-09-04 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE title LIKE "%Perl%" OR title LIKE "%PHP%" ORDER BY RAND() DESC', NULL, 'Tech books',     1, NULL, 300,          1 );
 
-INSERT INTO signs ( sign_id, branchcode, name, webapp, swatch, idleafter, pagedelay ) VALUES ( 1, 'CPL', 'Signs for the main library', 1, 'b', 60, 30 );
-INSERT INTO signs ( sign_id, branchcode, name, webapp, swatch, idleafter, pagedelay ) VALUES ( 2, 'CPL', 'Minimal test', 1, 'b', 5, 6 );
+INSERT INTO signs ( sign_id, branchcode, name, webapp, swatch, transition, idleafter, pagedelay ) VALUES ( 1, 'CPL', 'Signs for the main library', 1, 'b', 'slide', 60, 30 );
+INSERT INTO signs ( sign_id, branchcode, name, webapp, swatch, transition, idleafter, pagedelay ) VALUES ( 2, 'CPL', 'Minimal test', 1, 'b', 'pop', 5, 6 );
 
 INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 1, 1, 'Newest titles' );
 INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 2, 2, 'Titles from 2012' );

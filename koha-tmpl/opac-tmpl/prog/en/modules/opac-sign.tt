@@ -17,11 +17,7 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
 [%- END -%]
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-[% IF ( sign && sign.idleafter > 0 ) %]
-[%#
-We only need this if we are displaying signs, not for the front page. We can also skip it if idleafter = 0.
-See http://jquerymobile.com/demos/1.2.0/docs/api/globalconfig.html for info about the order in which things are loaded.
-%]
+[%# See http://jquerymobile.com/demos/1.2.0/docs/api/globalconfig.html for info about the order in which things are loaded. %]
 <script>
 
 var ShowRecordsIntervalID;
@@ -32,6 +28,11 @@ var WaitBetweenRecords = [% sign.pagedelay %] * 1000;
 
 $(document).bind("mobileinit", function(){
 
+  $.extend( $.mobile, {
+    defaultPageTransition: '[% sign.transition %]'
+  });
+
+  [% IF ( sign && sign.idleafter > 0 ) %]
   // Catch the pagebeforechange event
   $(document).on( 'pagebeforechange',function(event, ui){
     if ( IsAnIdlePageChange == 0 ) {
@@ -47,9 +48,11 @@ $(document).bind("mobileinit", function(){
   });
 
   WaitForIdleTimeoutID = WaitForIdle();
+  [% END %]
 
 });
 
+[% IF ( sign && sign.idleafter > 0 ) %]
 function WaitForIdle() {
 
   // Wait a set amount of time before starting automatic page turning
@@ -83,9 +86,9 @@ function ShowRecords() {
   return IntID;
 
 }
+[% END %]
 
 </script>
-[% END %]
 <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
 </head>
 <body>
