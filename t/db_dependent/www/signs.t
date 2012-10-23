@@ -36,6 +36,10 @@ my $md5 = md5_hex( time() );
 my $stream_name = "stream $md5";
 my $sign_name   = "sign $md5";
 my $params      = 'limit=3';
+my $idleafter   = '65';
+my $pagedelay   = '35';
+my $idleafter2  = '66';
+my $pagedelay2  = '36';
 
 BAIL_OUT("You must set the environment variable KOHA_INTRANET_URL to ".
          "point this test to your staff client. If you do not have ".
@@ -133,6 +137,8 @@ $agent->submit_form_ok({
     'branchcode' => 'CPL', # FIXME Make this dynamic
     'webapp'     => 1,
     'swatch'     => 'a',
+    'idleafter'  => $idleafter,
+    'pagedelay'  => $pagedelay,
   }
 }, 'add a new sign' );
 $agent->content_like( qr/$sign_name/, 'content contains new sign name' );
@@ -191,6 +197,8 @@ $opacagent->content_like( qr/$stream_name/, 'sign contains stream name' );
 $opacagent->content_like( qr/viewport/, 'OPAC content contains viewport' );
 $opacagent->content_contains( 'apple-mobile-web-app-capable', 'OPAC content contains apple-mobile-web-app-capable' );
 $opacagent->content_contains( '<div data-role="page" data-theme="a" id="stream_' . $sign_stream_id . '">', 'OPAC content contains data-theme = a' );
+$opacagent->content_contains( "WaitBeforeIdle     = $idleafter", 'OPAC content contains WaitBeforeIdle' );
+$opacagent->content_contains( "WaitBetweenRecords = $pagedelay", 'OPAC content contains WaitBetweenRecords' );
 
 ### Edit sign
 
@@ -206,6 +214,8 @@ $agent->submit_form_ok({
     'branchcode' => 'CPL', # FIXME Make this dynamic
     'webapp'     => 0,
     'swatch'     => 'c',
+    'idleafter'  => $idleafter2,
+    'pagedelay'  => $pagedelay2,
   }
 }, 'edit sign' );
 $agent->content_like( qr/$sign_name/, 'content contains sign name' );
@@ -214,6 +224,8 @@ $agent->content_like( qr/$sign_name/, 'content contains sign name' );
 $opacagent->reload();
 $opacagent->content_lacks( 'apple-mobile-web-app-capable', 'OPAC content lacks apple-mobile-web-app-capable' );
 $opacagent->content_contains( '<div data-role="page" data-theme="c" id="stream_' . $sign_stream_id . '">', 'OPAC content contains data-theme = c' );
+$opacagent->content_contains( "WaitBeforeIdle     = $idleafter2", 'OPAC content contains edited WaitBeforeIdle' );
+$opacagent->content_contains( "WaitBetweenRecords = $pagedelay2", 'OPAC content contains edited WaitBetweenRecords' );
 
 ### Detach stream from sign
 
