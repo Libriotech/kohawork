@@ -27,7 +27,6 @@ INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDig
 [%- END %]",'Template for formatting MARC records for display in digital signs.','Textarea');
 INSERT INTO systempreferences (variable,explanation,type) VALUES ('OPACDigitalSignsCSS','Extra CSS to be included in all signs','Textarea');
 INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsSwatches','abcde','List the swatches that can be chosen when creating a new sign','free');
-
 INSERT INTO permissions (module_bit, code, description) VALUES (13, 'edit_digital_signs', 'Create and edit digital signs for the OPAC');
 
 -- TODO Add these tables to kohasctructure.sql
@@ -39,7 +38,7 @@ CREATE TABLE sign_streams (
   name varchar(64),                           -- name/title of the sign
   PRIMARY KEY (sign_stream_id),
   CONSTRAINT sign_streams_ibfk_1 FOREIGN KEY (saved_sql_id) REFERENCES saved_sql (id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS signs;
 CREATE TABLE signs (
   sign_id int(11) NOT NULL auto_increment,     -- primary key, used to identify signs
@@ -52,7 +51,7 @@ CREATE TABLE signs (
   pagedelay int(11) NOT NULL default 0,        -- seconds to wait before turning to a new page/record
   PRIMARY KEY (sign_id),
   CONSTRAINT signs_ibfk_1 FOREIGN KEY (branchcode) REFERENCES branches (branchcode) -- ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE signs_to_streams (
   sign_to_stream_id int(11) NOT NULL auto_increment, -- primary key, used to identify connections between signs and streams (the same stream can be attached to a sign more than once, with different parameters)
   sign_stream_id int(11) NOT NULL,                   -- foreign key from the decks sign_streams table
@@ -61,7 +60,7 @@ CREATE TABLE signs_to_streams (
   PRIMARY KEY (sign_to_stream_id),
   CONSTRAINT signs_to_streams_ibfk_1 FOREIGN KEY (sign_stream_id) REFERENCES sign_streams (sign_stream_id) ON DELETE CASCADE,
   CONSTRAINT signs_to_streams_ibfk_2 FOREIGN KEY (sign_id) REFERENCES signs (sign_id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Sample data for testing
 -- TODO Delete before submitting patch
