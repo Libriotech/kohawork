@@ -137,11 +137,10 @@ function ShowRecords() {
               </div>
             </div>
             <div data-role="content">
-	            <h1>[% r.title %]</h1>
-              <div class="coverimg"><img src="opac-cover.pl?biblionumber=[% r.biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></div>
               <div class="recorddescription">
-              [%# Copy the MARC object from r.marc into record, to make it easier to write the template in the syspref %]
-              [%- SET record = r.marc -%]
+              [%# Set some local variables, to make it easier to write the template in the syspref %]
+              [%- SET record       = r.marc         -%]
+              [%- SET biblionumber = r.biblionumber -%]
               [%- recordtemplate | eval -%]
               </div>
             </div>

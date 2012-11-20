@@ -11,8 +11,8 @@ DELETE FROM saved_sql;
 DELETE FROM authorised_values WHERE category = 'REPORT_GROUP' AND authorised_value = 'SIG';
 
 INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSigns',1,'Turn digital signs in the OPAC on or off.','YesNo');
-INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsRecordTemplate',"<p>Title: [% record.field('245').subfield('a') %][% IF record.field('245').subfield('b') %] : [% record.field('245').subfield('b') %][% END %]</p>
-
+INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsRecordTemplate',"<h1>[% record.field('245').subfield('a') %][% IF record.field('245').subfield('b') %] : [% record.field('245').subfield('b') %][% END %]</h1>
+<div class=\"coverimg\"><img src=\"opac-cover.pl?biblionumber=[% biblionumber %]\" style=\"border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;\"></div>
 [% IF record.field('260').subfield('b') %]
 <p>Publisher: [% record.field('260').subfield('b') %]</p>
 [% END %]
@@ -24,6 +24,10 @@ INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDig
     <li>[% f.subfield('a') %]</li>
   [%- END %]
   </ul>
+[%- END %]
+
+[%- FOREACH f IN record.field('5..') %]
+  <p>[% f.subfield('a') %]</p>
 [%- END %]",'Template for formatting MARC records for display in digital signs.','Textarea');
 INSERT INTO systempreferences (variable,explanation,type) VALUES ('OPACDigitalSignsCSS','Extra CSS to be included in all signs','Textarea');
 INSERT INTO systempreferences (variable,value,explanation,type) VALUES ('OPACDigitalSignsSwatches','abcde','List the swatches that can be chosen when creating a new sign','free');
