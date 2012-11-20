@@ -177,7 +177,7 @@ function ShowRecords() {
       [% END %]
 
     [% ELSE %]
-      <p>No signs attached to this sign.</p>
+      <p>No streams attached to this sign.</p>
     [% END %]
   [% END %]
 
