@@ -27,7 +27,7 @@ use C4::Output;
 use Koha::Signs;
 use Data::Dumper; # FIXME Debug only
 
-# binmode STDOUT, ':encoding(UTF-8)'; # FIXME Non-ASCII is broken without this
+binmode STDOUT, ':encoding(UTF-8)'; # FIXME Non-ASCII is broken without this
 
 my $query   = CGI->new;
 my $sign_id = $query->param('sign')         || '';
