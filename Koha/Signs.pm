@@ -239,17 +239,27 @@ sub GetStreamsAttachedToSignWithRecords {
   foreach my $stream ( @{$streams} ) {
 
     my $records = RunSQL( ReplaceParamsInSQL( $stream->{'savedsql'}, $stream->{'params'} ) );
-    my @processed_records;
-    foreach my $rec ( @{$records} ) {
-      my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
-      if ( ! $marc ) {
-        next;
+
+    if ( $include_marc ) {
+
+      my @processed_records;
+      foreach my $rec ( @{$records} ) {
+        my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
+        if ( ! $marc ) {
+          next;
+        }
+        # FIXME Cache the processed records (more than one sign can have the same record)
+        $rec->{'marc'} = $marc;
+        push @processed_records, $rec;
       }
-      # FIXME Cache the processed records (more than one sign can have the same record)
-      $rec->{'marc'} = $marc;
-      push @processed_records, $rec;
+      $stream->{'records'} = \@processed_records;
+
+    } else {
+
+      $stream->{'records'} = $records;
+
     }
-    $stream->{'records'} = \@processed_records;
+
     push @changedstreams, $stream;
 
   }
