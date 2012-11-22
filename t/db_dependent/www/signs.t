@@ -61,7 +61,6 @@ $agent->get_ok( "$intranet/cgi-bin/koha/mainpage.pl", 'connect to intranet' );
 $agent->form_name('loginform');
 $agent->field( 'password', $password );
 $agent->field( 'userid',   $user );
-$agent->field( 'branch',   '' );
 $agent->click_ok( '', 'login to staff client' );
 $agent->get_ok( "$intranet/cgi-bin/koha/mainpage.pl", 'load main page' );
 
@@ -136,7 +135,6 @@ $agent->submit_form_ok({
   fields  => {
     'op'         => 'save_sign',
     'name'       => $sign_name,
-    'branchcode' => 'CPL', # FIXME Make this dynamic
     'webapp'     => 1,
     'swatch'     => 'a',
     'idleafter'  => $idleafter,
@@ -215,7 +213,6 @@ $agent->submit_form_ok({
     'op'         => 'save_sign',
     'sign_id'    => $sign_id,
     'name'       => $sign_name,
-    'branchcode' => 'CPL', # FIXME Make this dynamic
     'webapp'     => 0,
     'swatch'     => 'c',
     'idleafter'  => $idleafter2,

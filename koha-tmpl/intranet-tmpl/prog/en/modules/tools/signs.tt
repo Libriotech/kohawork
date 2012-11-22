@@ -124,18 +124,6 @@
     <legend id="general_info_lgd">General settings</legend>
     <ol>
     <li><label for="name">Name</label><input type="text" name="name" value="[% sign.name %]" /></li>
-    <li><label for="branchcode">Library</label>
-      <select name="branchcode" id="branchcode">
-        <option value="">Choose a library</option>
-        [% FOREACH b IN branches %]
-          [% IF ( sign.branchcode == b.value ) %]
-            <option value="[% b.value %]" selected="selected">[% b.branchname %]</option>
-          [% ELSE %]
-            <option value="[% b.value %]">[% b.branchname %]</option>
-          [% END %]
-        [% END %]
-      </select>
-    </li>
     </ol>
   </fieldset>
   <fieldset id="sign_appearance" class="rows">
@@ -193,8 +181,6 @@
 [% ELSIF op == 'edit_streams' %]
 
   <h1>Edit streams attached to [% sign.name %]</h1>
-  <p>Library: [% sign.branchname %]</p>
-
   <h2>Streams already attached to this sign</h2>
   [% IF ( attached.size ) %]
     <table>
@@ -361,7 +347,6 @@
     <thead>
     <tr>
     <th>Name</th>
-    <th>Library</th>
     <th>Web-app</th>
     <th>Swatch</th>
     <th>Transition</th>
@@ -376,7 +361,6 @@
     [% FOREACH s IN signs %]
     [% IF ( loop.even ) %]<tr class="highlight">[% ELSE %]<tr>[% END %]
     <td><a href="?op=view_sign&amp;sign_id=[% s.sign_id %]">[% s.name %]</a></td>
-    <td>[% s.branchname %]</td>
     <td>[% IF ( s.webapp ) %]Yes[% ELSE %]No[% END %]</td>
     <td>[% s.swatch %]</td>
     <td>[% s.transition %]</td>
