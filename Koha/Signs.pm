@@ -98,19 +98,19 @@ sub DeleteStream {
 
 sub AddSign {
 
-  my ( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
+  my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
+  my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
+  return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
 
 }
 
 sub EditSign {
 
-  my ( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id ) = @_;
+  my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE signs SET branchcode = ?, name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
-  return $sth->execute( $branchcode, $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id );
+  my $sth = $dbh->prepare("UPDATE signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
+  return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id );
 
 }
 
@@ -120,10 +120,9 @@ sub GetSign {
 
   return unless $sign_id;
 
-  my $query = "SELECT s.*, b.branchname
-               FROM signs as s LEFT JOIN branches as b
-               ON s.branchcode = b.branchcode
-               WHERE s.sign_id = ?";
+  my $query = "SELECT *
+               FROM signs
+               WHERE sign_id = ?";
   my $sth = $dbh->prepare($query);
   $sth->execute($sign_id);
   return $sth->fetchrow_hashref();
@@ -132,10 +131,9 @@ sub GetSign {
 
 sub GetAllSigns {
 
-  my $query = "SELECT s.*, b.branchname
-               FROM signs as s LEFT JOIN branches as b
-               ON s.branchcode = b.branchcode
-               ORDER BY s.name";
+  my $query = "SELECT *
+               FROM signs
+               ORDER BY name";
   my $sth = $dbh->prepare($query);
   $sth->execute();
   return $sth->fetchall_arrayref({});
@@ -201,7 +199,6 @@ sub ReplaceParamsInSQL {
   foreach my $param ( split /&/, $params ) {
     my ( $key, $value ) = split /=/, $param;
     # FIXME Handle spaces
-    # FIXME How do we get our hands on the branchcode stored in the sign?
     $sql =~ s/<<$key>>/$value/g;
   }
   return $sql;

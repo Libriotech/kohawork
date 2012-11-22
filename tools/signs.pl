@@ -37,7 +37,6 @@ Allows authorized users to create and manage digital signs for the OPAC.
 use Koha::Signs;
 use CGI;
 use C4::Auth;
-use C4::Branch;
 use C4::Context;
 use C4::Log;
 use C4::Output;
@@ -137,7 +136,6 @@ if ( $op eq 'add_stream' ) {
 
   $template->param(
     'op'       => 'sign_form',
-    'branches' => GetBranchesLoop,
     'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
   );
 
@@ -146,7 +144,6 @@ if ( $op eq 'add_stream' ) {
   $template->param(
     'op'          => 'sign_form',
     'sign'        => GetSign( $sign_id ),
-    'branches'    => GetBranchesLoop,
     'script_name' => $script_name,
     'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
   );
@@ -154,9 +151,9 @@ if ( $op eq 'add_stream' ) {
 } elsif ( $op eq 'save_sign' ) {
 
   if ($cgi->param('sign_id')) {
-    EditSign( $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay'), $cgi->param('sign_id') );
+    EditSign( $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay'), $cgi->param('sign_id') );
   } else {
-    AddSign(  $cgi->param('branchcode'), $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay') );
+    AddSign(  $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay') );
   }
   print $cgi->redirect($script_name);
 

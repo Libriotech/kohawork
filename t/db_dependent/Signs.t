@@ -53,7 +53,7 @@ like( $editedstream->{'name'},         qr/$name3/,   "GetStream after EditStream
 
 ### Signs
 
-my $sign_name                = 'some unlikely sign name';
+my $sign_name                = "some sign name $md5";
 my $sign_webapp              = 0;
 my $sign_webapp_changed      = 0;
 my $sign_swatch              = '';
@@ -70,7 +70,7 @@ ok( AddSign( $sign_name, $sign_webapp, $sign_swatch, $sign_transition, $sign_idl
 
 # Find the sign_id of the sign we just added, for use in further tests
 # FIXME AddSign sghould return this
-my $signquery = "SELECT sign_id FROM signs WHERE name =";
+my $signquery = "SELECT sign_id FROM signs WHERE name = ?";
 my $signsth = $dbh->prepare( $signquery );
 $signsth->execute( $sign_name );
 my ( $sign_id ) = $signsth->fetchrow_array();
@@ -78,7 +78,6 @@ my ( $sign_id ) = $signsth->fetchrow_array();
 # GetSign
 my $sign;
 ok( $sign = GetSign( $sign_id ), "GetSign (sign_id = $sign_id) ok" );
-like( $sign->{'branchcode'}, qr/$sign_branchcode/, "GetSign branchcode ok" );
 like( $sign->{'name'},       qr/$sign_name/,       "GetSign name ok" );
 like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetSign webapp ok" );
 like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetSign swatch ok" );
@@ -93,7 +92,6 @@ my $num_of_signs = @{$signs};
 cmp_ok( $num_of_signs, ">", 0, "GetAllSigns found at least one sign" );
 foreach my $sign ( @{$signs} ) {
   if ( $sign->{'sign_id'} == $sign_id ) {
-    like( $sign->{'branchcode'}, qr/$sign_branchcode/, "GetAllSigns branchcode ok" );
     like( $sign->{'name'},       qr/$sign_name/,       "GetAllSigns name ok" );
     like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetAllSigns webapp ok" );
     like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetAllSigns swatch ok" );
@@ -105,9 +103,8 @@ foreach my $sign ( @{$signs} ) {
 
 # EditSign
 my $editedsign;
-ok( EditSign( $sign_branchcode, $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_transition_changed, $sign_idleafter_changed, $sign_pagedelay_changed, $sign_id ), "EditSign ok" );
+ok( EditSign( $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_transition_changed, $sign_idleafter_changed, $sign_pagedelay_changed, $sign_id ), "EditSign ok" );
 ok( $editedsign = GetSign( $sign_id ), "GetSign on edited sign ok" );
-like( $editedsign->{'branchcode'}, qr/$sign_branchcode/,         "GetSign after EditSign branchcode ok" );
 like( $editedsign->{'name'},       qr/$sign_name/,               "GetSign after EditSign name ok" );
 like( $editedsign->{'webapp'},     qr/$sign_webapp_changed/,     "GetSign after EditSign webapp ok" );
 like( $editedsign->{'swatch'},     qr/$sign_swatch_changed/,     "GetSign after EditSign swatch ok" );
