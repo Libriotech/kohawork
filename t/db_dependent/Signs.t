@@ -8,7 +8,7 @@ use Koha::Signs;
 
 my $dbh = C4::Context->dbh;
 
-my $md5 = md5_hex( time() );
+my $md5       = md5_hex( time() );
 my $name1     = "some name $md5";
 my $name2     = "second name $md5";
 my $name3     = "third name $md5";
@@ -53,20 +53,26 @@ like( $editedstream->{'name'},         qr/$name3/,   "GetStream after EditStream
 
 ### Signs
 
-my $sign_branchcode     = 'CPL';
-my $sign_name           = 'some unlikely sign name';
-my $sign_webapp         = 0;
-my $sign_webapp_changed = 0;
-my $sign_swatch         = '';
-my $sign_swatch_changed = 'c';
+my $sign_name                = 'some unlikely sign name';
+my $sign_webapp              = 0;
+my $sign_webapp_changed      = 0;
+my $sign_swatch              = '';
+my $sign_swatch_changed      = 'c';
+my $sign_transition          = 'fade';
+my $sign_transition_changed  = 'pop';
+my $sign_idleafter           = '5';
+my $sign_idleafter_changed   = '10';
+my $sign_pagedelay           = '5';
+my $sign_pagedelay_changed   = '10';
 
 # AddSign
-ok( AddSign( $sign_branchcode, $sign_name, $sign_webapp, $sign_swatch ), "AddSign" );
+ok( AddSign( $sign_name, $sign_webapp, $sign_swatch, $sign_transition, $sign_idleafter, $sign_pagedelay ), "AddSign" );
 
 # Find the sign_id of the sign we just added, for use in further tests
-my $signquery = "SELECT sign_id FROM signs WHERE branchcode = ? AND name = ? AND webapp = ?";
+# FIXME AddSign sghould return this
+my $signquery = "SELECT sign_id FROM signs WHERE name =";
 my $signsth = $dbh->prepare( $signquery );
-$signsth->execute( $sign_branchcode, $sign_name, $sign_webapp );
+$signsth->execute( $sign_name );
 my ( $sign_id ) = $signsth->fetchrow_array();
 
 # GetSign
@@ -76,6 +82,9 @@ like( $sign->{'branchcode'}, qr/$sign_branchcode/, "GetSign branchcode ok" );
 like( $sign->{'name'},       qr/$sign_name/,       "GetSign name ok" );
 like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetSign webapp ok" );
 like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetSign swatch ok" );
+like( $sign->{'transition'}, qr/$sign_transition/, "GetSign transition ok" );
+like( $sign->{'idleafter'},  qr/$sign_idleafter/,  "GetSign idleafter ok" );
+like( $sign->{'pagedelay'},  qr/$sign_pagedelay/,  "GetSign pagedelay ok" );
 
 # GetAllSigns
 my $signs;
@@ -87,18 +96,24 @@ foreach my $sign ( @{$signs} ) {
     like( $sign->{'branchcode'}, qr/$sign_branchcode/, "GetAllSigns branchcode ok" );
     like( $sign->{'name'},       qr/$sign_name/,       "GetAllSigns name ok" );
     like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetAllSigns webapp ok" );
-    like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetSign swatch ok" );
+    like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetAllSigns swatch ok" );
+    like( $sign->{'transition'}, qr/$sign_transition/, "GetAllSigns transition ok" );
+    like( $sign->{'idleafter'},  qr/$sign_idleafter/,  "GetAllSigns idleafter ok" );
+    like( $sign->{'pagedelay'},  qr/$sign_pagedelay/,  "GetAllSigns pagedelay ok" );
   }
 }
 
 # EditSign
 my $editedsign;
-ok( EditSign( $sign_branchcode, $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_id ), "EditSign ok" );
+ok( EditSign( $sign_branchcode, $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_transition_changed, $sign_idleafter_changed, $sign_pagedelay_changed, $sign_id ), "EditSign ok" );
 ok( $editedsign = GetSign( $sign_id ), "GetSign on edited sign ok" );
-like( $editedsign->{'branchcode'}, qr/$sign_branchcode/,     "GetSign after EditSign branchcode ok" );
-like( $editedsign->{'name'},       qr/$sign_name/,           "GetSign after EditSign name ok" );
-like( $editedsign->{'webapp'},     qr/$sign_webapp_changed/, "GetSign after EditSign webapp ok" );
-like( $editedsign->{'swatch'},     qr/$sign_swatch_changed/, "GetSign after EditSign swatch ok" );
+like( $editedsign->{'branchcode'}, qr/$sign_branchcode/,         "GetSign after EditSign branchcode ok" );
+like( $editedsign->{'name'},       qr/$sign_name/,               "GetSign after EditSign name ok" );
+like( $editedsign->{'webapp'},     qr/$sign_webapp_changed/,     "GetSign after EditSign webapp ok" );
+like( $editedsign->{'swatch'},     qr/$sign_swatch_changed/,     "GetSign after EditSign swatch ok" );
+like( $editedsign->{'transition'}, qr/$sign_transition_changed/, "GetSign after EditSign transition ok" );
+like( $editedsign->{'idleafter'},  qr/$sign_idleafter_changed/,  "GetSign after EditSign idleafter ok" );
+like( $editedsign->{'pagedelay'},  qr/$sign_pagedelay_changed/,  "GetSign after EditSign pagedelay ok" );
 
 ### Attaching streams to signs
 
@@ -127,6 +142,9 @@ foreach my $attatchedstream ( @{$attatchedstreams} ) {
     like( $attatchedstream->{'name'},         qr/$name3/,   "GetStreamsAttachedToSign found a sign with our name" );
   }
 }
+
+# GetStreamsAttachedToSignWithRecords
+ok( GetStreamsAttachedToSignWithRecords( $sign_id ), "GetStreamsAttachedToSignWithRecords ok for sign_id = $sign_id" );
 
 ### Clean up
 
