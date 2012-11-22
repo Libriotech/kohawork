@@ -48,7 +48,7 @@ if ( C4::Context->preference('OPACDigitalSigns') ) {
   if ( $sign_id ne '' ) {
 
     $template->{VARS}->{'sign'}    = GetSign( $sign_id );
-    $template->{VARS}->{'streams'} = GetStreamsAttachedToSignWithRecords( $sign_id );
+    $template->{VARS}->{'streams'} = GetStreamsAttachedToSignWithRecords( $sign_id, 1 );
 
   } else {
 
