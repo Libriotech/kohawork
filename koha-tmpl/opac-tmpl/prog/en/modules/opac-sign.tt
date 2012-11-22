@@ -6,18 +6,15 @@
 <link rel="shortcut icon" href="[% IF ( OpacFavicon ) %][% OpacFavicon %][% ELSE %][% themelang %]/includes/favicon.ico[% END %]" type="image/x-icon" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 [%- IF ( sign.webapp ) %]<meta name="apple-mobile-web-app-capable" content="yes" />[% END -%]
-[%# FIXME Use the JQM files from JQM in early stages of development, to be replaced with a local version later %]
-[%# <script type="text/javascript" src="[% themelang % ]/lib/jquery/jquery.js"></script> %]
 [%- IF ( OPACDigitalSignsCSS != '' ) -%]
   <style type="text/css">
   [% OPACDigitalSignsCSS %]
   </style>
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css" />
+  <link rel="stylesheet" href="/opac-tmpl/lib/jquery/mobile/jquery.mobile.structure.min.css" />
 [%- ELSE -%]
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+  <link rel="stylesheet" href="/opac-tmpl/lib/jquery/mobile/jquery.mobile.min.css" />
 [%- END -%]
-<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-[%# See http://jquerymobile.com/demos/1.2.0/docs/api/globalconfig.html for info about the order in which things are loaded. %]
+<script type="text/javascript" src="[% themelang %]/lib/jquery/jquery.js"></script>
 <script>
 
 var ShowRecordsIntervalID;
@@ -89,7 +86,7 @@ function ShowRecords() {
 [% END %]
 
 </script>
-<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+<script src="/opac-tmpl/lib/jquery/mobile/jquery.mobile.min.js"></script>
 </head>
 <body>
 [%- IF ( enabled == 0 )  -%]
