@@ -22,7 +22,6 @@ use warnings;
 
 use CGI;
 use C4::Auth;
-use C4::Biblio;
 use C4::Output;
 use Koha::Signs;
 use Data::Dumper; # FIXME Debug only
@@ -48,30 +47,8 @@ if ( C4::Context->preference('OPACDigitalSigns') ) {
   # Display a sign with streams
   if ( $sign_id ne '' ) {
 
-    my $streams = GetStreamsAttachedToSign( $sign_id );
-    my @changedstreams;
-
-    # Add records to the streams
-    foreach my $stream ( @{$streams} ) {
-
-      my $records = RunSQL( ReplaceParamsInSQL( $stream->{'savedsql'}, $stream->{'params'} ) );
-      my @processed_records;
-      foreach my $rec ( @{$records} ) {
-        my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
-        if ( ! $marc ) {
-          next;
-        }
-        # FIXME Cache the processed records (more than one sign can have the same record)
-        $rec->{'marc'} = $marc;
-        push @processed_records, $rec;
-      }
-      $stream->{'records'} = \@processed_records;
-      push @changedstreams, $stream;
-
-    }
-
-    $template->{VARS}->{'sign'}                = GetSign( $sign_id );
-    $template->{VARS}->{'streams'}             = \@changedstreams;
+    $template->{VARS}->{'sign'}    = GetSign( $sign_id );
+    $template->{VARS}->{'streams'} = GetStreamsAttachedToSignWithRecords( $sign_id );
 
   } else {
 
