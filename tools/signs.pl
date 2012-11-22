@@ -165,6 +165,7 @@ if ( $op eq 'add_stream' ) {
   $template->param(
     'op'          => 'view_sign',
     'sign'        => GetSign( $sign_id ),
+    'streams'     => GetStreamsAttachedToSignWithRecords( $sign_id, 0 ),
     'script_name' => $script_name,
   );
 

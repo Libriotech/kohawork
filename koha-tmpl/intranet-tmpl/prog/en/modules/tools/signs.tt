@@ -320,7 +320,20 @@
 [% ELSIF op == 'view_sign' %]
 
   <h1>[% sign.name %]</h1>
-  [%# FIXME - Add more content for the sign %]
+  <h2>Streams</h2>
+
+  [% IF ( streams ) %]
+    [% FOREACH stream IN streams %]
+      <h3>[% stream.name %]</h3>
+      <ul>
+      [% FOREACH record IN stream.records %]
+        <li><a href="/cgi-bin/koha/catalogue/detail.pl?biblionumber=[% record.biblionumber %]">[% record.title %]</a></li>
+      [% END %]
+      </ul>
+    [% END %]
+  [% ELSE %]
+    <p>No streams attached.</p>
+  [% END%]
 
 [% ELSIF op == 'view_stream' %]
 
