@@ -1,6 +1,7 @@
 package Koha::Signs;
 
 use C4::Context;
+use C4::Biblio;
 use Modern::Perl;
 
 use base qw( Exporter );
@@ -22,6 +23,7 @@ our @EXPORT = qw(
 
   AttachStreamToSign
   GetStreamsAttachedToSign
+  GetStreamsAttachedToSignWithRecords
   AddParamsForAttachedStream
   GetParams
   ReplaceParamsInSQL
@@ -221,6 +223,38 @@ sub GetStreamsAttachedToSign {
   my $sth = $dbh->prepare( $query );
   $sth->execute( $sign_id );
   return $sth->fetchall_arrayref({});
+
+}
+
+sub GetStreamsAttachedToSignWithRecords {
+
+  my ( $sign_id, $include_marc ) = @_;
+
+  return unless $sign_id;
+
+  my $streams = GetStreamsAttachedToSign( $sign_id );
+  my @changedstreams;
+
+  # Add records to the streams
+  foreach my $stream ( @{$streams} ) {
+
+    my $records = RunSQL( ReplaceParamsInSQL( $stream->{'savedsql'}, $stream->{'params'} ) );
+    my @processed_records;
+    foreach my $rec ( @{$records} ) {
+      my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
+      if ( ! $marc ) {
+        next;
+      }
+      # FIXME Cache the processed records (more than one sign can have the same record)
+      $rec->{'marc'} = $marc;
+      push @processed_records, $rec;
+    }
+    $stream->{'records'} = \@processed_records;
+    push @changedstreams, $stream;
+
+  }
+
+  return \@changedstreams;
 
 }
 
