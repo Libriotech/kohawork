@@ -43,6 +43,7 @@ $(document).bind("mobileinit", function(){
       // Start counting so we know when we are idle again
       WaitForIdleTimeoutID = WaitForIdle();
     } else  {
+      // FIXME Remove this part
       // This is the result of ShowRecords() turning pages automatically
       // window.clearTimeout( WaitForIdleTimeoutID );
     }
