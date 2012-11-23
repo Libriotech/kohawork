@@ -107,7 +107,11 @@ function ShowRecords() {
             [%# The header has a list of buttons for all the streams %]
             [%- SET localstreams = streams -%]
             [%- FOREACH stream IN localstreams -%]
-              <a href="#stream_[% stream.sign_stream_id %]" data-inline="true" data-role="button">[% stream.name %]</a>
+              [% IF s.sign_stream_id == stream.sign_stream_id %]
+                <a href="#stream_[% stream.sign_stream_id %]" data-inline="true" data-icon="star" data-role="button">[% stream.name %]</a>
+              [% ELSE %]
+                <a href="#stream_[% stream.sign_stream_id %]" data-inline="true" data-role="button">[% stream.name %]</a>
+              [% END %]
             [% END -%]
             </div>
           </div>
