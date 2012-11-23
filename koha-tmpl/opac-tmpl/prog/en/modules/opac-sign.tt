@@ -20,8 +20,12 @@
 var ShowRecordsIntervalID;
 var WaitForIdleTimeoutID;
 var IsAnIdlePageChange = 0;
+[% IF ( sign.idleafter ) -%]
 var WaitBeforeIdle     = [% sign.idleafter %] * 1000;
+[%- END %]
+[% IF ( sign.pagedelay ) %]
 var WaitBetweenRecords = [% sign.pagedelay %] * 1000;
+[% END %]
 
 $(document).bind("mobileinit", function(){
 
