@@ -37,12 +37,14 @@ my $dbh = C4::Context->dbh;
 
 # Streams
 
+# Returns id of new sign_stream
 sub AddStream {
 
   my ( $name, $report ) = @_;
 
   my $sth=$dbh->prepare("INSERT INTO sign_streams SET name = ?, saved_sql_id = ?");
-  return $sth->execute( $name, $report );
+  $sth->execute( $name, $report );
+  return $dbh->last_insert_id( undef, undef, 'sign_streams', 'sign_stream_id' );
 
 }
 
@@ -96,12 +98,14 @@ sub DeleteStream {
 
 # Signs
 
+# Returns id of new sign
 sub AddSign {
 
   my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
 
   my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
-  return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
+  $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
+  return $dbh->last_insert_id( undef, undef, 'signs', 'sign_id' );
 
 }
 
