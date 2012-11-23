@@ -133,7 +133,11 @@ function ShowRecords() {
               <div style="text-align: center;">
               [%- SET localstreams = streams -%]
               [%- FOREACH stream IN localstreams -%]
+              [% IF s.sign_stream_id == stream.sign_stream_id %]
+                <a href="#stream_[% stream.sign_stream_id %]" data-inline="true" data-icon="star" data-role="button">[% stream.name %]</a>
+              [% ELSE %]
                 <a href="#stream_[% stream.sign_stream_id %]" data-inline="true" data-role="button">[% stream.name %]</a>
+              [% END %]
               [% END -%]
               </div>
             </div>
