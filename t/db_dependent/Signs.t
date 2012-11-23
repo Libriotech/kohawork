@@ -1,12 +1,9 @@
 use Test::More qw(no_plan); # TODO Set the number
-use C4::Context;
 use Digest::MD5 qw( md5_hex );
 use Modern::Perl;
 
 BEGIN {use_ok('Koha::Signs') }
 use Koha::Signs;
-
-my $dbh = C4::Context->dbh;
 
 my $md5       = md5_hex( time() );
 my $name1     = "some name $md5";
@@ -18,13 +15,8 @@ my $parameter = "limit=3&dummy=$md5";
 ### Streams
 
 # AddStream
-ok( AddStream( $name1, $report1 ), "AddStream" );
-
-# Find the sign_stream_id of the stream we just added, for use in further tests
-my $query = "SELECT sign_stream_id FROM sign_streams WHERE saved_sql_id = '$report1' AND name = '$name1'";
-my $sth = $dbh->prepare($query);
-$sth->execute();
-my ( $sign_stream_id ) = $sth->fetchrow_array();
+my $sign_stream_id;
+ok( $sign_stream_id = AddStream( $name1, $report1 ), "AddStream" );
 
 # GetStream
 my $stream;
@@ -66,14 +58,8 @@ my $sign_pagedelay           = '5';
 my $sign_pagedelay_changed   = '10';
 
 # AddSign
-ok( AddSign( $sign_name, $sign_webapp, $sign_swatch, $sign_transition, $sign_idleafter, $sign_pagedelay ), "AddSign" );
-
-# Find the sign_id of the sign we just added, for use in further tests
-# FIXME AddSign sghould return this
-my $signquery = "SELECT sign_id FROM signs WHERE name = ?";
-my $signsth = $dbh->prepare( $signquery );
-$signsth->execute( $sign_name );
-my ( $sign_id ) = $signsth->fetchrow_array();
+my $sign_id;
+ok( $sign_id = AddSign( $sign_name, $sign_webapp, $sign_swatch, $sign_transition, $sign_idleafter, $sign_pagedelay ), "AddSign" );
 
 # GetSign
 my $sign;
