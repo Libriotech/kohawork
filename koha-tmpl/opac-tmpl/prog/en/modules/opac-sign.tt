@@ -14,6 +14,12 @@
 [%- ELSE -%]
   <link rel="stylesheet" href="/opac-tmpl/lib/jquery/mobile/jquery.mobile.min.css" />
 [%- END -%]
+<style type="text/css">
+.stopautopageturnbutton {
+  float: right;
+  display: none;
+}
+</style>
 <script type="text/javascript" src="[% themelang %]/lib/jquery/jquery.js"></script>
 <script>
 
@@ -42,10 +48,9 @@ $(document).bind("mobileinit", function(){
       window.clearInterval( ShowRecordsIntervalID );
       // Start counting so we know when we are idle again
       WaitForIdleTimeoutID = WaitForIdle();
+      $('.stopautopageturnbutton').hide();
     } else  {
-      // FIXME Remove this part
-      // This is the result of ShowRecords() turning pages automatically
-      // window.clearTimeout( WaitForIdleTimeoutID );
+      $('.stopautopageturnbutton').show();
     }
   });
 
@@ -148,6 +153,7 @@ function ShowRecords() {
             </div>
             <div data-role="content">
               <div class="recorddescription">
+              <a href="#stream[% s.sign_stream_id %]_biblio[% r.biblionumber %]" class="stopautopageturnbutton" data-role="button" data-inline="true">Stop</a>
               [%# Set some local variables, to make it easier to write the template in the syspref %]
               [%- SET record       = r.marc         -%]
               [%- SET biblionumber = r.biblionumber -%]
