@@ -30,10 +30,10 @@ ok( $streams = GetAllStreams, "GetAllStreams ok" );
 my $num_of_streams = @{$streams};
 cmp_ok( $num_of_streams, ">", 0, "GetAllStreams found at least one stream" );
 foreach my $stream ( @{$streams} ) {
-  if ( $stream->{'sign_stream_id'} == $sign_stream_id ) {
-    like( $stream->{'saved_sql_id'}, qr/$report1/, "GetAllStreams found a sign with our saved_sql_id" );
-    like( $stream->{'name'},         qr/$name1/,   "GetAllStreams found a sign with our name" );
-  }
+    if ( $stream->{'sign_stream_id'} == $sign_stream_id ) {
+        like( $stream->{'saved_sql_id'}, qr/$report1/, "GetAllStreams found a sign with our saved_sql_id" );
+        like( $stream->{'name'},         qr/$name1/,   "GetAllStreams found a sign with our name" );
+    }
 }
 
 # EditStream
@@ -77,14 +77,14 @@ ok( $signs = GetAllSigns, "GetAllSigns ok" );
 my $num_of_signs = @{$signs};
 cmp_ok( $num_of_signs, ">", 0, "GetAllSigns found at least one sign" );
 foreach my $sign ( @{$signs} ) {
-  if ( $sign->{'sign_id'} == $sign_id ) {
-    like( $sign->{'name'},       qr/$sign_name/,       "GetAllSigns name ok" );
-    like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetAllSigns webapp ok" );
-    like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetAllSigns swatch ok" );
-    like( $sign->{'transition'}, qr/$sign_transition/, "GetAllSigns transition ok" );
-    like( $sign->{'idleafter'},  qr/$sign_idleafter/,  "GetAllSigns idleafter ok" );
-    like( $sign->{'pagedelay'},  qr/$sign_pagedelay/,  "GetAllSigns pagedelay ok" );
-  }
+    if ( $sign->{'sign_id'} == $sign_id ) {
+        like( $sign->{'name'},       qr/$sign_name/,       "GetAllSigns name ok" );
+        like( $sign->{'webapp'},     qr/$sign_webapp/,     "GetAllSigns webapp ok" );
+        like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetAllSigns swatch ok" );
+        like( $sign->{'transition'}, qr/$sign_transition/, "GetAllSigns transition ok" );
+        like( $sign->{'idleafter'},  qr/$sign_idleafter/,  "GetAllSigns idleafter ok" );
+        like( $sign->{'pagedelay'},  qr/$sign_pagedelay/,  "GetAllSigns pagedelay ok" );
+    }
 }
 
 # EditSign
@@ -120,10 +120,10 @@ ok( $attatchedstreams = GetStreamsAttachedToSign( $sign_id ), "GetStreamsAttache
 my $num_of_attached_streams = @{$attatchedstreams};
 cmp_ok( $num_of_attached_streams, ">", 0, "GetStreamsAttachedToSign found at least one stream" );
 foreach my $attatchedstream ( @{$attatchedstreams} ) {
-  if ( $attatchedstream->{'sign_stream_id'} == $sign_stream_id ) {
-    like( $attatchedstream->{'saved_sql_id'}, qr/$report1/, "GetStreamsAttachedToSign found a sign with our saved_sql_id" );
-    like( $attatchedstream->{'name'},         qr/$name3/,   "GetStreamsAttachedToSign found a sign with our name" );
-  }
+    if ( $attatchedstream->{'sign_stream_id'} == $sign_stream_id ) {
+        like( $attatchedstream->{'saved_sql_id'}, qr/$report1/, "GetStreamsAttachedToSign found a sign with our saved_sql_id" );
+        like( $attatchedstream->{'name'},         qr/$name3/,   "GetStreamsAttachedToSign found a sign with our name" );
+    }
 }
 
 # GetStreamsAttachedToSignWithRecords

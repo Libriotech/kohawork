@@ -87,12 +87,12 @@ $agent->content_like( qr/Report/,     'content contains Report' );
 # diag( Dumper @report_selects );
 
 $agent->submit_form_ok({
-  form_id => 'streamform',
-  fields  => {
-    'op'     => 'save_stream',
-    'name'   => $stream_name,
-    'report' => 2, # FIXME Make this dynamic?
-  }
+    form_id => 'streamform',
+    fields  => {
+        'op'     => 'save_stream',
+        'name'   => $stream_name,
+        'report' => 2, # FIXME Make this dynamic?
+    }
 }, 'add a new stream' );
 $agent->content_like( qr/$stream_name/, 'content contains new stream name' );
 
@@ -116,13 +116,13 @@ $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
 $agent->follow_link_ok( { url_regex => qr/edit_stream.*$sign_stream_id/i }, 'click on Edit for stream' );
 $agent->content_like( qr/$stream_name/, 'content contains stream name' );
 $agent->submit_form_ok({
-  form_id => 'streamform',
-  fields  => {
-    'op'             => 'save_stream',
-    'sign_stream_id' => $sign_stream_id,
-    'name'           => $stream_name,
-    'report'         => 1, # FIXME Make this dynamic?
-  }
+    form_id => 'streamform',
+    fields  => {
+        'op'             => 'save_stream',
+        'sign_stream_id' => $sign_stream_id,
+        'name'           => $stream_name,
+        'report'         => 1, # FIXME Make this dynamic?
+    }
 }, 'edit stream' );
 $agent->content_like( qr/$stream_name/, 'content contains stream name' );
 
@@ -131,16 +131,16 @@ $agent->content_like( qr/$stream_name/, 'content contains stream name' );
 $agent->follow_link_ok( { url_regex => qr/op=add_sign/i }, 'open Add sign page' );
 $agent->content_like( qr/Add sign/, 'content contains Add sign' );
 $agent->submit_form_ok({
-  form_id => 'signform',
-  fields  => {
-    'op'         => 'save_sign',
-    'name'       => $sign_name,
-    'webapp'     => 1,
-    'swatch'     => 'a',
-    'idleafter'  => $idleafter,
-    'pagedelay'  => $pagedelay,
-    'transition' => $transition,
-  }
+    form_id => 'signform',
+    fields  => {
+        'op'         => 'save_sign',
+        'name'       => $sign_name,
+        'webapp'     => 1,
+        'swatch'     => 'a',
+        'idleafter'  => $idleafter,
+        'pagedelay'  => $pagedelay,
+        'transition' => $transition,
+    }
 }, 'add a new sign' );
 $agent->content_like( qr/$sign_name/, 'content contains new sign name' );
 
@@ -160,12 +160,12 @@ $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
 $agent->follow_link_ok( { url_regex => qr/edit_streams&sign_id=$sign_id$/i }, 'click on Edit streams' );
 $agent->content_like( qr/Edit streams attached to $sign_name/, 'content contains Edit streams attached to sign name' );
 $agent->submit_form_ok({
-  form_id => 'attach_stream_to_sign_form',
-  fields  => {
-    'op'             => 'attach_stream_to_sign',
-    'sign_id'        => $sign_id,
-    'sign_stream_id' => $sign_stream_id,
-  }
+    form_id => 'attach_stream_to_sign_form',
+    fields  => {
+        'op'             => 'attach_stream_to_sign',
+        'sign_id'        => $sign_id,
+        'sign_stream_id' => $sign_stream_id,
+    }
 }, 'attach stream to sign' );
 $agent->content_like( qr/Parameters for $stream_name/, 'content contains Parameters for stream name' );
 
@@ -176,12 +176,12 @@ my $sign_to_stream_id = $signstreamquery->param( 'sign_to_stream_id' );
 diag ( 'sign_to_stream_id: ', $sign_to_stream_id );
 
 $agent->submit_form_ok({
-  form_id => 'get_params_form',
-  fields  => {
-    'op'                => 'save_params',
-    'sign_to_stream_id' => $sign_to_stream_id,
-    'parameters'        => $params,
-  }
+    form_id => 'get_params_form',
+    fields  => {
+        'op'                => 'save_params',
+        'sign_to_stream_id' => $sign_to_stream_id,
+        'parameters'        => $params,
+    }
 }, 'save params' );
 
 $agent->content_like( qr/Parameters for $stream_name/, 'content contains Parameters for stream name' );
@@ -208,17 +208,17 @@ $agent->follow_link_ok( { text => 'Digital signs' }, 'go to Digital signs' );
 $agent->follow_link_ok( { url_regex => qr/edit_sign.*$sign_id/i }, 'click on Edit for sign' );
 $agent->content_like( qr/$sign_name/, 'content contains sign name' );
 $agent->submit_form_ok({
-  form_id => 'signform',
-  fields  => {
-    'op'         => 'save_sign',
-    'sign_id'    => $sign_id,
-    'name'       => $sign_name,
-    'webapp'     => 0,
-    'swatch'     => 'c',
-    'idleafter'  => $idleafter2,
-    'pagedelay'  => $pagedelay2,
-    'transition' => $transition2,
-  }
+    form_id => 'signform',
+    fields  => {
+        'op'         => 'save_sign',
+        'sign_id'    => $sign_id,
+        'name'       => $sign_name,
+        'webapp'     => 0,
+        'swatch'     => 'c',
+        'idleafter'  => $idleafter2,
+        'pagedelay'  => $pagedelay2,
+        'transition' => $transition2,
+    }
 }, 'edit sign' );
 $agent->content_like( qr/$sign_name/, 'content contains sign name' );
 
@@ -254,11 +254,11 @@ $agent->content_like( qr/$stream_name/, 'content contains stream name' );
 
 # Confirm delete
 $agent->submit_form_ok({
-  form_id => 'confirm_stream_delete_form',
-  fields  => {
-    'op'             => 'del_stream_ok',
-    'sign_stream_id' => $sign_stream_id,
-  }
+    form_id => 'confirm_stream_delete_form',
+    fields  => {
+        'op'             => 'del_stream_ok',
+        'sign_stream_id' => $sign_stream_id,
+    }
 }, 'confirm delete of stream' );
 $agent->content_like( qr/Stream deleted/, 'stream deleted' );
 
@@ -279,11 +279,11 @@ $agent->content_like( qr/$sign_name/, 'content contains sign name' );
 
 # Confirm delete
 $agent->submit_form_ok({
-  form_id => 'confirm_sign_delete_form',
-  fields  => {
-    'op'      => 'del_sign_ok',
-    'sign_id' => $sign_id,
-  }
+    form_id => 'confirm_sign_delete_form',
+    fields  => {
+        'op'      => 'del_sign_ok',
+        'sign_id' => $sign_id,
+    }
 }, 'confirm delete of sign' );
 $agent->content_like( qr/Sign deleted/, 'sign deleted' );
 
