@@ -47,16 +47,14 @@ my $cgi = new CGI;
 my $dbh = C4::Context->dbh;
 my $script_name = 'signs.pl';
 
-my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
-    {
-        template_name   => "tools/signs.tt",
-        query           => $cgi,
-        type            => "intranet",
-        authnotrequired => 0,
-        flagsrequired   => { tools => 'edit_digital_signs' },
-        debug           => 0,
-    }
-);
+my ( $template, $loggedinuser, $cookie ) = get_template_and_user({
+  template_name   => "tools/signs.tt",
+  query           => $cgi,
+  type            => "intranet",
+  authnotrequired => 0,
+  flagsrequired   => { tools => 'edit_digital_signs' },
+  debug           => 0,
+});
 
 my $op                = $cgi->param('op') || '';
 my $sign_id           = $cgi->param('sign_id') || '';
@@ -165,7 +163,6 @@ if ( $op eq 'add_stream' ) {
     'streams'     => GetStreamsAttachedToSignWithRecords( $sign_id, 0 ),
     'script_name' => $script_name,
   );
-
 
 } elsif ( $op eq 'del_sign' && $sign_id ne '' ) {
 
