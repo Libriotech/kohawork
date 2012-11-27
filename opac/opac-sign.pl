@@ -17,14 +17,12 @@
 # with Koha; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-use strict;
-use warnings;
-
 use CGI;
 use C4::Auth;
 use C4::Output;
 use Koha::Signs;
 use Data::Dumper; # FIXME Debug only
+use Modern::Perl;
 
 binmode STDOUT, ':encoding(UTF-8)'; # FIXME Non-ASCII is broken without this
 
