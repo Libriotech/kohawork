@@ -9,27 +9,27 @@ use base qw( Exporter );
 # set the version for version checking
 our @EXPORT = qw(
 
-  AddStream
-  EditStream
-  GetStream
-  GetAllStreams
-  DeleteStream
+    AddStream
+    EditStream
+    GetStream
+    GetAllStreams
+    DeleteStream
 
-  AddSign
-  EditSign
-  GetSign
-  GetAllSigns
-  DeleteSign
+    AddSign
+    EditSign
+    GetSign
+    GetAllSigns
+    DeleteSign
 
-  AttachStreamToSign
-  GetStreamsAttachedToSign
-  GetStreamsAttachedToSignWithRecords
-  AddParamsForAttachedStream
-  GetParams
-  ReplaceParamsInSQL
-  DetachStreamFromSign
+    AttachStreamToSign
+    GetStreamsAttachedToSign
+    GetStreamsAttachedToSignWithRecords
+    AddParamsForAttachedStream
+    GetParams
+    ReplaceParamsInSQL
+    DetachStreamFromSign
 
-  RunSQL
+    RunSQL
 
 );
 
@@ -40,59 +40,59 @@ my $dbh = C4::Context->dbh;
 # Returns id of new sign_stream
 sub AddStream {
 
-  my ( $name, $report ) = @_;
+    my ( $name, $report ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO sign_streams SET name = ?, saved_sql_id = ?");
-  $sth->execute( $name, $report );
-  return $dbh->last_insert_id( undef, undef, 'sign_streams', 'sign_stream_id' );
+    my $sth=$dbh->prepare("INSERT INTO sign_streams SET name = ?, saved_sql_id = ?");
+    $sth->execute( $name, $report );
+    return $dbh->last_insert_id( undef, undef, 'sign_streams', 'sign_stream_id' );
 
 }
 
 sub EditStream {
 
-  my ( $name, $report, $sign_stream_id ) = @_;
+    my ( $name, $report, $sign_stream_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE sign_streams SET name = ?, saved_sql_id = ? WHERE sign_stream_id = ?");
-  return $sth->execute( $name, $report, $sign_stream_id );
+    my $sth = $dbh->prepare("UPDATE sign_streams SET name = ?, saved_sql_id = ? WHERE sign_stream_id = ?");
+    return $sth->execute( $name, $report, $sign_stream_id );
 
 }
 
 sub GetStream {
 
-  my ( $sign_id ) = @_;
+    my ( $sign_id ) = @_;
 
-  return unless $sign_id;
+    return unless $sign_id;
 
-  my $query = "SELECT s.*, sq.report_name, sq.savedsql
-               FROM sign_streams AS s, saved_sql AS sq
-               WHERE s.saved_sql_id = sq.id
-                 AND s.sign_stream_id = ?";
-  my $sth = $dbh->prepare($query);
-  $sth->execute($sign_id);
-  return $sth->fetchrow_hashref();
+    my $query = "SELECT s.*, sq.report_name, sq.savedsql
+                 FROM sign_streams AS s, saved_sql AS sq
+                 WHERE s.saved_sql_id = sq.id
+                   AND s.sign_stream_id = ?";
+    my $sth = $dbh->prepare($query);
+    $sth->execute($sign_id);
+    return $sth->fetchrow_hashref();
 
 }
 
 sub GetAllStreams {
 
-  my $query = "SELECT s.*, sq.report_name, sq.savedsql
-               FROM sign_streams AS s, saved_sql AS sq
-               WHERE s.saved_sql_id = sq.id
-               ORDER BY s.name";
-  my $sth = $dbh->prepare($query);
-  $sth->execute();
-  return $sth->fetchall_arrayref({});
+    my $query = "SELECT s.*, sq.report_name, sq.savedsql
+                 FROM sign_streams AS s, saved_sql AS sq
+                 WHERE s.saved_sql_id = sq.id
+                 ORDER BY s.name";
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+    return $sth->fetchall_arrayref({});
 
 }
 
 sub DeleteStream {
 
-  my ( $sign_stream_id ) = @_;
+    my ( $sign_stream_id ) = @_;
 
-  return unless $sign_stream_id;
+    return unless $sign_stream_id;
 
-  my $sth = $dbh->prepare('DELETE FROM sign_streams WHERE sign_stream_id = ?');
-  return $sth->execute($sign_stream_id);
+    my $sth = $dbh->prepare('DELETE FROM sign_streams WHERE sign_stream_id = ?');
+    return $sth->execute($sign_stream_id);
 
 }
 
@@ -101,57 +101,57 @@ sub DeleteStream {
 # Returns id of new sign
 sub AddSign {
 
-  my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
+    my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
 
-  my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
-  $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
-  return $dbh->last_insert_id( undef, undef, 'signs', 'sign_id' );
+    my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
+    $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
+    return $dbh->last_insert_id( undef, undef, 'signs', 'sign_id' );
 
 }
 
 sub EditSign {
 
-  my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id ) = @_;
+    my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id ) = @_;
 
-  my $sth = $dbh->prepare("UPDATE signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
-  return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id );
+    my $sth = $dbh->prepare("UPDATE signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
+    return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id );
 
 }
 
 sub GetSign {
 
-  my ( $sign_id ) = @_;
+    my ( $sign_id ) = @_;
 
-  return unless $sign_id;
+    return unless $sign_id;
 
-  my $query = "SELECT *
-               FROM signs
-               WHERE sign_id = ?";
-  my $sth = $dbh->prepare($query);
-  $sth->execute($sign_id);
-  return $sth->fetchrow_hashref();
+    my $query = "SELECT *
+                 FROM signs
+                 WHERE sign_id = ?";
+    my $sth = $dbh->prepare($query);
+    $sth->execute($sign_id);
+    return $sth->fetchrow_hashref();
 
 }
 
 sub GetAllSigns {
 
-  my $query = "SELECT *
-               FROM signs
-               ORDER BY name";
-  my $sth = $dbh->prepare($query);
-  $sth->execute();
-  return $sth->fetchall_arrayref({});
+    my $query = "SELECT *
+                 FROM signs
+                 ORDER BY name";
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+    return $sth->fetchall_arrayref({});
 
 }
 
 sub DeleteSign {
 
-  my ( $sign_id ) = @_;
+    my ( $sign_id ) = @_;
 
-  return unless $sign_id;
+    return unless $sign_id;
 
-  my $sth = $dbh->prepare('DELETE FROM signs WHERE sign_id = ?');
-  return $sth->execute($sign_id);
+    my $sth = $dbh->prepare('DELETE FROM signs WHERE sign_id = ?');
+    return $sth->execute($sign_id);
 
 }
 
@@ -160,135 +160,135 @@ sub DeleteSign {
 # Returns the ID of the connection between sign and stream
 sub AttachStreamToSign {
 
-  my ( $sign_stream_id, $sign_id ) = @_;
+    my ( $sign_stream_id, $sign_id ) = @_;
 
-  return unless $sign_stream_id || $sign_id;
+    return unless $sign_stream_id || $sign_id;
 
-  my $sth = $dbh->prepare( 'INSERT INTO signs_to_streams SET sign_stream_id = ?, sign_id = ?' );
-  $sth->execute( $sign_stream_id, $sign_id );
-  return $dbh->last_insert_id( undef, undef, 'signs_to_streams', 'sign_to_stream_id' );
+    my $sth = $dbh->prepare( 'INSERT INTO signs_to_streams SET sign_stream_id = ?, sign_id = ?' );
+    $sth->execute( $sign_stream_id, $sign_id );
+    return $dbh->last_insert_id( undef, undef, 'signs_to_streams', 'sign_to_stream_id' );
 
 }
 
 sub AddParamsForAttachedStream {
 
-  my ( $sign_to_stream_id, $params ) = @_;
-  return unless $sign_to_stream_id;
-  my $sth = $dbh->prepare( 'UPDATE signs_to_streams SET params = ? WHERE sign_to_stream_id = ?' );
-  return $sth->execute( $params, $sign_to_stream_id );
+    my ( $sign_to_stream_id, $params ) = @_;
+    return unless $sign_to_stream_id;
+    my $sth = $dbh->prepare( 'UPDATE signs_to_streams SET params = ? WHERE sign_to_stream_id = ?' );
+    return $sth->execute( $params, $sign_to_stream_id );
 
 }
 
 # Returns the string of params for a given stream-attached-to-sign
 sub GetParams {
 
-  my ( $sign_to_stream_id ) = @_;
+    my ( $sign_to_stream_id ) = @_;
 
-  return unless $sign_to_stream_id;
+    return unless $sign_to_stream_id;
 
-  my $query = 'SELECT params FROM signs_to_streams WHERE sign_to_stream_id = ?';
-  my $sth = $dbh->prepare( $query );
-  $sth->execute( $sign_to_stream_id );
-  return $sth->fetchrow_array();
+    my $query = 'SELECT params FROM signs_to_streams WHERE sign_to_stream_id = ?';
+    my $sth = $dbh->prepare( $query );
+    $sth->execute( $sign_to_stream_id );
+    return $sth->fetchrow_array();
 
 }
 
 sub ReplaceParamsInSQL {
 
-  my ( $sql, $params ) = @_;
+    my ( $sql, $params ) = @_;
 
-  return unless $sql || $params;
-  return $sql unless $sql =~ m/<</;
+    return unless $sql || $params;
+    return $sql unless $sql =~ m/<</;
 
-  foreach my $param ( split /&/, $params ) {
-    my ( $key, $value ) = split /=/, $param;
-    # FIXME Handle spaces
-    $sql =~ s/<<$key>>/$value/g;
-  }
-  return $sql;
+    foreach my $param ( split /&/, $params ) {
+        my ( $key, $value ) = split /=/, $param;
+        # FIXME Handle spaces
+        $sql =~ s/<<$key>>/$value/g;
+    }
+    return $sql;
 
 }
 
 sub GetStreamsAttachedToSign {
 
-  my ( $sign_id ) = @_;
+    my ( $sign_id ) = @_;
 
-  return unless $sign_id;
+    return unless $sign_id;
 
-  my $query = 'SELECT s.*, sts.sign_to_stream_id, sts.params, sq.report_name, sq.savedsql
-               FROM sign_streams AS s, signs_to_streams AS sts, saved_sql AS sq
-               WHERE s.sign_stream_id = sts.sign_stream_id
-                 AND s.saved_sql_id = sq.id
-                 AND sts.sign_id = ?
-               ORDER BY s.name';
-  my $sth = $dbh->prepare( $query );
-  $sth->execute( $sign_id );
-  return $sth->fetchall_arrayref({});
+    my $query = 'SELECT s.*, sts.sign_to_stream_id, sts.params, sq.report_name, sq.savedsql
+                 FROM sign_streams AS s, signs_to_streams AS sts, saved_sql AS sq
+                 WHERE s.sign_stream_id = sts.sign_stream_id
+                   AND s.saved_sql_id = sq.id
+                   AND sts.sign_id = ?
+                 ORDER BY s.name';
+    my $sth = $dbh->prepare( $query );
+    $sth->execute( $sign_id );
+    return $sth->fetchall_arrayref({});
 
 }
 
 sub GetStreamsAttachedToSignWithRecords {
 
-  my ( $sign_id, $include_marc ) = @_;
+    my ( $sign_id, $include_marc ) = @_;
 
-  return unless $sign_id;
+    return unless $sign_id;
 
-  my $streams = GetStreamsAttachedToSign( $sign_id );
-  my @changedstreams;
+    my $streams = GetStreamsAttachedToSign( $sign_id );
+    my @changedstreams;
 
-  # Add records to the streams
-  foreach my $stream ( @{$streams} ) {
+    # Add records to the streams
+    foreach my $stream ( @{$streams} ) {
 
-    my $records = RunSQL( ReplaceParamsInSQL( $stream->{'savedsql'}, $stream->{'params'} ) );
+        my $records = RunSQL( ReplaceParamsInSQL( $stream->{'savedsql'}, $stream->{'params'} ) );
 
-    if ( $include_marc ) {
+        if ( $include_marc ) {
 
-      my @processed_records;
-      foreach my $rec ( @{$records} ) {
-        my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
-        if ( ! $marc ) {
-          next;
+            my @processed_records;
+            foreach my $rec ( @{$records} ) {
+                my $marc = GetMarcBiblio( $rec->{'biblionumber'} );
+                if ( ! $marc ) {
+                  next;
+                }
+                # FIXME Cache the processed records (more than one sign can have the same record)
+                $rec->{'marc'} = $marc;
+                push @processed_records, $rec;
+            }
+            $stream->{'records'} = \@processed_records;
+
+        } else {
+
+          $stream->{'records'} = $records;
+
         }
-        # FIXME Cache the processed records (more than one sign can have the same record)
-        $rec->{'marc'} = $marc;
-        push @processed_records, $rec;
-      }
-      $stream->{'records'} = \@processed_records;
 
-    } else {
-
-      $stream->{'records'} = $records;
+        push @changedstreams, $stream;
 
     }
 
-    push @changedstreams, $stream;
-
-  }
-
-  return \@changedstreams;
+    return \@changedstreams;
 
 }
 
 sub DetachStreamFromSign {
 
-  my ( $sign_to_stream_id ) = @_;
+    my ( $sign_to_stream_id ) = @_;
 
-  return unless $sign_to_stream_id;
+    return unless $sign_to_stream_id;
 
-  my $sth = $dbh->prepare( 'DELETE FROM signs_to_streams WHERE sign_to_stream_id = ?' );
-  return $sth->execute( $sign_to_stream_id );
+    my $sth = $dbh->prepare( 'DELETE FROM signs_to_streams WHERE sign_to_stream_id = ?' );
+    return $sth->execute( $sign_to_stream_id );
 
 }
 
 sub RunSQL {
 
-  my ( $query ) = @_;
+    my ( $query ) = @_;
 
-  return unless $query;
+    return unless $query;
 
-  my $sth = $dbh->prepare($query);
-  $sth->execute();
-  return $sth->fetchall_arrayref({});
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+    return $sth->fetchall_arrayref({});
 
 }
 
