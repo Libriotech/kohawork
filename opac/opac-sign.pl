@@ -30,32 +30,34 @@ my $query   = CGI->new;
 my $sign_id = $query->param('sign')         || '';
 
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user({
-  'template_name'   => 'opac-sign.tt',
-  'query'           => $query,
-  'type'            => 'opac',
-  'authnotrequired' => ( C4::Context->preference('OpacPublic') ? 1 : 0 ),
-  'flagsrequired'   => { borrow => 1 },
+    'template_name'   => 'opac-sign.tt',
+    'query'           => $query,
+    'type'            => 'opac',
+    'authnotrequired' => ( C4::Context->preference('OpacPublic') ? 1 : 0 ),
+    'flagsrequired'   => { borrow => 1 },
 });
 
 if ( C4::Context->preference('OPACDigitalSigns') ) {
 
-  $template->{VARS}->{'recordtemplate'}      = C4::Context->preference('OPACDigitalSignsRecordTemplate');
-  $template->{VARS}->{'OPACDigitalSignsCSS'} = C4::Context->preference( 'OPACDigitalSignsCSS' );
+    $template->{VARS}->{'recordtemplate'}      = C4::Context->preference('OPACDigitalSignsRecordTemplate');
+    $template->{VARS}->{'OPACDigitalSignsCSS'} = C4::Context->preference( 'OPACDigitalSignsCSS' );
 
-  # Display a sign with streams
-  if ( $sign_id ne '' ) {
+    # Display a sign with streams
+    if ( $sign_id ne '' ) {
 
-    $template->{VARS}->{'sign'}    = GetSign( $sign_id );
-    $template->{VARS}->{'streams'} = GetStreamsAttachedToSignWithRecords( $sign_id, 1 );
+        $template->{VARS}->{'sign'}    = GetSign( $sign_id );
+        $template->{VARS}->{'streams'} = GetStreamsAttachedToSignWithRecords( $sign_id, 1 );
 
-  } else {
+    } else {
 
-    $template->{VARS}->{'signs'}  = GetAllSigns();
+       $template->{VARS}->{'signs'}  = GetAllSigns();
 
-  }
+    }
 
 } else {
-  $template->{VARS}->{'enabled'} = 0;
+
+   $template->{VARS}->{'enabled'} = 0;
+
 }
 
 output_html_with_http_headers $query, $cookie, $template->output;
