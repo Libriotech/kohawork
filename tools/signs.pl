@@ -48,12 +48,12 @@ my $dbh = C4::Context->dbh;
 my $script_name = 'signs.pl';
 
 my ( $template, $loggedinuser, $cookie ) = get_template_and_user({
-  template_name   => "tools/signs.tt",
-  query           => $cgi,
-  type            => "intranet",
-  authnotrequired => 0,
-  flagsrequired   => { tools => 'edit_digital_signs' },
-  debug           => 0,
+    template_name   => "tools/signs.tt",
+    query           => $cgi,
+    type            => "intranet",
+    authnotrequired => 0,
+    flagsrequired   => { tools => 'edit_digital_signs' },
+    debug           => 0,
 });
 
 my $op                = $cgi->param('op') || '';
@@ -66,187 +66,187 @@ my $parameters        = $cgi->param('parameters') || '';
 
 if ( $op eq 'add_stream' ) {
 
-  # TODO Check that there are reports that can be used
+    # TODO Check that there are reports that can be used
 
-  $template->param(
-    'op'         => 'stream_form',
-    'reports'    => get_saved_reports( { group => 'SIG' } ),
-  );
+    $template->param(
+        'op'      => 'stream_form',
+        'reports' => get_saved_reports( { group => 'SIG' } ),
+    );
 
 } elsif ( $op eq 'edit_stream' && $sign_stream_id ne '') {
 
-  my $stream = GetStream( $sign_stream_id );
+    my $stream = GetStream( $sign_stream_id );
 
-  $template->param(
-    'op'          => 'stream_form',
-    'stream'      => $stream,
-    'reports'     => get_saved_reports( { group => 'SIG' } ),
-    'script_name' => $script_name
-  );
+    $template->param(
+      'op'          => 'stream_form',
+      'stream'      => $stream,
+      'reports'     => get_saved_reports( { group => 'SIG' } ),
+      'script_name' => $script_name
+    );
 
 } elsif ( $op eq 'save_stream' ) {
 
-  if ( $sign_stream_id ne '' ) {
-    EditStream( $cgi->param('name'), $cgi->param('report'), $cgi->param('sign_stream_id') );
-  } else {
-    AddStream( $cgi->param('name'), $cgi->param('report'),  );
-  }
-  print $cgi->redirect($script_name);
+    if ( $sign_stream_id ne '' ) {
+        EditStream( $cgi->param('name'), $cgi->param('report'), $cgi->param('sign_stream_id') );
+    } else {
+        AddStream( $cgi->param('name'), $cgi->param('report'),  );
+    }
+    print $cgi->redirect($script_name);
 
 } elsif ( $op eq 'view_stream' && $sign_stream_id ne '' ) {
 
-  my $stream = GetStream( $sign_stream_id );
+    my $stream = GetStream( $sign_stream_id );
 
-  if ( $stream->{'savedsql'} =~ m/<</ ) {
-    $template->param( 'has_params' => 1 );
-  } else {
-    $template->param( 'records' => RunSQL( $stream->{'savedsql'} ) );
-  }
+    if ( $stream->{'savedsql'} =~ m/<</ ) {
+        $template->param( 'has_params' => 1 );
+    } else {
+        $template->param( 'records' => RunSQL( $stream->{'savedsql'} ) );
+    }
 
-  $template->param(
-    'op'          => 'view_stream',
-    'stream'      => $stream,
-    'script_name' => $script_name
-  );
+    $template->param(
+        'op'          => 'view_stream',
+        'stream'      => $stream,
+        'script_name' => $script_name
+    );
 
 } elsif ( $op eq 'del_stream' ) {
 
-  my $stream = GetStream( $sign_stream_id );
+    my $stream = GetStream( $sign_stream_id );
 
-  $template->param(
-    'op'          => 'del_stream',
-    'stream'      => $stream,
-    'script_name' => $script_name,
-  );
+    $template->param(
+        'op'          => 'del_stream',
+        'stream'      => $stream,
+        'script_name' => $script_name,
+    );
 
 } elsif ( $op eq 'del_stream_ok' ) {
 
-  DeleteStream( $sign_stream_id );
+    DeleteStream( $sign_stream_id );
 
-  $template->param(
-    'op'          => 'del_stream_ok',
-    'script_name' => $script_name,
-  );
+    $template->param(
+        'op'          => 'del_stream_ok',
+        'script_name' => $script_name,
+    );
 
 # Signs
 
 } elsif ( $op eq 'add_sign' ) {
 
-  $template->param(
-    'op'       => 'sign_form',
-    'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
-  );
+    $template->param(
+        'op'       => 'sign_form',
+        'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
+    );
 
 } elsif ( $op eq 'edit_sign' && $sign_id ne '' ) {
 
-  $template->param(
-    'op'          => 'sign_form',
-    'sign'        => GetSign( $sign_id ),
-    'script_name' => $script_name,
-    'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
-  );
+    $template->param(
+        'op'          => 'sign_form',
+        'sign'        => GetSign( $sign_id ),
+        'script_name' => $script_name,
+        'swatches' => C4::Context->preference( 'OPACDigitalSignsSwatches' ),
+    );
 
 } elsif ( $op eq 'save_sign' ) {
 
-  if ($cgi->param('sign_id')) {
-    EditSign( $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay'), $cgi->param('sign_id') );
-  } else {
-    AddSign(  $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay') );
-  }
-  print $cgi->redirect($script_name);
+    if ($cgi->param('sign_id')) {
+        EditSign( $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay'), $cgi->param('sign_id') );
+    } else {
+        AddSign(  $cgi->param('name'), $cgi->param('webapp'), $cgi->param('swatch'), $cgi->param('transition'), $cgi->param('idleafter'), $cgi->param('pagedelay') );
+    }
+    print $cgi->redirect($script_name);
 
 } elsif ( $op eq 'view_sign' && $sign_id ne '' ) {
 
-  $template->param(
-    'op'          => 'view_sign',
-    'sign'        => GetSign( $sign_id ),
-    'streams'     => GetStreamsAttachedToSignWithRecords( $sign_id, 0 ),
-    'script_name' => $script_name,
-  );
+    $template->param(
+        'op'          => 'view_sign',
+        'sign'        => GetSign( $sign_id ),
+        'streams'     => GetStreamsAttachedToSignWithRecords( $sign_id, 0 ),
+        'script_name' => $script_name,
+    );
 
 } elsif ( $op eq 'del_sign' && $sign_id ne '' ) {
 
-  $template->param(
-    'op'          => 'del_sign',
-    'sign'        => GetSign( $sign_id ),
-    'script_name' => $script_name,
-  );
+    $template->param(
+        'op'          => 'del_sign',
+        'sign'        => GetSign( $sign_id ),
+        'script_name' => $script_name,
+    );
 
 } elsif ( $op eq 'del_sign_ok' ) {
 
-  DeleteSign( $sign_id );
+    DeleteSign( $sign_id );
 
-  $template->param(
-    'op'          => 'del_sign_ok',
-    'script_name' => $script_name,
-  );
+    $template->param(
+        'op'          => 'del_sign_ok',
+        'script_name' => $script_name,
+    );
 
 # Signs and streams
 
 } elsif ( $op eq 'edit_streams' && $sign_id ne '') {
 
-  $template->param(
-    'op'          => 'edit_streams',
-    'sign'        => GetSign( $sign_id ),
-    'sign_id'     => $sign_id,
-    'streams'     => GetAllStreams(),
-    'attached'    => GetStreamsAttachedToSign( $sign_id ),
-    'script_name' => $script_name
-  );
+    $template->param(
+        'op'          => 'edit_streams',
+        'sign'        => GetSign( $sign_id ),
+        'sign_id'     => $sign_id,
+        'streams'     => GetAllStreams(),
+        'attached'    => GetStreamsAttachedToSign( $sign_id ),
+        'script_name' => $script_name
+    );
 
 } elsif ( $op eq 'attach_stream_to_sign' && $sign_stream_id ne '' && $sign_id ne '' ) {
 
-  my $sign_to_stream_id = AttachStreamToSign( $sign_stream_id, $sign_id );
+    my $sign_to_stream_id = AttachStreamToSign( $sign_stream_id, $sign_id );
 
-  # Check if the SQL associated with the stream needs parameters
-  my $stream = GetStream( $sign_stream_id );
-  if ( $stream->{'savedsql'} =~ m/<</ ) {
-    print $cgi->redirect( $script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id . '&sign_id=' . $sign_id );
-  } else {
-    print $cgi->redirect( $script_name . '?op=edit_streams&sign_id=' . $sign_id );
-  }
+    # Check if the SQL associated with the stream needs parameters
+    my $stream = GetStream( $sign_stream_id );
+    if ( $stream->{'savedsql'} =~ m/<</ ) {
+        print $cgi->redirect( $script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id . '&sign_id=' . $sign_id );
+    } else {
+        print $cgi->redirect( $script_name . '?op=edit_streams&sign_id=' . $sign_id );
+    }
 
 } elsif ( $op eq 'get_params' && $sign_to_stream_id ne '' && $sign_stream_id ne '' && $sign_id ne '' ) {
 
-  my $stream = GetStream( $sign_stream_id );
-  my $params = GetParams( $sign_to_stream_id );
-  my $newsql = ReplaceParamsInSQL( $stream->{'savedsql'}, $params );
-  if ( $newsql =~ m/<</ ) {
-    $template->param( 'has_params' => 1 );
-  } else {
-    $template->param( 'records' => RunSQL( $newsql ) );
-  }
+    my $stream = GetStream( $sign_stream_id );
+    my $params = GetParams( $sign_to_stream_id );
+    my $newsql = ReplaceParamsInSQL( $stream->{'savedsql'}, $params );
+    if ( $newsql =~ m/<</ ) {
+        $template->param( 'has_params' => 1 );
+    } else {
+        $template->param( 'records' => RunSQL( $newsql ) );
+    }
 
-  $template->param(
-    'op'                => 'get_params',
-    'stream'            => $stream,
-    'sign_id'           => $sign_id,
-    'sign_stream_id'    => $sign_stream_id,
-    'sign_to_stream_id' => $sign_to_stream_id,
-    'params'            => $params,
-    'newsql'            => $newsql,
-    'script_name'       => $script_name,
-  );
+    $template->param(
+        'op'                => 'get_params',
+        'stream'            => $stream,
+        'sign_id'           => $sign_id,
+        'sign_stream_id'    => $sign_stream_id,
+        'sign_to_stream_id' => $sign_to_stream_id,
+        'params'            => $params,
+        'newsql'            => $newsql,
+        'script_name'       => $script_name,
+    );
 
 } elsif ( $op eq 'save_params' && $sign_to_stream_id ne '' && $sign_id ne '' ) {
 
-  AddParamsForAttachedStream( $sign_to_stream_id, $parameters );
-  print $cgi->redirect( $script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id . '&sign_id=' . $sign_id );
+    AddParamsForAttachedStream( $sign_to_stream_id, $parameters );
+    print $cgi->redirect( $script_name . '?op=get_params&sign_to_stream_id=' . $sign_to_stream_id . '&sign_stream_id=' . $sign_stream_id . '&sign_id=' . $sign_id );
 
 } elsif ( $op eq 'detach_stream_from_sign' && $sign_to_stream_id ne '' ) {
 
-  DetachStreamFromSign( $sign_to_stream_id );
-  print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
+    DetachStreamFromSign( $sign_to_stream_id );
+    print $cgi->redirect($script_name . '?op=edit_streams&sign_id=' . $sign_id);
 
 } else {
 
-  # TODO Check the setting of OPACDigitalSigns, give a warning if it is off
+    # TODO Check the setting of OPACDigitalSigns, give a warning if it is off
 
-  $template->param(
-    'streams' => GetAllStreams(),
-    'signs'   => GetAllSigns(),
-    'else'    => 1
-  );
+    $template->param(
+        'streams' => GetAllStreams(),
+        'signs'   => GetAllSigns(),
+        'else'    => 1
+    );
 
 }
 
