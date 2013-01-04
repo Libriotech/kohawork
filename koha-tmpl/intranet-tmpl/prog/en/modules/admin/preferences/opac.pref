@@ -599,7 +599,7 @@ OPAC:
               class: code
             - (If you use this option to create custom swatches you might have to adjust the list of available swatches with the OPACDigitalSignsSwatches preference)
         -
-            - Make it possible to choose one of the swatches
+            - Make it possible to choose one of the themes (swatches)
             - pref: OPACDigitalSignsSwatches
               class: long
             - when creating a new sign.
