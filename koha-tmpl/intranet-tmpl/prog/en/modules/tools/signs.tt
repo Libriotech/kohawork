@@ -174,7 +174,7 @@
         [% END %]
       </select>
     </li>
-    <li><label for="swatch">Swatch</label>
+    <li><label for="swatch">Theme (swatch)</label>
       <select name="swatch" id="swatch">
         <option value="">Default</option>
         [% FOREACH swatch IN swatches.split('') %]
@@ -383,7 +383,7 @@
     <tr>
     <th>Name</th>
     <th>Web-app</th>
-    <th>Swatch</th>
+    <th>Theme (swatch)</th>
     <th>Transition</th>
     <th>Idle after</th>
     <th>Page delay</th>
