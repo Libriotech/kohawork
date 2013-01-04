@@ -131,9 +131,6 @@ function ShowRecords() {
               <a href="#stream[% s.sign_stream_id %]_biblio[% r.biblionumber %]" title="[% r.title %]"><img src="opac-cover.pl?biblionumber=[% r.biblionumber %]" style="border: 1px solid black; min-width: 150px; max-width: 150px; margin: 1em; padding: 1em;"></a>
             [%- END %]
           </div>
-          <div data-role="footer" data-theme="[% sign.swatch %]" data-position="fixed">
-            <h4>Page Footer</h4>
-          </div>
         </div>
 
         [%- SET records = s.records -%]
@@ -210,9 +207,6 @@ function ShowRecords() {
           <li><a href="?sign=[% sign.sign_id %]" data-ajax="false">[% sign.name %]</a></li>
         [% END %]
         </ul>
-      </div>
-      <div data-role="footer" data-position="fixed">
-        <h4>Page Footer</h4>
       </div>
     </div>
   [% END %]
