@@ -243,9 +243,10 @@ if ( $op eq 'add_stream' ) {
     # TODO Check the setting of OPACDigitalSigns, give a warning if it is off
 
     $template->param(
-        'streams' => GetAllStreams(),
-        'signs'   => GetAllSigns(),
-        'else'    => 1
+        'streams'     => GetAllStreams(),
+        'signs'       => GetAllSigns(),
+        'OPACBaseURL' => C4::Context->preference( 'OPACBaseURL' ) || '',
+        'else'        => 1
     );
 
 }

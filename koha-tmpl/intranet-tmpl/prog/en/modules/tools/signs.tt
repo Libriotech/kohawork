@@ -390,6 +390,7 @@
     <th>Edit</th>
     <th>Edit streams</th>
     <th>Delete</th>
+    <th>View sign</th>
     </tr>
     </thead>
     <tbody>
@@ -404,10 +405,12 @@
     <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
     <td><a href="?op=edit_streams&amp;sign_id=[% s.sign_id %]">Edit streams</a></td>
     <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
+    <td>[% IF ( OPACBaseURL ) %]<a href="http://[% OPACBaseURL %]/cgi-bin/koha/opac-sign.pl?sign=[% s.sign_id %]" title="View this sign in the OPAC">View sign</a>[% END %]</td>
     </tr>
     [% END %]
     </tbody>
     </table>
+    [% UNLESS ( OPACBaseURL ) %]<p>Please note: Links to view signs in the OPAC will only be displayed if you fill in the OPACBaseURL system preference.</p>[% END %]
   [% ELSE %]
     <p>No signs defined!</p>
   [% END %]
