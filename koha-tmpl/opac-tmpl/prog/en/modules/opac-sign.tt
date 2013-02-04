@@ -80,7 +80,10 @@ function ShowRecords() {
     var IntID = window.setInterval(function () {
       IsAnIdlePageChange = 1;
       var page = '#' + $('.record').slice(t).attr('id');
-      $.mobile.changePage( page );
+      // Only do the page change if the signs window has focus
+      if (document.hasFocus()) {
+        $.mobile.changePage( page );
+      }
       IsAnIdlePageChange = 0;
       t = t + 1;
       // Go back to zero if we reached the max number of records, so we can loop infinitely
