@@ -602,4 +602,4 @@ OPAC:
             - Make it possible to choose one of the themes (swatches)
             - pref: OPACDigitalSignsSwatches
               class: long
-            - when creating a new sign.
+            - when creating a new sign. By default the themes a-e are provided, but you can override these by creating your own themes (e.g. with the <a href="http://jquerymobile.com/themeroller/">ThemeRoller for jQuery Mobile</a>) and enter them into the  OPACDigitalSignsCSS system preference. If you do add your own custom themes there you will want to adjust the letters in this system preference to match the themes you created.
