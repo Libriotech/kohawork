@@ -636,9 +636,9 @@ OPAC:
             - pref: OPACDigitalSignsCSS
               type: textarea
               class: code
-            - (If you use this option to create custom swatches you might have to adjust the list of available swatches with the OPACDigitalSignsSwatches preference)
+            - (If you use this option to create custom swatches (e.g. with the <a href="http://jquerymobile.com/themeroller/">ThemeRoller for jQuery Mobile</a>) you might have to adjust the list of letters identifying available themes (swatches) in the OPACDigitalSignsSwatches preference.)
         -
             - Make it possible to choose one of the themes (swatches)
             - pref: OPACDigitalSignsSwatches
               class: long
-            - when creating a new sign. By default the themes a-e are provided, but you can override these by creating your own themes (e.g. with the <a href="http://jquerymobile.com/themeroller/">ThemeRoller for jQuery Mobile</a>) and enter them into the  OPACDigitalSignsCSS system preference. If you do add your own custom themes there you will want to adjust the letters in this system preference to match the themes you created.
+            - when creating a new sign. By default the themes a-e are provided, but you can override these by creating your own themes and entering them into the OPACDigitalSignsCSS system preference. If you do add your own custom themes there you will want to adjust the letters in this system preference to match the themes you created.
