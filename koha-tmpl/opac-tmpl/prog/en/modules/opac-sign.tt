@@ -25,12 +25,16 @@
 
 var ShowRecordsIntervalID;
 var WaitForIdleTimeoutID;
+var ReloadWhenIdle = 0;
 var IsAnIdlePageChange = 0;
 [% IF ( sign.idleafter ) -%]
 var WaitBeforeIdle     = [% sign.idleafter %] * 1000;
 [%- END %]
 [% IF ( sign.pagedelay ) -%]
 var WaitBetweenRecords = [% sign.pagedelay %] * 1000;
+[%- END %]
+[% IF ( sign.reloadafter ) -%]
+var WaitBeforeReload = [% sign.reloadafter %] * 1000;
 [%- END %]
 
 $(document).bind("mobileinit", function(){
@@ -56,6 +60,10 @@ $(document).bind("mobileinit", function(){
 
   WaitForIdleTimeoutID = WaitForIdle();
   [% END %]
+  
+  window.setTimeout(function () {
+    ReloadWhenIdle = 1;
+  }, WaitBeforeReload );
 
 });
 
@@ -78,6 +86,10 @@ function ShowRecords() {
   var t = 0;
   if ( number_of_records > 0 ) {
     var IntID = window.setInterval(function () {
+      // Check if it is time to do a reload
+      if ( ReloadWhenIdle == 1 ) {
+        location.reload( true );
+      }
       IsAnIdlePageChange = 1;
       var page = '#' + $('.record').slice(t).attr('id');
       // Only do the page change if the signs window has focus

@@ -56,10 +56,12 @@ my $sign_idleafter           = '5';
 my $sign_idleafter_changed   = '10';
 my $sign_pagedelay           = '5';
 my $sign_pagedelay_changed   = '10';
+my $sign_reloadafter         = '5';
+my $sign_reloadafter_changed = '10';
 
 # AddSign
 my $sign_id;
-ok( $sign_id = AddSign( $sign_name, $sign_webapp, $sign_swatch, $sign_transition, $sign_idleafter, $sign_pagedelay ), "AddSign" );
+ok( $sign_id = AddSign( $sign_name, $sign_webapp, $sign_swatch, $sign_transition, $sign_idleafter, $sign_pagedelay, $sign_reloadafter ), "AddSign" );
 
 # GetSign
 my $sign;
@@ -70,6 +72,7 @@ like( $sign->{'swatch'},     qr/$sign_swatch/,     "GetSign swatch ok" );
 like( $sign->{'transition'}, qr/$sign_transition/, "GetSign transition ok" );
 like( $sign->{'idleafter'},  qr/$sign_idleafter/,  "GetSign idleafter ok" );
 like( $sign->{'pagedelay'},  qr/$sign_pagedelay/,  "GetSign pagedelay ok" );
+like( $sign->{'reloadafter'},qr/$sign_reloadafter/,"GetSign reloadafter ok" );
 
 # GetAllSigns
 my $signs;
@@ -84,12 +87,13 @@ foreach my $sign ( @{$signs} ) {
         like( $sign->{'transition'}, qr/$sign_transition/, "GetAllSigns transition ok" );
         like( $sign->{'idleafter'},  qr/$sign_idleafter/,  "GetAllSigns idleafter ok" );
         like( $sign->{'pagedelay'},  qr/$sign_pagedelay/,  "GetAllSigns pagedelay ok" );
+        like( $sign->{'reloadafter'},qr/$sign_reloadafter/,"GetAllSigns reloadafter ok" );
     }
 }
 
 # EditSign
 my $editedsign;
-ok( EditSign( $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_transition_changed, $sign_idleafter_changed, $sign_pagedelay_changed, $sign_id ), "EditSign ok" );
+ok( EditSign( $sign_name, $sign_webapp_changed, $sign_swatch_changed, $sign_transition_changed, $sign_idleafter_changed, $sign_pagedelay_changed, $sign_reloadafter_changed, $sign_id ), "EditSign ok" );
 ok( $editedsign = GetSign( $sign_id ), "GetSign on edited sign ok" );
 like( $editedsign->{'name'},       qr/$sign_name/,               "GetSign after EditSign name ok" );
 like( $editedsign->{'webapp'},     qr/$sign_webapp_changed/,     "GetSign after EditSign webapp ok" );
@@ -97,6 +101,7 @@ like( $editedsign->{'swatch'},     qr/$sign_swatch_changed/,     "GetSign after 
 like( $editedsign->{'transition'}, qr/$sign_transition_changed/, "GetSign after EditSign transition ok" );
 like( $editedsign->{'idleafter'},  qr/$sign_idleafter_changed/,  "GetSign after EditSign idleafter ok" );
 like( $editedsign->{'pagedelay'},  qr/$sign_pagedelay_changed/,  "GetSign after EditSign pagedelay ok" );
+like( $editedsign->{'reloadafter'},qr/$sign_reloadafter_changed/,"GetSign after EditSign reloadafter ok" );
 
 ### Attaching streams to signs
 

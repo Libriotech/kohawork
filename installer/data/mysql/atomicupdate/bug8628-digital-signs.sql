@@ -52,6 +52,7 @@ CREATE TABLE signs (
   swatch char(1) NOT NULL DEFAULT '',          -- swatches determine the colors of page elements
   idleafter int(11) NOT NULL default 0,        -- seconds to wait before automatic page turning cicks in
   pagedelay int(11) NOT NULL default 0,        -- seconds to wait before turning to a new page/record
+  reloadafter int(11) NOT NULL default 0,      -- seconds to wait before reloading all the pages
   PRIMARY KEY (sign_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE signs_to_streams (
@@ -76,8 +77,8 @@ INSERT INTO saved_sql
 ( 3,  51,             'SIG',         '2012-08-22 12:55:33', '2012-08-22 12:55:33', 'SELECT biblionumber, title FROM biblio ORDER BY RAND() DESC LIMIT 20',                                  NULL,     'Random titles',    1,     NULL,  300,          1 ),
 ( 4,  51,             'SIG',         '2012-09-04 12:55:33', '2012-09-04 12:55:33', 'SELECT biblionumber, title FROM biblio WHERE title LIKE "%Perl%" OR title LIKE "%PHP%" ORDER BY RAND() DESC', NULL, 'Tech books',     1, NULL, 300,          1 );
 
-INSERT INTO signs ( sign_id, name, webapp, swatch, transition, idleafter, pagedelay ) VALUES ( 1, 'Signs for the main library', 1, 'b', 'slide', 60, 30 );
-INSERT INTO signs ( sign_id, name, webapp, swatch, transition, idleafter, pagedelay ) VALUES ( 2, 'Minimal test', 1, 'b', 'pop', 5, 6 );
+INSERT INTO signs ( sign_id, name, webapp, swatch, transition, idleafter, pagedelay, reloadafter ) VALUES ( 1, 'Signs for the main library', 1, 'b', 'slide', 60, 30, 300 );
+INSERT INTO signs ( sign_id, name, webapp, swatch, transition, idleafter, pagedelay, reloadafter ) VALUES ( 2, 'Minimal test', 1, 'b', 'pop', 5, 6, 30 );
 
 INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 1, 1, 'Newest titles' );
 INSERT INTO sign_streams ( sign_stream_id, saved_sql_id, name ) VALUES ( 2, 2, 'Titles from 2012' );
