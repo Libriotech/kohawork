@@ -101,20 +101,20 @@ sub DeleteStream {
 # Returns id of new sign
 sub AddSign {
 
-    my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay ) = @_;
+    my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $reloadafter ) = @_;
 
-    my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?");
-    $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay );
+    my $sth=$dbh->prepare("INSERT INTO signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?, reloadafter = ?");
+    $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $reloadafter );
     return $dbh->last_insert_id( undef, undef, 'signs', 'sign_id' );
 
 }
 
 sub EditSign {
 
-    my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id ) = @_;
+    my ( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $reloadafter, $sign_id ) = @_;
 
-    my $sth = $dbh->prepare("UPDATE signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ? WHERE sign_id = ?");
-    return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $sign_id );
+    my $sth = $dbh->prepare("UPDATE signs SET name = ?, webapp = ?, swatch = ?, transition = ?, idleafter = ?, pagedelay = ?, reloadafter = ? WHERE sign_id = ?");
+    return $sth->execute( $name, $webapp, $swatch, $transition, $idleafter, $pagedelay, $reloadafter, $sign_id );
 
 }
 

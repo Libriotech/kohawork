@@ -208,6 +208,9 @@
     <li><label for="pagedelay">Page delay</label>
       <input type="text" name="pagedelay" id="pagedelay" value="[% sign.pagedelay %]" size="4" /> seconds.
     </li>
+    <li><label for="reloadafter">Reload after</label>
+      <input type="text" name="reloadafter" id="reloadafter" value="[% sign.reloadafter %]" size="4" /> seconds.
+    </li>
     </ol>
   </fieldset>
   <fieldset class="action"> <input type="submit" value="Submit" class="submit" /></fieldset>
@@ -387,6 +390,7 @@
     <th>Transition</th>
     <th>Idle after</th>
     <th>Page delay</th>
+    <th>Reload after</th>
     <th>Edit</th>
     <th>Edit streams</th>
     <th>Delete</th>
@@ -402,6 +406,7 @@
     <td>[% s.transition %]</td>
     <td>[% s.idleafter %]</td>
     <td>[% s.pagedelay %]</td>
+    <td>[% s.reloadafter %]</td>
     <td><a href="?op=edit_sign&amp;sign_id=[% s.sign_id %]">Edit</a></td>
     <td><a href="?op=edit_streams&amp;sign_id=[% s.sign_id %]">Edit streams</a></td>
     <td><a href="?op=del_sign&amp;sign_id=[% s.sign_id %]">Delete</a></td>
