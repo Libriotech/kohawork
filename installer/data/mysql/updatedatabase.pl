@@ -6444,6 +6444,38 @@ if ( CheckVersion($DBversion) ) {
     SetVersion($DBversion);
 }
 
+$DBversion = "3.11.00.024";
+if ( CheckVersion($DBversion) ) {
+    $dbh->do("INSERT INTO systempreferences (variable,value,explanation,options,type) VALUES('OpacItemLocation','callnum','Show the shelving location of items in the opac','callnum|ccode|location','Choice');");
+    print "Upgrade to $DBversion done (Bug 5079: Add OpacItemLocation syspref)\n";
+    SetVersion ($DBversion);
+}
+
+$DBversion = "3.11.00.025";
+if ( CheckVersion($DBversion) ) {
+    $dbh->do(
+        "CREATE TABLE linktracker (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  biblionumber int(11) DEFAULT NULL,
+  itemnumber int(11) DEFAULT NULL,
+  borrowernumber int(11) DEFAULT NULL,
+  url text,
+  timeclicked datetime DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY bibidx (biblionumber),
+  KEY itemidx (itemnumber),
+  KEY borridx (borrowernumber),
+  KEY dateidx (timeclicked)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+    );
+    $dbh->do( "
+  INSERT INTO systempreferences (variable,value,explanation,options,type)
+  VALUES('TrackClicks','0','Track links clicked',NULL,'Integer')" );
+    print
+"Upgrade to $DBversion done (Adds feature Bug 8917, the ability to track links clicked)\n";
+    SetVersion($DBversion);
+}
+
 
 =head1 FUNCTIONS
 
