@@ -1,0 +1,33 @@
+[% INCLUDE 'doc-head-open.inc' %][% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Browse
+[% INCLUDE 'doc-head-close.inc' %]
+<!-- FIXME Link to linked data? link rel="alternate" type="application/rss+xml" title="[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog recent comments" href="[% OPACBaseURL %]/cgi-bin/koha/opac-showreviews.pl?format=rss" / -->
+</head>
+<body id="opac-browse">
+[% IF ( OpacNav ) %]<div id="doc3" class="yui-t1">[% ELSE %]<div id="doc3" class="yui-t7">[% END %]
+   <div id="bd">
+[% INCLUDE 'masthead.inc' %]
+<div id="yui-main">
+  <div class="yui-b"><div class="yui-g">
+	<div id="browse" class="container">
+
+<h3>Browse</h3>
+
+[% IF ( uri ) %]
+
+  [% uri | html %]
+
+[% ELSE %]
+
+[% END %]
+
+</div>
+</div>
+</div>
+</div>
+[% IF ( OpacNav ) %]
+<div class="yui-b"><div id="leftmenus" class="container">
+[% INCLUDE 'navigation.inc' %]
+</div></div>
+[% END %]
+</div>
+[% INCLUDE 'opac-bottom.inc' %]
