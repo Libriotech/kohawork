@@ -1,0 +1,61 @@
+[% INCLUDE 'doc-head-open.inc' %][% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Browse
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body id="opac-browse">
+[% IF ( OpacNav ) %]<div id="doc3" class="yui-t1">[% ELSE %]<div id="doc3" class="yui-t7">[% END %]
+   <div id="bd">
+[% INCLUDE 'masthead.inc' %]
+<div id="yui-main">
+  <div class="yui-b"><div class="yui-g">
+	<div id="browse" class="container">
+
+<h3>Browse</h3>
+
+[% IF ( linkeddata ) %]
+
+    [% IF ( linkeddata.template != '' ) %]
+
+        [% SET d = linkeddata.data %]
+        [% linkeddata.template | eval %]
+
+    [% ELSE %]
+
+        <p>Sorry, we are unable to display this data properly at the moment. Below is a raw dump of all the data.</p>
+        <h2>Raw data:</h2>
+        <p>Subject: <a href="[% uri | uri %]">[% uri | html %]</a></p>
+        <table>
+        <tr><th>Graph</th><th>Predicate</th><th>Object</th></tr>
+        [% FOREACH d IN linkeddata.data %]
+          <tr>
+          <td>[% d.g.value %]</td>
+          <td>[% d.p.value %]</td>
+          <td>
+            [% IF d.o.type == 'uri' %]
+              <a href="?uri=[% d.o.value | uri %]">[% d.o.value | html %]</a> [<a href="[% d.o.value %]" title="Look up URI">x</a>]
+            [% ELSE %]
+              [% d.o.value %]
+            [% END %]
+          </td>
+          </tr>
+        [% END %]
+        </table>
+
+    [% END %]
+
+[% ELSE %]
+
+    <p>No URI</p>
+
+[% END %]
+
+</div>
+</div>
+</div>
+</div>
+[% IF ( OpacNav ) %]
+<div class="yui-b"><div id="leftmenus" class="container">
+[% INCLUDE 'navigation.inc' %]
+</div></div>
+[% END %]
+</div>
+[% INCLUDE 'opac-bottom.inc' %]
