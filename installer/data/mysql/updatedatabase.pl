@@ -6771,6 +6771,19 @@ if ( CheckVersion($DBversion) ) {
    SetVersion ($DBversion);
 }
 
+$DBversion = "3.11.00.203";
+if ( CheckVersion($DBversion) ) {
+    $dbh->do(q{ALTER TABLE suggestions CHANGE COLUMN title title VARCHAR(255) DEFAULT NULL;});
+    print "Upgrade to $DBversion done (Bug 2046 - increasing title column length for suggestions)\n";
+    SetVersion ($DBversion);
+}
+
+$DBversion = "3.11.00.300";
+if ( CheckVersion($DBversion) ) {
+    print "Upgrade to $DBversion done (3.12-beta3 release)\n";
+    SetVersion ($DBversion);
+}
+
 
 =head1 FUNCTIONS
 

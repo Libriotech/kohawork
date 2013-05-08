@@ -230,7 +230,7 @@ $(document).ready(function() { calcNewsuggTotal(); });
           <span class="label">Library:</span> [% branchname %]
         </li>
         <li>
-          <span class="label">Budget:</span> [% budgetname %]
+          <span class="label">Fund:</span> [% budgetname %]
         </li>
         <li>
           <span class="label">Copies:</span>[% quantity %]
@@ -267,7 +267,7 @@ $(document).ready(function() { calcNewsuggTotal(); });
         <h1>Enter a new purchase suggestion</h1>
     [% END %]
     <fieldset class="rows"> <legend>Bibliographic information</legend><ol>
-        <li><label for="title">Title:</label><input type="text" id="title" name="title" size="50" maxlength="80" value="[% title |html %]"/></li>
+        <li><label for="title">Title:</label><input type="text" id="title" name="title" size="80" maxlength="255" value="[% title |html %]"/></li>
         <li><label for="author">Author:</label><input type="text" id="author" name="author" size="50" maxlength="80" value="[% author %]"/></li>
         <li><label for="copyrightdate">Copyright date:</label><input type="text" id="copyrightdate" name="copyrightdate" size="4" maxlength="4" value="[% copyrightdate %]" /></li>
         <li><label for="isbn">ISBN or ISSN or other standard number:</label><input type="text" id="isbn" name="isbn" size="50" maxlength="80" value="[% isbn %]"/></li>
@@ -329,7 +329,7 @@ $(document).ready(function() { calcNewsuggTotal(); });
                 [% IF ( branchloo.selected ) %]<option value="[% branchloo.value %]" selected="selected">[% branchloo.branchname %]</option>[% ELSE %]<option value="[% branchloo.value %]">[% branchloo.branchname %]</option>[% END %][% END %]
             </select>
         </li>
-        <li><label for="budgetid">Budget:</label>
+        <li><label for="budgetid">Fund:</label>
             <select name="budgetid" id="budgetid">
                 <option value="">Any</option>[% FOREACH budgetsloo IN budgetsloop %]
                 [% IF ( budgetsloo.selected ) %]<option value="[% budgetsloo.budget_id %]" selected="selected">[% budgetsloo.budget_name %]</option>[% ELSE %]<option value="[% budgetsloo.budget_id %]">[% budgetsloo.budget_name %]</option>[% END %][% END %]
@@ -392,7 +392,7 @@ $(document).ready(function() { calcNewsuggTotal(); });
             <th>Suggested by - on</th>
             <th>Managed by - on</th>
             <th>Library</th>
-            <th>Budget</th>
+            <th>Fund</th>
             <th>Status</th></tr>
     </thead>
         <tbody>

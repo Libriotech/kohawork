@@ -221,8 +221,7 @@ sub XSLTParse4Display {
         $stylesheet->{$xslfilename} = $xslt->parse_stylesheet($style_doc);
     }
     my $results      = $stylesheet->{$xslfilename}->transform($source);
-    my $newxmlrecord = $stylesheet->{$xslfilename}->output_as_chars($results);
-    #no need to decode with UTF-8 in header of XSLT templates: BZ 6554
+    my $newxmlrecord = $stylesheet->{$xslfilename}->output_string($results);
     return $newxmlrecord;
 }
 
@@ -280,10 +279,12 @@ sub buildKohaItemsNamespace {
             $status = "available";
         }
         my $homebranch = $item->{homebranch}? xml_escape($branches->{$item->{homebranch}}->{'branchname'}):'';
-        $location = $item->{location}? xml_escape($shelflocations->{$item->{location}}):'';
-        $ccode = $item->{ccode}? xml_escape($ccodes->{$item->{ccode}}):'';
+        my $holdingbranch = $item->{holdingbranch}? xml_escape($branches->{$item->{holdingbranch}}->{'branchname'}):'';
+        $location = $item->{location}? xml_escape($shelflocations->{$item->{location}}||$item->{location}):'';
+        $ccode = $item->{ccode}? xml_escape($ccodes->{$item->{ccode}}||$item->{ccode}):'';
         my $itemcallnumber = xml_escape($item->{itemcallnumber});
         $xml.= "<item><homebranch>$homebranch</homebranch>".
+                "<holdingbranch>$holdingbranch</holdingbranch>".
                 "<location>$location</location>".
                 "<ccode>$ccode</ccode>".
 		"<status>$status</status>".
