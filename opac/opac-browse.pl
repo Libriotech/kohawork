@@ -27,7 +27,6 @@ use strict;
 use warnings;
 
 use CGI;
-# use RDF::Query::Client;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
