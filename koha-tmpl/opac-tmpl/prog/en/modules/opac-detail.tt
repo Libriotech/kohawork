@@ -914,6 +914,9 @@ YAHOO.util.Event.onContentReady("furtherm", function () {
         <div id="BW_citations"></div>
     [% END %]
 
+    [%# FIXME Make this dependent on a syspref! %]
+    <p><a href="opac-browse.pl?uri=[% current_url %]">View Linked Data</a></p>
+
 </div>
 
 <div id="bibliodescriptions" class="toptabs">
