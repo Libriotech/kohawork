@@ -917,6 +917,10 @@ if ( C4::Context->preference( "SocialNetworks" ) ) {
     $template->param( SocialNetworks => 1 );
 }
 
+# Linked Data
+# FIXME Hide this behind a syspref
+$template->param( current_url => C4::Context->preference('OPACBaseURL') . "/cgi-bin/koha/opac-detail.pl?biblionumber=$biblionumber" );
+
 # Shelf Browser Stuff
 if (C4::Context->preference("OPACShelfBrowser")) {
     my $starting_itemnumber = $query->param('shelfbrowse_itemnumber');
