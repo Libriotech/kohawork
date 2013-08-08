@@ -12,11 +12,14 @@
 
 <h3>Browse</h3>
 
-[% IF ( uri ) %]
+[% IF ( linkeddata ) %]
 
-  [% uri | html %]
+  [% SET d = linkeddata.data %]
+  [% linkeddata.template | eval %]
 
 [% ELSE %]
+
+    <p>No URI</p>
 
 [% END %]
 

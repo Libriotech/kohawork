@@ -30,6 +30,8 @@ use CGI;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
+use Koha::LinkedData;
+use Data::Validate::URI qw(is_uri);
 
 $| = 1;
 
@@ -65,9 +67,9 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
 my $uri = $query->param('uri');
 warn "URI: $uri";
 
-if ( $uri ne '' ) {
+if ( is_uri( $uri ) ) {
 
-    $template->{VARS}->{'uri'} = $uri;
+    $template->{VARS}->{'linkeddata'} = get_data_from_uri( $uri );
 
 } else {
 

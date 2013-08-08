@@ -18,6 +18,7 @@ package Koha::LinkedData;
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 use Modern::Perl;
+use RDF::Query::Client;
 use C4::Context;
 
 use base 'Exporter';
@@ -26,6 +27,9 @@ use version; our $VERSION = qv('1.0.0');
 our @EXPORT = (
     qw( get_data_from_uri )
 );
+
+# FIXME Make this a syspref!
+our $endpoint = 'http://data.libriotech.no/metaquery/';
 
 =head1 NAME
 
@@ -62,7 +66,7 @@ sub get_data_from_uri {
     my $templateiterator = $templatequery->execute( $endpoint );
     # Grab the first template (there should not be more than one)
     my $t = $templateiterator->next;
-    $data{'t'} = $t->{template}->literal_value;
+    $data{'template'} = $t->{template}->literal_value;
 
 
     ##  Get all the queries and templates based on the type of the given URI
@@ -78,7 +82,7 @@ sub get_data_from_uri {
                           ?typequery <http://example.org/hasTemplate> ?template .
                       }";
     my $typequery = RDF::Query::Client->new( $typesparql );
-    my $queries = $typequery->execute( config->{sparql_endpoint} );
+    my $queries = $typequery->execute( $endpoint );
 
     # Simplify the datastructure in $queries a bit
     # This will give us a hash of hashes, with the slugs as keys,
@@ -112,8 +116,10 @@ sub get_data_from_uri {
         $datapoints{ $key }{ 'data' } = \@querydata;
 
     }
-    $data{'d'} = \%datapoints;
+    $data{'data'} = \%datapoints;
 
     return \%data;
 
 }
+
+1;
