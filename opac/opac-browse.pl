@@ -69,6 +69,7 @@ warn "URI: $uri";
 
 if ( is_uri( $uri ) ) {
 
+    $template->{VARS}->{'uri'}        = $uri;
     $template->{VARS}->{'linkeddata'} = get_data_from_uri( $uri );
 
 } else {
