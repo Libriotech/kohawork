@@ -38,7 +38,7 @@ Koha::LinkedData
 
 =head1 DESCRIPTION
 
-Routines for letting Koha interact with Linked Data.
+Routines for letting Koha interact with Linked Data. 
 
 =head1 FUNCTIONS
 
@@ -46,9 +46,9 @@ Routines for letting Koha interact with Linked Data.
 
 $data = get_data_from_uri( $uri );
 
-Takes a URI as argument and returns a reference to a hash that
+Takes a URI as argument and returns a reference to a hash that 
 contains the template for the type of the given URI, as well as some
-data.
+data. 
 
 =cut
 
@@ -58,7 +58,7 @@ sub get_data_from_uri {
     my %data;
 
     ## Get the main template, based on the type of the given URI
-
+    
     my $templatesparql = "SELECT DISTINCT ?template  WHERE {
                               <$uri> a ?type .
                               ?type <http://example.org/hasTemplate> ?template .
@@ -72,9 +72,6 @@ sub get_data_from_uri {
 
         $data{'template'} = $t->{template}->literal_value;
 
-
-        ##  Get all the queries and templates based on the type of the given URI
-
         # Get the type query
         # $queries will be an iterator that holds a list of queries, each of which
         # is made up of a slug, a query and a template
@@ -87,12 +84,12 @@ sub get_data_from_uri {
                           }";
         my $typequery = RDF::Query::Client->new( $typesparql );
         my $queries = $typequery->execute( $endpoint );
-
+        
         # Simplify the datastructure in $queries a bit
-        # This will give us a hash of hashes, with the slugs as keys,
+        # This will give us a hash of hashes, with the slugs as keys, 
         # and two keys in the inner hash: sparql and template
         # (It looked like the DISTINCT part of the type query did not
-        # work at some point, this operation will have the side effect
+        # work at some point, this operation will have the side effect 
         # of ensuring we are working on unique slugs.)
         my %datapoints;
         while (my $row = $queries->next) {
@@ -104,21 +101,20 @@ sub get_data_from_uri {
         }
 
         ## Iterate over the queries, and collect their data in %datapoints
-
         foreach my $key ( keys %datapoints ) {
-
+            
             # Get the SPARQL query
             my $sparql = $datapoints{ $key }{ 'sparql' };
-
+            
             # Insert the given URI into the query
             $sparql =~ s/__URI__/$uri/;
-
+            
             # Run the query
             my $q = RDF::Query::Client->new( $sparql );
             my @querydata = $q->execute( $endpoint );
             # Add the data to %datapoints with a new key called "data"
             $datapoints{ $key }{ 'data' } = \@querydata;
-
+            
         }
         $data{'data'} = \%datapoints;
 
@@ -131,7 +127,7 @@ sub get_data_from_uri {
                                           }' );
         my @defaultdata = $q->execute( $endpoint );
         $data{'data'} = \@defaultdata;
-
+        
     }
 
     return \%data;

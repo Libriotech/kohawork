@@ -20,7 +20,7 @@
         [% linkeddata.template | eval %]
 
     [% ELSE %]
-
+        
         <p>Sorry, we are unable to display this data properly at the moment. Below is a raw dump of all the data.</p>
         <h2>Raw data:</h2>
         <p>Subject: <a href="[% uri | uri %]">[% uri | html %]</a></p>
