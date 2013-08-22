@@ -30,14 +30,13 @@ use CGI;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
-use Koha::LinkedData;
+use Koha::LinkedData2;
 use Data::Validate::URI qw(is_uri);
 
 $| = 1;
 
 my $DEBUG = 0;
 my $data  = new CGI;
-my $imagenumber;
 
 =head1 NAME
 
@@ -49,7 +48,7 @@ opac-browse.pl?uri=http://example.com/some_example
 
 =head1 DESCRIPTION
 
-This script makes it possible to browse data retrieved from a triplestore.
+This script makes it possible to browse semantic/linked data retrieved from a triplestore.
 
 =cut
 
@@ -70,11 +69,14 @@ warn "URI: $uri";
 if ( is_uri( $uri ) ) {
 
     $template->{VARS}->{'uri'}        = $uri;
-    $template->{VARS}->{'linkeddata'} = get_data_from_uri( $uri );
+    # my $ld = Koha::LinkedData2->new( C4::Context->preference("OPACBaseURL"), C4::Context->preference("SPARQL_Endpoint") );
+    my $ld = Koha::LinkedData2->new( 'http://example.org/', 'http://data.libriotech.no/metaquery/' );
+    $template->{VARS}->{'linkeddata'} = $ld->get_data_from_uri( $uri );
 
 } else {
 
-    # TODO Default query
+    # TODO Default query that can display some entry points into the 
+    # browsing of the data, if no valid URI is given as argument
 
 }
 
