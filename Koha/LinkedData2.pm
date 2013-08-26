@@ -125,13 +125,11 @@ sub get_data_from_uri {
             $datapoints{ $key }{ 'realquery' } = $sparqlquery;
             
             # Run the query
-            # FIXME This only finds the first result. For this:
-            # http://kohanor32/cgi-bin/koha/opac-browse.pl?uri=http://metaquery.libriotech.no/s/a
-            # there should have been 3 results
             my $querydata = $sparql->get_sparql( $sparqlquery );
             my @data;
-            foreach my $point ( $querydata->next ){
-                warn "key: $key --- ", Dumper $point;
+            # Iterate through the data to create a structure that is
+            # easier to use in the templates than $querydata->next
+            while ( my $point = $querydata->next ){
                 push @data, $point;
             }
             # Add the data to %datapoints with a new key called "data"

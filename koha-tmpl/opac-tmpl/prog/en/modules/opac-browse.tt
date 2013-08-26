@@ -19,21 +19,6 @@
         [% SET d = linkeddata.data %]
         [% linkeddata.template | eval %]
 
-<hr />
-[% USE Dumper %]
-
-  <h2>Test</h2>
-  <ul>
-    [% FOREACH cite IN d.cites.data %]
-      <pre>![% Dumper.dump_html( cite ) %]</pre>
-      <li><a href="?uri=[% cite.uri.uri_value %]">[% cite.title.literal_value %]</a></li>
-    [% END %]
-  </ul>
-
-<hr />
-
-<pre>[% Dumper.dump_html( d ) %]</pre>
-
     [% ELSE %]
         
         <p>Sorry, we are unable to display this data properly at the moment. Below is a raw dump of all the data.</p>
