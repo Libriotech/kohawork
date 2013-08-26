@@ -30,7 +30,7 @@ use CGI;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
-use Koha::LinkedData2;
+use Koha::LinkedData;
 use Data::Validate::URI qw(is_uri);
 
 $| = 1;
@@ -69,8 +69,9 @@ warn "URI: $uri";
 if ( is_uri( $uri ) ) {
 
     $template->{VARS}->{'uri'}        = $uri;
-    # my $ld = Koha::LinkedData2->new( C4::Context->preference("OPACBaseURL"), C4::Context->preference("SPARQL_Endpoint") );
-    my $ld = Koha::LinkedData2->new( 'http://example.org/', 'http://data.libriotech.no/metaquery/' );
+    # FIXME Make the sysprefs live
+    # my $ld = Koha::LinkedData->new( C4::Context->preference("OPACBaseURL"), C4::Context->preference("SPARQL_Endpoint") );
+    my $ld = Koha::LinkedData->new( 'http://example.org/', 'http://data.libriotech.no/metaquery/' );
     $template->{VARS}->{'linkeddata'} = $ld->get_data_from_uri( $uri );
 
 } else {
