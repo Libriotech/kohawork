@@ -52,6 +52,8 @@ This script makes it possible to browse semantic/linked data retrieved from a tr
 
 =cut
 
+# FIXME Redirect to the front page if OPACLinkedData is not activated
+
 my $query = new CGI;
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     {
