@@ -914,8 +914,9 @@ YAHOO.util.Event.onContentReady("furtherm", function () {
         <div id="BW_citations"></div>
     [% END %]
 
-    [%# FIXME Make this dependent on a syspref! %]
-    <p><a href="opac-browse.pl?uri=[% current_url %]">View Linked Data</a></p>
+    [% IF ( Koha.Preference( 'OPACLinkedData' ) == 1 ) %]
+        <p><a href="opac-browse.pl?uri=[% current_url %]">View linked data</a></p>
+    [% END %]
 
 </div>
 
