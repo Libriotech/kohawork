@@ -1,0 +1,13 @@
+Linked data:
+    General:
+        - 
+            - Use 
+            - pref: SPARQLEndpoint
+            - "as the SPARQL endpoint that Koha talks to."
+    OPAC:
+        - 
+            - pref: OPACLinkedData
+              choices:
+                  yes: Enable
+                  no: Disable
+            - "the display of linked data in the OPAC."
