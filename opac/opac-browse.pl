@@ -71,9 +71,7 @@ warn "URI: $uri";
 if ( is_uri( $uri ) ) {
 
     $template->{VARS}->{'uri'}        = $uri;
-    # FIXME Make the sysprefs live
-    # my $ld = Koha::LinkedData->new( C4::Context->preference("OPACBaseURL"), C4::Context->preference("SPARQL_Endpoint") );
-    my $ld = Koha::LinkedData->new( 'http://example.org/', 'http://data.libriotech.no/metaquery/' );
+    my $ld = Koha::LinkedData->new( C4::Context->preference("SPARQLEndpoint") );
     $template->{VARS}->{'linkeddata'} = $ld->get_data_from_uri( $uri );
 
 } else {
