@@ -52,9 +52,14 @@ This script makes it possible to browse semantic/linked data retrieved from a tr
 
 =cut
 
-# FIXME Redirect to the front page if OPACLinkedData is not activated
-
 my $query = new CGI;
+
+# Check if display of linked data in the OPAC is enabled
+unless ( C4::Context->preference("OPACLinkedData") ) {
+    # Redirect to the main page
+    print $query->redirect("/cgi-bin/koha/opac-main.pl");
+}
+
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     {
         template_name   => "opac-browse.tt",
