@@ -915,7 +915,7 @@ YAHOO.util.Event.onContentReady("furtherm", function () {
     [% END %]
 
     [% IF ( Koha.Preference( 'OPACLinkedData' ) == 1 ) %]
-        <p><a href="opac-browse.pl?uri=[% current_url %]">View linked data</a></p>
+        <p><a href="opac-browse.pl?uri=[% current_url %]">View as linked data</a></p>
     [% END %]
 
 </div>
