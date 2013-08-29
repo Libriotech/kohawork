@@ -78,7 +78,7 @@ if ( is_uri( $uri ) ) {
 
 } else {
 
-    # TODO Default query that can display some entry points into the 
+    # FIXME Default query that can display some entry points into the 
     # browsing of the data, if no valid URI is given as argument
 
 }
