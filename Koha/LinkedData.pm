@@ -46,11 +46,9 @@ our $VERSION = '0.01';
 
 sub new {
     my $class           = shift;
-    my $uribase         = shift;
     my $sparql_endpoint = shift;
     my $self            = {};
     bless $self, $class;
-    $self->{'uribase'}  = $uribase;
     $self->{'endpoint'} = $sparql_endpoint;
     return $self;
 }
