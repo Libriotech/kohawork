@@ -66,7 +66,6 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
 );
 
 my $uri = $query->param('uri');
-warn "URI: $uri";
 
 if ( is_uri( $uri ) ) {
 
