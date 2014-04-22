@@ -507,6 +507,11 @@
                         <div id="BW_citations"></div>
                     [% END # / IF Babeltheque%]
 
+                    [% IF ( Koha.Preference( 'OPACLinkedData' ) == 1 ) %]
+                        [% SET current_url = 'http://' _ Koha.Preference( 'OPACBaseURL' ) _ "/cgi-bin/koha/opac-detail.pl?biblionumber=" _ biblionumber %]
+                        <p><a href="opac-browse.pl?uri=[% current_url %]">View as linked data</a></p>
+                    [% END %]
+
                 </div> <!-- / #catalogue_detail_biblio -->
 
                 <div id="bibliodescriptions" class="toptabs">
