@@ -83,8 +83,11 @@ if ( $op eq 'add' ) {
 elsif ( $op eq 'edit' ) {
 
     # if the user has pressed the "edit branch settings" button.
-    $template->param( 'heading_branches_add_branch_p' => 0,
-                        'add' => 1, );
+    $template->param(
+        'heading_branches_add_branch_p' => 0,
+        'add'                           => 1,
+        'branches'                      => GetBranchesLoop(),
+    );
     editbranchform($branchcode,$template);
 }
 elsif ( $op eq 'add_validate' ) {
@@ -341,7 +344,8 @@ sub branchinfotable {
             'branchcity', 'branchstate', 'branchcountry',
             'branchphone', 'branchfax',
             'branchemail', 'branchurl', 'opac_info',
-            'branchip',       'branchprinter', 'branchnotes'
+            'branchip',       'branchprinter', 'branchnotes',
+            'closed_from','closed_to','opac_holds','alt_pickup',
           )
         {
             $row{$field} = $branch->{$field};
@@ -406,6 +410,10 @@ sub _branch_to_template {
          opac_info      => $data->{'opac_info'},
          branchip       => $data->{'branchip'},
          branchnotes    => $data->{'branchnotes'}, 
+         closed_from    => $data->{'closed_from'},
+         closed_to      => $data->{'closed_to'},
+         opac_holds     => $data->{'opac_holds'},
+         alt_pickup     => $data->{'alt_pickup'},
     );
 }
 

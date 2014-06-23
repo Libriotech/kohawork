@@ -1,3 +1,9 @@
+[% USE KohaDates %]
+[% USE Branches %]
+[%  
+SET opac_holds_states = { 'warn' => 'Warn', 'disable' => 'Disable', 'hide' => 'Hide' }
+%]
+
 [% INCLUDE 'doc-head-open.inc' %]
 <title>Koha &rsaquo; Administration &rsaquo; Libraries and groups
 [% IF ( editcategory ) %]
@@ -145,6 +151,39 @@ tinyMCE.init({
         <li><label for="branchnotes">Notes: </label><input type="text" name="branchnotes" id="branchnotes" size="80" value="[% branchnotes |html %]" /></li>
         </ol>
         </fieldset>
+        <fieldset class="rows" id="branches_closed">
+        <legend id="branches_closed_lgd">Temporarily close the library</legend>
+        <ol>
+            <li><label for="closed_from">From date: </label><input type="date" name="closed_from" id="closed_from" value="[% closed_from | html %]" /></li>
+            <li><label for="closed_to">To date: </label><input type="date" name="closed_to" id="closed_to" value="[% closed_to | html %]" /></li>
+            <li>
+                <label for="opac_holds">OPAC holds: </label>
+                <select name="opac_holds" id="opac_holds">
+                    [% FOREACH opt IN opac_holds_states %]
+                        [% IF ( opt.key == opac_holds ) %]
+                            <option value="[% opt.key %]" selected="selected">[% opt.value %]</option>
+                        [% ELSE %]
+                            <option value="[% opt.key %]">[% opt.value %]</option>
+                        [% END %]
+                    [% END %]
+                </select>
+                while the library is closed.
+            </li>
+            <li>
+                <label for="alt_pickup">Alternative pickup: </label>
+                <select name="alt_pickup" id="alt_pickup">
+                    [% FOREACH branch IN branches %]
+                        [% NEXT IF ( branchcode == branch.branchcode ) %]
+                        [% IF ( branch.branchcode == alt_pickup ) %]
+                            <option value="[% branch.branchcode | html %]" selected="selected">[% branch.branchname | html %]</option>
+                        [% ELSE %]
+                            <option value="[% branch.branchcode | html %]">[% branch.branchname | html %]</option>
+                        [% END %]
+                    [% END %]
+                </select>
+            </li>
+        </ol>
+        </fieldset>
         <fieldset class="action"><input type="submit" value="Submit" /> <a class="cancel" href="/cgi-bin/koha/admin/branches.pl">Cancel</a></fieldset>
     </form>
 [% END %]
@@ -181,6 +220,7 @@ tinyMCE.init({
             <th>Address</th>
             <th>Properties</th>
             <th>IP</th>
+            <th>Closed</th>
             <!-- <th>Printer</th> -->
             <th>&nbsp;</th>
             <th>&nbsp;</th>
@@ -233,6 +273,13 @@ tinyMCE.init({
                 </td>
                 <td>
                     [% branche.branchip %]
+                </td>
+                <td>
+                    [% IF ( branche.closed_from || branche.closed_to ) %]
+                        [% branche.closed_from | $KohaDates %] - [% branche.closed_to | $KohaDates %]<br />
+                        OPAC holds: [% opac_holds_states.${branche.opac_holds} %]<br />
+                        Alt. pickup library: [% Branches.GetName( branche.alt_pickup ) %]
+                    [% END %]
                 </td>
                 <!-- <td>
                     [% branche.branchprinter %]
