@@ -27,6 +27,8 @@
             <li><a class="addtocart cart[% biblionumber %]" href="#" onclick="addRecord('[% biblionumber %]'); return false;">Add to your cart</a>  <a style="display:none;" class="cartRemove cartR[% biblionumber %]" href="#" onclick="delSingleRecord('[% biblionumber %]'); return false;">(remove)</a></li>
         [% END %]
     [% END %]
+    [%# FIXME Make the ILL link conditional %]
+    <li><a class="ill" href="/cgi-bin/koha/opac-nncipp.pl?biblionumber=[% biblionumber %]">ILL</a></il>
     [% IF ( OpacHighlightedWords && query_desc ) %]
     <li>
         <a href="#" class="highlight_toggle" id="highlight_toggle_off">Unhighlight</a>
