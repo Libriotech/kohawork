@@ -1,0 +1,130 @@
+[% USE Koha %]
+[% USE KohaDates %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+[% IF ( LibraryNameTitle ) %][% LibraryNameTitle %][% ELSE %]Koha online[% END %] catalog &rsaquo; Order by ILL
+[% INCLUDE 'doc-head-close.inc' %]
+[% BLOCK cssinclude %][% END %]
+</head>
+[% INCLUDE 'bodytag.inc' bodyid='opac-user' bodyclass='scrollto' %]
+[% INCLUDE 'masthead.inc' %]
+
+<div class="main">
+    <ul class="breadcrumb">
+        <li><a href="/cgi-bin/koha/opac-main.pl">Home</a> <span class="divider">&rsaquo;</span></li>
+        <li>Order by ILL</li>
+    </ul>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+             <div class="span2">
+                <div id="navigation">
+                    [% INCLUDE 'navigation.inc' IsPatronPage=1 %]
+                </div>
+            </div>
+            <div class="span10">
+                <h1>Order by ILL</h1>
+                [% IF error %]
+                    <div class="alert alert-error">
+                        <p><span id="[% error.message %]">
+                            [% IF error.message == 'missing_fields' %]
+                                Some mandatory fields are missing.
+                            [% ELSIF error.message == 'request_cancellation_fail' %]
+                                We were unable to request the cancellation of request number [% query_value %].
+                            [% ELSIF error.message == 'request_placement_fail' %]
+                                We were unable to place your request.
+                            [% ELSIF error.message == 'api_search_fail' %]
+                                There was an error whilst communicating with the remote service.
+                            [% ELSIF error.message == 'request_comment_fail' %]
+                                We were unable to save your comment for request number [% query_value %].
+                            [% END %]
+                        </span></p>
+                    </div>
+                [% ELSIF message %]
+                    <div class="alert alert-success">
+                        <p><span id="[% message.message %]">
+                            [% IF message.message == 'order_success' %]
+                                Your request for "[% biblio.title %]" by <em>[% biblio.author %]</em> has been added to the queue, with order number [% message.order_number %].
+                            [% ELSIF message.message == 'request_cancellation_ok' %]
+                                Your cancellation of request [% message.id %] has been requested.
+                            [% ELSIF message.message == 'request_comment_ok' %]
+                                Your comment, "[% message.comment %]", has been attached to request number [% message.id %].
+                            [% END %]
+                        </span></p>
+                    </div>
+                [% END %]
+
+                [% IF !op %]
+                    <p>[% biblio.title %] by [% biblio.author %]</p>
+                    <p><a href="/cgi-bin/koha/opac-nncipp.pl?biblionumber=[% biblionumber %]&op=order">Order</a> | <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=[% biblionumber %]">Cancel</a></p>
+                [% END %]
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+[% INCLUDE 'opac-bottom.inc' %]
+
+
+[% BLOCK jsinclude %]
+    [% INCLUDE 'calendar.inc' %]
+    [% INCLUDE 'datatables.inc' %]
+    <script type="text/JavaScript">
+        //<![CDATA[
+        var MSG_CONFIRM_DELETE_HOLD   = _("Are you sure you want to cancel this hold?");
+        var MSG_CONFIRM_SUSPEND_HOLDS = _("Are you sure you want to suspend all holds?");
+        var MSG_CONFIRM_RESUME_HOLDS  = _("Are you sure you want to resume all suspended holds?");
+
+        $(document).ready(function(){
+            $('#opac-user-views').tabs();
+            $(".js-show").show();
+            $(".js-hide").hide();
+            $(".modal-nojs").addClass("modal").addClass("hide").removeClass("modal-nojs");
+            $(".suspend-until").prop("readonly",1);
+            var dTables = $("#checkoutst,#holdst,#overduest");
+            dTables.each(function(){
+                var thIndex = $(this).find("th.psort").index();
+                $(this).dataTable($.extend(true, {}, dataTablesDefaults, {
+                    "aaSorting" : [[ thIndex, 'asc' ]],
+                    "aoColumnDefs": [
+                        { "aTargets": [ "nosort" ],"bSortable": false,"bSearchable": false },
+                        { "sType": "anti-the", "aTargets" : [ "anti-the" ] },
+                        { "sType": "title-string", "aTargets" : [ "title-string" ] }
+                    ]
+                }));
+            });
+
+            [% IF ( GoogleJackets ) %]KOHA.Google.GetCoverFromIsbn();[% END %]
+            [% IF ( OpacRenewalAllowed && canrenew && !userdebarred ) %]
+                $("#renewselected").submit(function(){
+                    valid = false;
+                    $("input[type=checkbox]").each(function(){
+                        if($(this).is(':checked')){
+                            valid = true;
+                        }
+                    });
+                    if(!valid){
+                        alert(_("Nothing has been selected. Check the box for each item you want to renew"));
+                    }
+                    return valid;
+                });
+                $("body").on("click","#renewselected_link",function(e){
+                    e.preventDefault();
+                    $("#renewselected").submit();
+                });
+                $("body").on("click","#renewall_link",function(e){
+                    e.preventDefault();
+                    $("#renewall").submit();
+                });
+                [% IF ( canrenew && !userdebarred && OpacRenewalAllowed && !( borrower.is_expired && borrower.BlockExpiredPatronOpacActions ) ) %]
+                    $("#checkoutst caption").append("<div id=\"renewcontrols\"><a id=\"renewselected_link\" href=\"#\">"+_("Renew selected")+"</a> <a id=\"renewall_link\" href=\"#\">"+_("Renew all")+"</a></div>");
+                [% END %]
+            [% END %]
+
+            $( ".suspend-until" ).datepicker({ minDate: 1 }); // Require that "until date" be in the future
+        });
+        //]]>
+    </script>
+[% END %]
