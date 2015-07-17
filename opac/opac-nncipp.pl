@@ -46,6 +46,7 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
 );
 
 my ( $error, $message );
+my $illRequests  = Koha::ILLRequests->new;
 my $query        = $cgi->param('query_value');
 my $here         = "/cgi-bin/koha/opac-nncipp.pl";
 my $op           = $cgi->param('op');
@@ -76,6 +77,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
     } else {
         # FIXME
     }
+    $message = { message => 'order_success', order_number => 123 };
 
 }
 
