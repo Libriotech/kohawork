@@ -571,8 +571,8 @@ sub _seed_for_test {
     my $request = $illRequest->seed($opts);
 
 A generic seeding procedure, taking a hashref as an argument.  Depending on
-the keys of the hashref we defer to seed_from_api, seed_from_store or
-seed_from_manual_entry.
+the keys of the hashref we defer to seed_from_api, seed_from_store,
+seed_from_manual_entry or seed_from_local_biblio.
 
 =cut
 
@@ -586,6 +586,8 @@ sub seed {
         $rq = $self->_seed_from_api( $opts );
     } elsif ( $opts->{primary_manual} ) {
         $rq = $self->_seed_from_manual_entry( $opts );
+    } elsif ( $opts->{biblionumber} ) {
+        $rq = $self->_seed_from_local_biblio( $opts );
     } else {
         $rq = 0
     }
@@ -689,6 +691,40 @@ sub _seed_from_store {
     }
 
     return 0;
+}
+
+=head3 _seed_from_local_biblio
+
+    my $request = $illRequest->_seed_from_local_biblio($params);
+
+Read a Biblio from the Koha database.
+
+=cut
+
+sub _seed_from_local_biblio {
+    my ( $self, $opts ) = @_;
+
+    my $result_set = Koha::Database->new->schema->resultset('Biblio');
+    my $biblio = $result_set->find({ 'biblionumber' => $opts->{biblionumber} });
+
+    # FIXME This is just a quick and dirty hack, gotta figure out how it is
+    # supposed to be done
+    $self->record($self->_abstract->manual_entry_build({
+        'm./metadata/titleLevel/title'  => $biblio->title,
+        'm./metadata/titleLevel/author' => $biblio->author,
+    }));
+    $self->status(
+        Koha::ILLRequest::Status->new( {
+            reqtype      => $self->record->getProperty('type'),
+            borrower     => $opts->{borrower},
+            branch       => $opts->{branch},
+            permitted    => $opts->{permitted},
+            biblionumber => $opts->{biblionumber}
+        } )
+    );
+    $self->save;                # save to DB.
+
+    return $self;
 }
 
 =head3 requires_moderation

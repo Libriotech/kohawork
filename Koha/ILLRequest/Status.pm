@@ -58,7 +58,7 @@ sub new {
     my $self = {
         borrower        => $opts->{borrower} || '',
         borrowernumber  => $brwNum || 0,
-        biblionumber    => $opts->{biblionumber} || '',
+        biblionumber    => $opts->{biblionumber} || 0,
         status          => $status,
         reply_date      => DateTime->now,
         placement_date  => DateTime->now,

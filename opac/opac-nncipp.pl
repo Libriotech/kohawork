@@ -31,6 +31,8 @@ use Koha::Borrowers;
 use Koha::ILLRequests;
 use URI::Escape;
 
+use Data::Dumper; # FIXME Debug
+
 my $cgi = CGI->new();
 
 my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
@@ -43,12 +45,11 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
 );
 
 my ( $error, $message );
-my $illRequests  = Koha::ILLRequests->new;
 my $query        = $cgi->param('query_value');
 my $here         = "/cgi-bin/koha/opac-nncipp.pl";
 my $op           = $cgi->param('op');
 my $biblionumber = $cgi->param('biblionumber');
-my $borrower     = Koha::Borrowers->new->find($borrowernumber)
+my $borrower     = Koha::Borrowers->new->find( $borrowernumber )
     || die "You're logged in as the database user. We don't support that.";
 
 # Default: Display "Order | Cancel" links for the given biblionumber
@@ -56,7 +57,21 @@ my $borrower     = Koha::Borrowers->new->find($borrowernumber)
 if ( $op eq 'order' && $biblionumber ne '' ) {
 
     # Add a ILL request for the given biblionumber and logged in user
-    $message = { message => 'order_success', order_number => 123 };
+
+    my $illRequest   = Koha::ILLRequests->new;
+    my $request = $illRequest->request({
+        'biblionumber' => $biblionumber,
+        'branch'       => $borrower->{'branchcode'},
+        'borrower'     => $borrowernumber,
+    });
+    # $illRequest->save;
+    # warn Dumper $illRequest;
+
+    if ( $request ) {
+        $message = { message => 'order_success', order_number => $request->{'status'}->{'id'} };
+    } else {
+        # FIXME
+    }
 
 }
 
