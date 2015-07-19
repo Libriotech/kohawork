@@ -24,6 +24,7 @@
 [%        CASE 'CIRCULATION'  %]Circulation
 [%        CASE 'LETTER'       %]Letter
 [%        CASE 'FINES'        %]Fines
+[%        CASE 'ILL'          %]ILL
 [%        CASE 'SYSTEMPREFERENCE' %]System prefs
 [%        CASE %][% module %]
 [%    END %]
@@ -71,7 +72,7 @@
 								<label for="modules">Module:</label>
 								<select name="modules" id="modules" multiple="multiple">
 									<option value="" selected="selected">All</option>
-                                                                        [% FOREACH modx IN [ 'CATALOGUING' 'AUTHORITIES' 'MEMBERS' 'ACQUISITIONS' 'SERIAL' 'CIRCULATION' 'LETTER' 'FINES' 'SYSTEMPREFERENCE' ] %]
+                                                                        [% FOREACH modx IN [ 'CATALOGUING' 'AUTHORITIES' 'MEMBERS' 'ACQUISITIONS' 'SERIAL' 'CIRCULATION' 'LETTER' 'FINES' 'SYSTEMPREFERENCE' 'ILL' ] %]
                                                                         <option value="[% modx %]">[% PROCESS translate_log_module module=modx %]</option>
                                                                         [% END %]
 								</select>
