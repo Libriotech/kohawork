@@ -50,6 +50,7 @@ my $query        = $cgi->param('query_value');
 my $here         = "/cgi-bin/koha/opac-nncipp.pl";
 my $op           = $cgi->param('op');
 my $biblionumber = $cgi->param('biblionumber');
+my $bibliodata   = GetBiblioData( $biblionumber );
 my $borrower     = Koha::Borrowers->new->find( $borrowernumber )
     || die "You're logged in as the database user. We don't support that.";
 
@@ -71,7 +72,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
     if ( $request ) {
         my $request_id = $request->{'status'}->{'id'};
         $message = { message => 'order_success', request_id => $request_id };
-        send_ItemRequested( $request_id, $borrower );
+        send_ItemRequested( $request_id, $bibliodata, $borrower );
     } else {
         # FIXME
     }
@@ -84,7 +85,7 @@ $template->param(
     message      => $message,
     op           => $op,
     biblionumber => $biblionumber,
-    biblio       => GetBiblioData( $biblionumber ),
+    biblio       => $bibliodata,
 );
 
 output_html_with_http_headers( $cgi, $cookie, $template->output );

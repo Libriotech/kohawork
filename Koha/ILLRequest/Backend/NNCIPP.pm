@@ -50,8 +50,9 @@ the request, so that they know what they have requested.
 
 sub send_ItemRequested {
 
-    my ( $request_id, $borrower ) = @_;
+    my ( $request_id, $bibliodata, $borrower ) = @_;
     
+    # FIXME Return with an error if there is no nncip_uri
     my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
@@ -59,23 +60,40 @@ sub send_ItemRequested {
     <ns1:ItemRequested>
         <ns1:InitiationHeader>
             <ns1:FromAgencyId>
-                <ns1:AgencyId>NO-" . $borrower->cardnumber . "</ns1:AgencyId>
+                <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
             </ns1:FromAgencyId>
             <ns1:ToAgencyId>
-                <ns1:AgencyId>CPL</ns1:AgencyId>
+                <ns1:AgencyId>NO-" . $borrower->cardnumber . "</ns1:AgencyId>
             </ns1:ToAgencyId>
         </ns1:InitiationHeader>
         <ns1:UserId>
-            <ns1:UserIdentifierValue>51</ns1:UserIdentifierValue>
+            <ns1:UserIdentifierValue>" . $borrower->cardnumber . "</ns1:UserIdentifierValue>
         </ns1:UserId>
-        <ns1:ItemId>
-            <ns1:ItemIdentifierValue>1</ns1:ItemIdentifierValue>
-        </ns1:ItemId>
+        <ns1:BibliographicId>
+            <ns1:BibliographicItemId>
+                <ns1:BibliographicItemIdentifier>" . $bibliodata->{'biblionumber'} . "</ns1:BibliographicItemIdentifier>
+            </ns1:BibliographicItemId>
+        </ns1:BibliographicId>
+        <ns1:RequestId>
+            <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+            <ns1:RequestIdentifierValue>$request_id</ns1:RequestIdentifierValue>
+        </ns1:RequestId>
         <ns1:RequestType>Loan</ns1:RequestType>
         <ns1:RequestScopeType>0</ns1:RequestScopeType>
+        <ns1:ItemOptionalFields>
+            <ns1:BibliographicDescription>
+                <ns1:Author>"           . $bibliodata->{'author'} . "</ns1:Author>
+                <ns1:Title>"            . $bibliodata->{'title'} . "</ns1:Title>
+                <ns1:PublicationPlace>" . $bibliodata->{'place'} . "</ns1:PublicationPlace>
+                <ns1:Publisher>"        . $bibliodata->{'publishercode'} . "</ns1:Publisher>
+                <ns1:PublicationDate>"  . $bibliodata->{'copyrightdate'} . "</ns1:PublicationDate>
+                <ns1:MediumType>"       . $bibliodata->{'itemtype'} . "</ns1:MediumType>
+            </ns1:BibliographicDescription>
+        </ns1:ItemOptionalFields>
     </ns1:ItemRequested>
 </ns1:NCIPMessage>";
 
+    logaction( 'ILL', 'ItemRequested', $bibliodata->{'biblionumber'}, $msg );
     _send_message( $msg, $nncip_uri );
 
 }
@@ -92,15 +110,16 @@ sub _send_message {
 
     my ( $msg, $endpoint ) = @_;
     
-    warn "endpoint: $endpoint";
-    
     my $http = HTTP::Tiny->new();
-    my $response = $http->post( 'http://koha.ncip.bibkat.no:3000', { 'content' => $msg } );
+    my $response = $http->post( $endpoint, { 'content' => $msg } );
     
     if ( $response->{success} ){
+        logaction( 'ILL', 'response_success', undef, $response->{'content'} );
         return { 'success' => 1, 'msg' => $response->{'content'} };
     } else {
-        return { 'success' => 0, 'msg' => "$response->{status} $response->{reason}" };
+        my $msg = "ERROR: $response->{status} $response->{reason}";
+        logaction( 'ILL', 'response_success', undef, $msg );
+        return { 'success' => 0, 'msg' => $msg };
     }
 
 }
