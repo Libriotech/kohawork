@@ -56,49 +56,42 @@ sub send_ItemRequested {
     my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
-    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
-	    <!-- Usage in NNCIPP 1.0 is in use-case 3, call #8: Owner library informs Home library that a user requests one Item -->
-	    <ns1:ItemRequested>
-		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
-		    <ns1:InitiationHeader>
-			    <!-- Owner Library -->
-			    <ns1:FromAgencyId>
-				    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
-			    </ns1:FromAgencyId>
-			    <!-- Home Library -->
-			    <ns1:ToAgencyId>
-				    <ns1:AgencyId>NO-" . $borrower->cardnumber . "</ns1:AgencyId>
-			    </ns1:ToAgencyId>
-		    </ns1:InitiationHeader>
-		    <!-- The UserId must be a NLR-Id (National Patron Register) -->
-		    <ns1:UserId>
-			    <ns1:UserIdentifierValue>N-" . $borrower->cardnumber . "</ns1:UserIdentifierValue>
-		    </ns1:UserId>
-		    <!-- The ItemId must uniquely identify the requested Item in the scope of the FromAgencyId. -->
-		    <!-- Use ItemOptimalFields.BibliographicDescription that is mandatory in NNCIPP 1.0, to describe the ItemId -->
-		    <!-- NNCIPP 1.0 only support ItemId and not the alternativ use of Bibliographic and RequestId. -->
-		    <ns1:ItemId>
-			    <ns1:ItemIdentifierValue>" . "FIXME" . "</ns1:ItemIdentifierValue>
-		    </ns1:ItemId>
-		    <!-- The RequestType must be one of the following  {“Loan”|”Copy”|”LoanNoReservation”|”LII”|”LIINoReservation”|”Depot”}-->
-		    <ns1:RequestType>Loan</ns1:RequestType>
-		    <!-- RequestScopeType is mandatory and must be \"0\", signaling that the request is on title-level (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
-		    <ns1:RequestScopeType>0</ns1:RequestScopeType>
-		    <!-- Use of ItemOptimalFields is mandatory in NNCIPP 1.0 -->
-		    <ns1:ItemOptionalFields>
-			    <!-- BibliographicDescription is used, as needed, to supplement the ItemId -->
-			    <ns1:BibliographicDescription>
-				    <ns1:Author>"             . $bibliodata->{'author'} . "</ns1:Author>
-				    <ns1:PlaceOfPublication>" . $bibliodata->{'place'} . "</ns1:PlaceOfPublication>
-				    <ns1:PublicationDate>"    . $bibliodata->{'copyrightdate'} . "</ns1:PublicationDate>
-				    <ns1:Publisher>"          . $bibliodata->{'publishercode'} . "</ns1:Publisher>
-				    <ns1:Title>"              . $bibliodata->{'title'} . "</ns1:Title>
-				    <ns1:Language>Use three letter codes (ISO-639-2)</ns1:Language>
-				    <ns1:MediumType>Use values as defined in Implementation-part of NCIP on page 23.</ns1:MediumType> <!-- Map from " . $bibliodata->{'itemtype'} . "? -->
-			    </ns1:BibliographicDescription>
-		    </ns1:ItemOptionalFields>
-	    </ns1:ItemRequested>
-    </ns1:NCIPMessage>";
+<ns1:NCIPMessage ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:ns1=\"http://www.niso.org/2008/ncip\">
+    <ns1:ItemRequested>
+        <ns1:InitiationHeader>
+            <ns1:FromAgencyId>
+                <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+            </ns1:FromAgencyId>
+            <ns1:ToAgencyId>
+                <ns1:AgencyId>NO-" . $borrower->cardnumber . "</ns1:AgencyId>
+            </ns1:ToAgencyId>
+        </ns1:InitiationHeader>
+        <ns1:UserId>
+            <ns1:UserIdentifierValue>" . $borrower->cardnumber . "</ns1:UserIdentifierValue>
+        </ns1:UserId>
+        <ns1:BibliographicId>
+            <ns1:BibliographicItemId>
+                <ns1:BibliographicItemIdentifier>" . $bibliodata->{'biblionumber'} . "</ns1:BibliographicItemIdentifier>
+            </ns1:BibliographicItemId>
+        </ns1:BibliographicId>
+        <ns1:RequestId>
+            <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+            <ns1:RequestIdentifierValue>$request_id</ns1:RequestIdentifierValue>
+        </ns1:RequestId>
+        <ns1:RequestType>Loan</ns1:RequestType>
+        <ns1:RequestScopeType>0</ns1:RequestScopeType>
+        <ns1:ItemOptionalFields>
+            <ns1:BibliographicDescription>
+                <ns1:Author>"           . $bibliodata->{'author'} . "</ns1:Author>
+                <ns1:Title>"            . $bibliodata->{'title'} . "</ns1:Title>
+                <ns1:PublicationPlace>" . $bibliodata->{'place'} . "</ns1:PublicationPlace>
+                <ns1:Publisher>"        . $bibliodata->{'publishercode'} . "</ns1:Publisher>
+                <ns1:PublicationDate>"  . $bibliodata->{'copyrightdate'} . "</ns1:PublicationDate>
+                <ns1:MediumType>"       . $bibliodata->{'itemtype'} . "</ns1:MediumType>
+            </ns1:BibliographicDescription>
+        </ns1:ItemOptionalFields>
+    </ns1:ItemRequested>
+</ns1:NCIPMessage>";
 
     logaction( 'ILL', 'ItemRequested', $bibliodata->{'biblionumber'}, $msg );
     _send_message( $msg, $nncip_uri );
