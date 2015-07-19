@@ -44,7 +44,7 @@
                     <div class="alert alert-success">
                         <p><span id="[% message.message %]">
                             [% IF message.message == 'order_success' %]
-                                Your request for "[% biblio.title %]" by <em>[% biblio.author %]</em> has been added to the queue, with order number [% message.order_number %].
+                                Your request for "[% biblio.title %]" by <em>[% biblio.author %]</em> has been added to the queue, with request ID [% message.request_id %].
                             [% ELSIF message.message == 'request_cancellation_ok' %]
                                 Your cancellation of request [% message.id %] has been requested.
                             [% ELSIF message.message == 'request_comment_ok' %]

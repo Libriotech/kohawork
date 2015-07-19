@@ -29,6 +29,7 @@ use C4::Output;
 use C4::Branch;
 use Koha::Borrowers;
 use Koha::ILLRequests;
+use Koha::ILLRequest::Backend::NNCIPP qw( send_ItemRequested );
 use URI::Escape;
 
 use Data::Dumper; # FIXME Debug
@@ -68,7 +69,9 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
     # warn Dumper $illRequest;
 
     if ( $request ) {
-        $message = { message => 'order_success', order_number => $request->{'status'}->{'id'} };
+        my $request_id = $request->{'status'}->{'id'};
+        $message = { message => 'order_success', request_id => $request_id };
+        send_ItemRequested( $request_id, $borrower );
     } else {
         # FIXME
     }
