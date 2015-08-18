@@ -89,11 +89,3 @@ $template->param(
 );
 
 output_html_with_http_headers( $cgi, $cookie, $template->output );
-
-sub fail {
-    my @values = @_;
-    foreach my $val ( @values ) {
-        return 1 if (!$val or $val eq '');
-    }
-    return 0;
-}
