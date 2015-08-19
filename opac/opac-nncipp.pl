@@ -64,7 +64,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
     my $request = $illRequest->request({
         'biblionumber' => $biblionumber,
         'branch'       => $borrower->{'branchcode'},
-        'borrower'     => $borrowernumber,
+        'borrower'     => $borrowernumber, # This will be a library, where "NO-$borrowernumber" = ISIL for that library
     });
     # $illRequest->save;
     # warn Dumper $illRequest;
@@ -72,6 +72,8 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
     if ( $request ) {
         my $request_id = $request->{'status'}->{'id'};
         $message = { message => 'order_success', request_id => $request_id };
+        # Notify the users home library that this request was made
+        # NNCIPP: Use case #3. Call #8.
         send_ItemRequested( $request_id, $bibliodata, $borrower );
     } else {
         # FIXME
