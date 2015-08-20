@@ -28,6 +28,7 @@ CREATE TABLE ill_requests (
     id serial PRIMARY KEY,
     borrowernumber integer REFERENCES borrowers (borrowernumber),
     biblionumber integer REFERENCES biblio (biblionumber),
+    ordered_from integer DEFAULT 0 NOT NULL,
     status varchar(50),
     placement_date date,
     reply_date date,

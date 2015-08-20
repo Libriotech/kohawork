@@ -50,6 +50,7 @@ my $query        = $cgi->param('query_value');
 my $here         = "/cgi-bin/koha/opac-nncipp.pl";
 my $op           = $cgi->param('op');
 my $biblionumber = $cgi->param('biblionumber');
+my $userid       = $cgi->param('userid');
 my $bibliodata   = GetBiblioData( $biblionumber );
 my $borrower     = Koha::Borrowers->new->find( $borrowernumber )
     || die "You're logged in as the database user. We don't support that.";
@@ -74,7 +75,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
         $message = { message => 'order_success', request_id => $request_id };
         # Notify the users home library that this request was made
         # NNCIPP: Use case #3. Call #8.
-        send_ItemRequested( $request_id, $bibliodata, $borrower );
+        send_ItemRequested( $bibliodata, $borrower, $userid );
     } else {
         # FIXME
     }

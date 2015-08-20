@@ -55,8 +55,16 @@
                 [% END %]
 
                 [% IF !op %]
-                    <p>[% biblio.title %] by [% biblio.author %]</p>
-                    <p><a href="/cgi-bin/koha/opac-nncipp.pl?biblionumber=[% biblionumber %]&op=order">Order</a> | <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=[% biblionumber %]">Cancel</a></p>
+                    <p><cite>[% biblio.title %]</cite> by [% biblio.author %]</p>
+                    <form method="POST" action"/cgi-bin/koha/opac-nncipp.pl">
+                        <input type="hidden" name="op" value="order"/>
+                        <input type="hidden" name="biblionumber" value="[% biblionumber %]"/>
+                        <label for="userid">Order on behalf of patron:</label>
+                        <input type="text" name="userid" id="userid" placeholder="NLR-ID"/>
+                        <div>
+                            <input type="submit" value="Order" class="btn"/> | <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=[% biblionumber %]">Cancel</a>
+                        </div>
+                    </form>
                 [% END %]
 
             </div>

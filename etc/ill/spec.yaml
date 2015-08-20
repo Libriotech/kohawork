@@ -67,10 +67,6 @@
 # YAML, you'll need to enclose the id in quotation marks, e.g. "@key".
 
 record:
-  uin:
-    name: British Library Identifier
-    inSummary: yes
-    accessor: id
   type:
     name: Material Type
     inSummary: yes
