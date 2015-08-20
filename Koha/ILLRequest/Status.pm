@@ -63,8 +63,9 @@ sub new {
         reply_date      => DateTime->now,
         placement_date  => DateTime->now,
         ts              => DateTime->now,
-        reqtype         => $opts->{reqtype}  || '',
-        branch          => $opts->{branch}   || '',
+        reqtype         => $opts->{reqtype}      || '',
+        branch          => $opts->{branch}       || '',
+        ordered_from    => $opts->{ordered_from} || 0,
     };
 
     bless $self, $class;
@@ -84,6 +85,7 @@ sub getFields {
         completion_date => $self->{completion_date},
         reqtype         => $self->{reqtype},
         branch          => $self->{branch},
+        ordered_from    => $self->{ordered_from},
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {
@@ -120,6 +122,7 @@ sub getFullStatus {
         completion_date => [ "Completion Date", $self->{completion_date} ],
         reqtype         => [ "Request Type", $self->{reqtype} ],
         branch          => [ "Branch", $self->{branch} ],
+        ordered_from    => [ "Ordered from", $self->{ordered_from} ]
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {
@@ -146,6 +149,7 @@ sub getSummary {
         biblionumber   => [ "Biblio Number", $self->{biblionumber} ],
         status         => [ "Status", $self->{status} ],
         reqtype        => [ "Request Type", $self->{reqtype} ],
+        ordered_from   => [ "Ordered from", $self->{ordered_from} ]
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {

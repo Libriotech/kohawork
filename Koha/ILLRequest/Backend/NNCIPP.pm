@@ -46,11 +46,23 @@ Typically triggered when a library has logged into the OPAC and placed an ILL
 request there. This message is sent back to the ILS of the library that made
 the request, so that they know what they have requested.
 
+Arguments:
+
+=over 4
+
+=item * $bibliodata = the result of a call to GetBiblioData()
+
+=item * $borrower = the result of a call to Koha::Borrowers->new->find( $borrowernumber )
+
+=item * $userid = The userid/cardnumber of the user that the requested document is meant for, at the Home Library
+
+=back
+
 =cut
 
 sub send_ItemRequested {
 
-    my ( $request_id, $bibliodata, $borrower ) = @_;
+    my ( $bibliodata, $borrower, $userid ) = @_;
 
     # FIXME Return with an error if there is no nncip_uri
     my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
@@ -72,7 +84,7 @@ sub send_ItemRequested {
 		    </ns1:InitiationHeader>
 		    <!-- The UserId must be a NLR-Id (National Patron Register) -->
 		    <ns1:UserId>
-			    <ns1:UserIdentifierValue>N-" . $borrower->cardnumber . "</ns1:UserIdentifierValue>
+			    <ns1:UserIdentifierValue>" . $userid . "</ns1:UserIdentifierValue>
 		    </ns1:UserId>
 		    <!-- The ItemId must uniquely identify the requested Item in the scope of the FromAgencyId. -->
 		    <!-- Use ItemOptimalFields.BibliographicDescription that is mandatory in NNCIPP 1.0, to describe the ItemId -->
