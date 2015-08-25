@@ -140,8 +140,7 @@ sub _send_message {
 
     my ( $msg, $endpoint ) = @_;
 
-    my $http = HTTP::Tiny->new();
-    my $response = $http->post( $endpoint, { 'content' => $msg } );
+    my $response = HTTP::Tiny->new->request( 'POST', $endpoint, { 'content' => $msg } );
 
     if ( $response->{success} ){
         logaction( 'ILL', 'response_success', undef, $response->{'content'} );
