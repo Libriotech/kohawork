@@ -63,8 +63,8 @@ sub new {
         reply_date      => DateTime->now,
         placement_date  => DateTime->now,
         ts              => DateTime->now,
-        reqtype         => $opts->{reqtype}  || '',
-        branch          => $opts->{branch}   || '',
+        reqtype         => $opts->{reqtype}      || '',
+        branch          => $opts->{branch}       || '',
         ordered_from    => $opts->{ordered_from} || 0,
     };
 

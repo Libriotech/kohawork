@@ -75,7 +75,6 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
 
     if ( $request ) {
         my $request_id = $request->{'status'}->{'id'};
-        warn "request_id: $request_id";
         $message = { message => 'order_success', request_id => $request_id };
         # Notify the users home library that this request was made
         # NNCIPP: Use case #3. Call #8.
