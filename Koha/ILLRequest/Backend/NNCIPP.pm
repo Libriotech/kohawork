@@ -19,6 +19,7 @@ package Koha::ILLRequest::Backend::NNCIPP;
 
 use C4::Members::Attributes qw ( GetBorrowerAttributeValue );
 use C4::Log;
+use C4::Items;
 use HTTP::Tiny;
 use Modern::Perl;
 use Data::Dumper; # FIXME Debug
@@ -67,6 +68,16 @@ sub send_ItemRequested {
     # FIXME Return with an error if there is no nncip_uri
     my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
 
+    # Pick out an item to tie the request to
+    my $barcode;
+    my @items = GetItemsInfo( $bibliodata->{'biblionumber'} );
+    foreach my $item ( @items ) {
+        if ( $item->{'barcode'} ne '' ) {
+            $barcode = $item->{'barcode'};
+            last;
+        }
+    }
+
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
     <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
 	    <!-- Usage in NNCIPP 1.0 is in use-case 3, call #8: Owner library informs Home library that a user requests one Item -->
@@ -90,7 +101,7 @@ sub send_ItemRequested {
 		    <!-- Use ItemOptimalFields.BibliographicDescription that is mandatory in NNCIPP 1.0, to describe the ItemId -->
 		    <!-- NNCIPP 1.0 only support ItemId and not the alternativ use of Bibliographic and RequestId. -->
 		    <ns1:ItemId>
-			    <ns1:ItemIdentifierValue>" . "FIXME" . "</ns1:ItemIdentifierValue>
+			    <ns1:ItemIdentifierValue>" . $barcode . "</ns1:ItemIdentifierValue>
 		    </ns1:ItemId>
 		    <!-- The RequestType must be one of the following  {“Loan”|”Copy”|”LoanNoReservation”|”LII”|”LIINoReservation”|”Depot”}-->
 		    <ns1:RequestType>Loan</ns1:RequestType>

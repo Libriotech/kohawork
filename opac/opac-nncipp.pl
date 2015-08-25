@@ -45,6 +45,7 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     }
 );
 
+my $message      = '';
 my $query        = $cgi->param('query_value');
 my $here         = "/cgi-bin/koha/opac-nncipp.pl";
 my $op           = $cgi->param('op');
@@ -59,6 +60,8 @@ my $ncip_response;
 
 if ( $op eq 'order' && $biblionumber ne '' ) {
 
+    # FIXME Add more checks to make sure the item can be ordered through ILL
+
     # Add a ILL request for the given biblionumber and logged in user
 
     my $illRequest   = Koha::ILLRequests->new;
@@ -72,6 +75,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
 
     if ( $request ) {
         my $request_id = $request->{'status'}->{'id'};
+        warn "request_id: $request_id";
         $message = { message => 'order_success', request_id => $request_id };
         # Notify the users home library that this request was made
         # NNCIPP: Use case #3. Call #8.
@@ -79,7 +83,6 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
     } else {
         # FIXME
     }
-    $message = { message => 'order_success', order_number => 123 };
 
 }
 
@@ -88,6 +91,7 @@ $template->param(
     op            => $op,
     biblionumber  => $biblionumber,
     biblio        => $bibliodata,
+    message       => $message,
     ncip_response => $ncip_response,
 );
 
