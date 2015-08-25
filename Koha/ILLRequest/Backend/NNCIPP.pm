@@ -113,7 +113,7 @@ sub send_ItemRequested {
     </ns1:NCIPMessage>";
 
     logaction( 'ILL', 'ItemRequested', $bibliodata->{'biblionumber'}, $msg );
-    _send_message( $msg, $nncip_uri );
+    return _send_message( $msg, $nncip_uri );
 
 }
 

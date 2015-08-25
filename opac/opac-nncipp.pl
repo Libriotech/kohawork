@@ -45,7 +45,6 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user(
     }
 );
 
-my ( $error, $message );
 my $query        = $cgi->param('query_value');
 my $here         = "/cgi-bin/koha/opac-nncipp.pl";
 my $op           = $cgi->param('op');
@@ -54,6 +53,7 @@ my $userid       = $cgi->param('userid');
 my $bibliodata   = GetBiblioData( $biblionumber );
 my $borrower     = Koha::Borrowers->new->find( $borrowernumber )
     || die "You're logged in as the database user. We don't support that.";
+my $ncip_response;
 
 # Default: Display "Order | Cancel" links for the given biblionumber
 
@@ -75,7 +75,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
         $message = { message => 'order_success', request_id => $request_id };
         # Notify the users home library that this request was made
         # NNCIPP: Use case #3. Call #8.
-        send_ItemRequested( $bibliodata, $borrower, $userid );
+        $ncip_response = send_ItemRequested( $bibliodata, $borrower, $userid );
     } else {
         # FIXME
     }
@@ -84,12 +84,11 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
 }
 
 $template->param(
-    query_value  => $query,
-    error        => $error,
-    message      => $message,
-    op           => $op,
-    biblionumber => $biblionumber,
-    biblio       => $bibliodata,
+    query_value   => $query,
+    op            => $op,
+    biblionumber  => $biblionumber,
+    biblio        => $bibliodata,
+    ncip_response => $ncip_response,
 );
 
 output_html_with_http_headers( $cgi, $cookie, $template->output );
