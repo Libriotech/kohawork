@@ -113,7 +113,7 @@ sub send_ItemRequested {
 		    <ns1:ItemId>
 			    <ns1:ItemIdentifierValue>" . $barcode . "</ns1:ItemIdentifierValue>
 		    </ns1:ItemId>
-		    <!-- The RequestType must be one of the following  {"Loan"|"Copy"|"LoanNoReservation"|"LII"|"LIINoReservation"|"Depot"}-->
+		    <!-- The RequestType must be one of the following  {Loan|Copy|LoanNoReservation|LII|LIINoReservation|Depot}-->
 		    <ns1:RequestType>Loan</ns1:RequestType>
 		    <!-- RequestScopeType is mandatory and must be \"0\", signaling that the request is on title-level (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
 		    <ns1:RequestScopeType>0</ns1:RequestScopeType>
