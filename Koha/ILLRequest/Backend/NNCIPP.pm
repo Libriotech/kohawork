@@ -21,6 +21,7 @@ use C4::Members::Attributes qw ( GetBorrowerAttributeValue );
 use C4::Log;
 use C4::Items;
 use HTTP::Tiny;
+use MARC::Record;
 use Modern::Perl;
 use Data::Dumper; # FIXME Debug
 use base qw(Exporter);
@@ -68,7 +69,7 @@ sub send_ItemRequested {
     # FIXME Return with an error if there is no nncip_uri
     my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
 
-    # Pick out an item to tie the request to
+    # Pick out an item to tie the request to (we take the first one that has a barcode)
     my $barcode;
     my @items = GetItemsInfo( $bibliodata->{'biblionumber'} );
     foreach my $item ( @items ) {
@@ -76,6 +77,15 @@ sub send_ItemRequested {
             $barcode = $item->{'barcode'};
             last;
         }
+    }
+
+    # Pick out the language code from 008, position 35-37
+    my $marcxml = $bibliodata->{'marcxml'};
+    my $record = MARC::Record->new_from_xml( $marcxml, 'UTF-8' );
+    my $f008 = $record->field( '008' )->data();
+    my $lang_code = '   ';
+    if ( $f008 ) {
+        $lang_code = substr $f008, 35, 3;
     }
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
@@ -116,8 +126,8 @@ sub send_ItemRequested {
 				    <ns1:PublicationDate>"    . $bibliodata->{'copyrightdate'} . "</ns1:PublicationDate>
 				    <ns1:Publisher>"          . $bibliodata->{'publishercode'} . "</ns1:Publisher>
 				    <ns1:Title>"              . $bibliodata->{'title'} . "</ns1:Title>
-				    <ns1:Language>Use three letter codes (ISO-639-2)</ns1:Language>
-				    <ns1:MediumType>Use values as defined in Implementation-part of NCIP on page 23.</ns1:MediumType> <!-- Map from " . $bibliodata->{'itemtype'} . "? -->
+				    <ns1:Language>"           . $lang_code . "</ns1:Language>
+				    <ns1:MediumType>Book</ns1:MediumType> <!-- Map from " . $bibliodata->{'itemtype'} . "? -->
 			    </ns1:BibliographicDescription>
 		    </ns1:ItemOptionalFields>
 	    </ns1:ItemRequested>
