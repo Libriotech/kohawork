@@ -124,7 +124,7 @@ sub send_ItemRequested {
 		    <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
 		    <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
 		    <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
-		    <!-- If your library dont recive 'Depot'-books; just respond with a "Unknown Value From Known Scheme"-ProblemType -->
+		    <!-- If your library dont recive 'Depot'-books; just respond with a \"Unknown Value From Known Scheme\"-ProblemType -->
 		    <ns1:RequestType>Physical</ns1:RequestType>
 		    <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
 		    <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
