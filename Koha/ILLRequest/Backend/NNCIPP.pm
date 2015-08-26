@@ -89,7 +89,8 @@ sub send_ItemRequested {
     }
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
-    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
+    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" 
+    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
 	    <!-- Usage in NNCIPP 1.0 is in use-case 3, call #8: Owner library informs Home library that a user requests one Item -->
 	    <ns1:ItemRequested>
 		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
@@ -108,16 +109,27 @@ sub send_ItemRequested {
 			    <ns1:UserIdentifierValue>" . $userid . "</ns1:UserIdentifierValue>
 		    </ns1:UserId>
 		    <!-- The ItemId must uniquely identify the requested Item in the scope of the FromAgencyId. -->
-		    <!-- Use ItemOptimalFields.BibliographicDescription that is mandatory in NNCIPP 1.0, to describe the ItemId -->
-		    <!-- NNCIPP 1.0 only support ItemId and not the alternativ use of Bibliographic and RequestId. -->
+		    <!-- The ToAgency may then mirror back this ItemId in a RequestItem-call to order it.-->
+		    <!-- Note: NNCIPP do not support use of BibliographicId insted of ItemId, in this case. -->
 		    <ns1:ItemId>
+			    <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
+			    <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
+			    <ns1:ItemIdentifierType>Barcode</ns1:ItemIdentifierType>
 			    <ns1:ItemIdentifierValue>" . $barcode . "</ns1:ItemIdentifierValue>
 		    </ns1:ItemId>
-		    <!-- The RequestType must be one of the following  {Loan|Copy|LoanNoReservation|LII|LIINoReservation|Depot}-->
-		    <ns1:RequestType>Loan</ns1:RequestType>
-		    <!-- RequestScopeType is mandatory and must be \"0\", signaling that the request is on title-level (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
-		    <ns1:RequestScopeType>0</ns1:RequestScopeType>
-		    <!-- Use of ItemOptimalFields is mandatory in NNCIPP 1.0 -->
+		    <!-- The RequestType must be one of the following: -->
+		    <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
+		    <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
+		    <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
+		    <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
+		    <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
+		    <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
+		    <!-- If your library dont recive 'Depot'-books; just respond with a "Unknown Value From Known Scheme"-ProblemType -->
+		    <ns1:RequestType>Physical</ns1:RequestType>
+		    <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
+		    <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
+		    <ns1:RequestScopeType>Title</ns1:RequestScopeType>
+		    <!-- Include ItemOptionalFields.BibliographicDescription if you wish to recive Bibliographic data in the response -->
 		    <ns1:ItemOptionalFields>
 			    <!-- BibliographicDescription is used, as needed, to supplement the ItemId -->
 			    <ns1:BibliographicDescription>
