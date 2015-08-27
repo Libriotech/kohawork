@@ -22,12 +22,16 @@ use C4::Log;
 use C4::Items;
 use HTTP::Tiny;
 use MARC::Record;
+use XML::Simple;
 use Modern::Perl;
 use Data::Dumper; # FIXME Debug
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(
+    SendLookupAgency
     send_ItemRequested
+
+    GetILLPartners
 );
 
 =head1 NAME
@@ -41,6 +45,66 @@ Koha::ILLRequest::Backend::NNCIPP - Koha ILL Backend: NNCIPP (Norwegian NCIP Pro
 A first stub file to implement NNCIPP for Koha.
 
 =head1 SUBROUTINES
+
+=head2 SendLookupAgency
+
+The argument to this function is a hashref with one of these keyes:
+
+=over 4
+
+=item * borrowernumber
+
+=item * nncip_uri
+
+=back
+
+=cut
+
+sub SendLookupAgency {
+
+    my ( $args ) = @_;
+
+    my $nncip_uri;
+    if ( $args->{'nncip_uri'} ) {
+        $nncip_uri = $args->{'nncip_uri'};
+    } elsif ( $args->{'borrowernumber'} ) {
+        $nncip_uri = GetBorrowerAttributeValue( $args->{'borrowernumber'}, 'nncip_uri' );
+    }
+
+    my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\"
+    ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\"
+    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+    xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
+	    <!-- Usage in NNCIPP 1.0 is in use-case 1, call #1:
+    i) ask for the shipping address that shuld be used to fulfill a lending request
+    ii) check what versions of NNCIPP the agency comply to -->
+	    <ns1:LookupAgency>
+		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+		    <ns1:InitiationHeader>
+			    <!-- A Library -->
+			    <ns1:FromAgencyId>
+				    <ns1:AgencyId>NO-1234567</ns1:AgencyId>
+			    </ns1:FromAgencyId>
+			    <!-- A Library -->
+			    <ns1:ToAgencyId>
+				    <ns1:AgencyId>NO-1212121</ns1:AgencyId>
+			    </ns1:ToAgencyId>
+		    </ns1:InitiationHeader>
+		    <!-- State which Agency you are asking information about, normaly equal to ToAgency. -->
+		    <ns1:AgencyId>NO-1212121</ns1:AgencyId>
+		    <!-- State what information element you are asking for-->
+		    <!-- It is mandatory to support \"Application Profile Supported Type\" in NNCIP.  -->
+		    <ns1:AgencyElementType>Application Profile Supported Type</ns1:AgencyElementType>
+		    <!-- It is recomended to support \"Agency Address Information\" in NNCIPP. -->
+		    <ns1:AgencyElementType>Agency Address Information</ns1:AgencyElementType>
+	    </ns1:LookupAgency>
+    </ns1:NCIPMessage>";
+
+    logaction( 'ILL', 'LookupAgency', undef, $msg );
+    return _send_message( $msg, $nncip_uri );
+
+}
 
 =head2 send_ItemRequested
 
@@ -150,6 +214,26 @@ sub send_ItemRequested {
 
 }
 
+=head2 GetILLPartners
+
+Return a list of all borrowers that have the nncip_uri extended attribute set.
+
+=cut
+
+sub GetILLPartners {
+
+    my $dbh = C4::Context->dbh();
+    my $sth = $dbh->prepare("SELECT *
+                 FROM borrower_attributes AS ba, borrowers AS b
+                 WHERE ba.code = 'nncip_uri'
+                   AND attribute != ''
+                   AND ba.borrowernumber = b.borrowernumber
+                 ORDER BY b.surname ASC");
+    $sth->execute();
+    return $sth->fetchall_arrayref( {} );
+
+}
+
 =head1 INTERNAL SUBROUTINES
 
 =head2 _send_message
@@ -166,11 +250,18 @@ sub _send_message {
 
     if ( $response->{success} ){
         logaction( 'ILL', 'response_success', undef, $response->{'content'} );
-        return { 'success' => 1, 'msg' => $response->{'content'} };
+        return {
+            'success' => 1,
+            'msg'     => $response->{'content'},
+            'data'    => XMLin( $response->{'content'} ),
+        };
     } else {
         my $msg = "ERROR: $response->{status} $response->{reason}";
         logaction( 'ILL', 'response_success', undef, $msg );
-        return { 'success' => 0, 'msg' => $msg };
+        return {
+            'success' => 0,
+            'msg' => $msg,
+        };
     }
 
 }

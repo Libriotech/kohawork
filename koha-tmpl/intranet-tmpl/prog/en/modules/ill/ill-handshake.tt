@@ -1,0 +1,53 @@
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha &rsaquo; ILL &rsaquo; Handshake</title>
+[% INCLUDE 'doc-head-close.inc' %]
+<script type="text/javascript" src="[% themelang %]/lib/jquery/plugins/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="[% themelang %]/lib/jquery/plugins/jquery.checkboxes.min.js"></script>
+</head>
+
+<body id="acq_suggestion" class="acq">
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+[% parent = "/cgi-bin/koha/ill/ill-requests.pl" %]
+[% here = "/cgi-bin/koha/ill/ill-new.pl" %]
+
+<div id="breadcrumbs">
+    <a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo;
+    <a href=[% parent %]>ILL</a> &rsaquo; Handshake
+</div>
+
+<div id="doc3" class="yui-t2">
+    <div id="bd">
+        <div id="yui-main">
+            <div class="yui-b">
+
+            <h1>ILL partners</h1>
+            <p>Choose a partner that you want to test:</p>
+            <form method="GET" action="/cgi-bin/koha/ill/ill-handshake.pl">
+            <select name="illpartner">
+            [% FOREACH p IN illpartners %]
+                [% IF partner.borrowernumber && partner.borrowernumber == p.borrowernumber %]
+                    <option value="[% p.borrowernumber %]" selected>[% p.surname %] ([% p.cardnumber %])</option>
+                [% ELSE %]
+                    <option value="[% p.borrowernumber %]">[% p.surname %] ([% p.cardnumber %])</option>
+                [% END %]
+            [% END %]
+            </select>
+            <input type="submit" value="Test" class="btn" />
+            </form>
+
+            [% IF partner %]
+                <h2>[% partner.surname %] ([% partner.cardnumber %])</h2>
+                <p>NNCIPP URI: <a href="[% nncip_uri %]">[% nncip_uri %]</a> <a href="/cgi-bin/koha/members/memberentry.pl?op=modify&borrowernumber=[% partner.borrowernumber %]&step=4">Edit</a></p>
+                <p>LookupAgency: [% IF response.success == 1 %]Success[% ELSE %]Fail[% END %]!</p>
+                [% USE Dumper %]
+                <pre>[% Dumper.dump_html( response.data ) %]</pre>
+            [% END %]
+
+            </div>
+        </div>
+    </div>
+</div>
+
+[% INCLUDE 'intranet-bottom.inc' %]
