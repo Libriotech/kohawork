@@ -101,8 +101,7 @@ sub SendLookupAgency {
 	    </ns1:LookupAgency>
     </ns1:NCIPMessage>";
 
-    logaction( 'ILL', 'LookupAgency', undef, $msg );
-    return _send_message( $msg, $nncip_uri );
+    return _send_message( 'LookupAgency', $msg, $nncip_uri );
 
 }
 
@@ -209,8 +208,7 @@ sub send_ItemRequested {
 	    </ns1:ItemRequested>
     </ns1:NCIPMessage>";
 
-    logaction( 'ILL', 'ItemRequested', $bibliodata->{'biblionumber'}, $msg );
-    return _send_message( $msg, $nncip_uri );
+    return _send_message( 'ItemRequested', $msg, $nncip_uri );
 
 }
 
@@ -244,12 +242,13 @@ Do the actual sending of XML messages to NCIP endpoints.
 
 sub _send_message {
 
-    my ( $msg, $endpoint ) = @_;
+    my ( $req, $msg, $endpoint ) = @_;
 
+    logaction( 'ILL', $req, undef, $msg );
     my $response = HTTP::Tiny->new->request( 'POST', $endpoint, { 'content' => $msg } );
 
     if ( $response->{success} ){
-        logaction( 'ILL', 'response_success', undef, $response->{'content'} );
+        logaction( 'ILL', $req . 'Response', undef, $response->{'content'} );
         return {
             'success' => 1,
             'msg'     => $response->{'content'},
@@ -257,7 +256,7 @@ sub _send_message {
         };
     } else {
         my $msg = "ERROR: $response->{status} $response->{reason}";
-        logaction( 'ILL', 'response_success', undef, $msg );
+        logaction( 'ILL', $req . 'Response', undef, $msg );
         return {
             'success' => 0,
             'msg' => $msg,
