@@ -42,7 +42,10 @@ if ( $illpartner ) {
 
     my $partner = GetMemberDetails( $illpartner );
     my $nncip_uri = GetBorrowerAttributeValue( $illpartner, 'nncip_uri' );
-    my $response = SendLookupAgency({ 'nncip_uri' => $nncip_uri });
+    my $response = SendLookupAgency({
+        'nncip_uri' => $nncip_uri,
+        'to_agency' => $partner->{ 'cardnumber' },
+    });
     
     $template->param(
       'partner'   => $partner,

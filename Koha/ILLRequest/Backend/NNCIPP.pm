@@ -84,15 +84,15 @@ sub SendLookupAgency {
 		    <ns1:InitiationHeader>
 			    <!-- A Library -->
 			    <ns1:FromAgencyId>
-				    <ns1:AgencyId>NO-1234567</ns1:AgencyId>
+				    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
 			    </ns1:FromAgencyId>
 			    <!-- A Library -->
 			    <ns1:ToAgencyId>
-				    <ns1:AgencyId>NO-1212121</ns1:AgencyId>
+				    <ns1:AgencyId>NO-" . $args->{'cardnumber'} . "</ns1:AgencyId>
 			    </ns1:ToAgencyId>
 		    </ns1:InitiationHeader>
 		    <!-- State which Agency you are asking information about, normaly equal to ToAgency. -->
-		    <ns1:AgencyId>NO-1212121</ns1:AgencyId>
+		    <ns1:AgencyId>NO-" . $args->{'cardnumber'} . "</ns1:AgencyId>
 		    <!-- State what information element you are asking for-->
 		    <!-- It is mandatory to support \"Application Profile Supported Type\" in NNCIP.  -->
 		    <ns1:AgencyElementType>Application Profile Supported Type</ns1:AgencyElementType>
