@@ -29,9 +29,11 @@ use base qw(Exporter);
 
 our @EXPORT_OK = qw(
     SendLookupAgency
+    SendRequestItem
     send_ItemRequested
 
     GetILLPartners
+    quickfix_requestbib
 );
 
 =head1 NAME
@@ -105,6 +107,88 @@ sub SendLookupAgency {
 
 }
 
+=head2 SendRequestItem
+
+Send a RequestItem to another library.
+
+=cut
+
+sub SendRequestItem {
+
+    my ( $args ) = @_;
+    
+    # Construct ItemIdentifierType and ItemIdentifierValue
+    my $itemidentifiertype  = '';
+    my $itemidentifiervalue = '';
+    if ( $args->{'barcode'} ne '' ) {
+        $itemidentifiertype  .= 'Barcode';
+        $itemidentifiervalue .= $args->{'barcode'};
+    }
+    if ( $args->{'barcode'} ne '' && $args->{'rfid'} ne '' ) {
+        $itemidentifiertype  .= ';';
+        $itemidentifiervalue .= ';';
+    }
+    if ( $args->{'rfid'} ne '' ) {
+        $itemidentifiertype  .= 'RFID';
+        $itemidentifiervalue .= $args->{'rfid'};
+    }
+    
+    my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
+	    <!-- Usage in NNCIPP 1.0 is in use-case 2: A user request a spesific uniqe item, from a external library.  -->
+	    <ns1:RequestItem>
+		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+		    <ns1:InitiationHeader>
+			    <!-- Home Library -->
+			    <ns1:FromAgencyId>
+				    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+			    </ns1:FromAgencyId>
+			    <!-- Owner Library -->
+			    <ns1:ToAgencyId>
+				    <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
+			    </ns1:ToAgencyId>
+		    </ns1:InitiationHeader>
+		    <!-- The UserId must be a NLR-Id (National Patron Register) -->
+		    <ns1:UserId>
+			    <ns1:UserIdentifierValue>" . $args->{'userid'} . "</ns1:UserIdentifierValue>
+		    </ns1:UserId>
+		    <!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
+		    <ns1:ItemId>
+			    <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
+			    <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
+			    <ns1:ItemIdentifierType>" . $itemidentifiertype . "</ns1:ItemIdentifierType>
+			    <ns1:ItemIdentifierValue>" . $itemidentifiervalue . "</ns1:ItemIdentifierValue>
+		    </ns1:ItemId>
+		    <!-- The RequestId must be created by the initializing AgencyId and it has to be globaly uniqe -->
+		    <ns1:RequestId>
+			    <!-- The initializing AgencyId must be part of the RequestId -->
+			    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+			    <!-- The RequestIdentifierValue must be part of the RequestId-->
+			    <ns1:RequestIdentifierValue>" . $args->{'requestid'} . "</ns1:RequestIdentifierValue>
+		    </ns1:RequestId>
+		    <!-- The RequestType must be one of the following: -->
+		    <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
+		    <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
+		    <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
+		    <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
+		    <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
+		    <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
+		    <!-- If your library dont recive 'Depot'-books; just respond with a \"Unknown Value From Known Scheme\"-ProblemType -->
+		    <ns1:RequestType>" . $args->{'reqtype'} . "</ns1:RequestType>
+		    <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
+		    <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
+		    <ns1:RequestScopeType>Title</ns1:RequestScopeType>
+		    <!-- Include ItemOptionalFields.BibliographicDescription if you wish to recive Bibliographic data in the response -->
+		    <ns1:ItemOptionalFields>
+			    <ns1:BibliographicDescription/>
+		    </ns1:ItemOptionalFields>
+	    </ns1:RequestItem>
+    </ns1:NCIPMessage>";
+    
+    return _send_message( 'RequestItem', $msg, $args->{'nncip_uri'} );
+
+}
+
 =head2 send_ItemRequested
 
 Typically triggered when a library has logged into the OPAC and placed an ILL
@@ -143,13 +227,7 @@ sub send_ItemRequested {
     }
 
     # Pick out the language code from 008, position 35-37
-    my $marcxml = $bibliodata->{'marcxml'};
-    my $record = MARC::Record->new_from_xml( $marcxml, 'UTF-8' );
-    my $f008 = $record->field( '008' )->data();
-    my $lang_code = '   ';
-    if ( $f008 ) {
-        $lang_code = substr $f008, 35, 3;
-    }
+    my $lang_code = _get_langcode_from_bibliodata( $bibliodata );
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
     <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" 
@@ -232,6 +310,28 @@ sub GetILLPartners {
 
 }
 
+=head1 QUICK AND DIRTY SUBROUTINES
+
+Here be monsters.
+
+=head2 quickfix_requestbib
+
+Just fix the title and author of a placeholder IllRequest
+
+=cut
+
+sub quickfix_requestbib {
+
+    my ( $args ) = @_;
+    
+    my $dbh = C4::Context->dbh();
+    my $sth = $dbh->prepare("UPDATE ill_request_attributes SET value = ? WHERE req_id = ? AND type = 'm./metadata/titleLevel/title';");
+    $sth->execute( $args->{title}, $args->{requestid} );
+    my $sth = $dbh->prepare("UPDATE ill_request_attributes SET value = ? WHERE req_id = ? AND type = 'm./metadata/titleLevel/author';");
+    $sth->execute( $args->{author}, $args->{requestid} );
+
+}
+
 =head1 INTERNAL SUBROUTINES
 
 =head2 _send_message
@@ -262,6 +362,27 @@ sub _send_message {
             'msg' => $msg,
         };
     }
+
+}
+
+=head2 _get_langcode_from_bibliodata 
+
+Take a record and pick ut the language code in controlfield 008, position 35-37.
+
+=cut
+
+sub _get_langcode_from_bibliodata {
+
+    my ( $bibliodata ) = @_;
+
+    my $marcxml = $bibliodata->{'marcxml'};
+    my $record = MARC::Record->new_from_xml( $marcxml, 'UTF-8' );
+    my $f008 = $record->field( '008' )->data();
+    my $lang_code = '   ';
+    if ( $f008 ) {
+        $lang_code = substr $f008, 35, 3;
+    }
+    return $lang_code;
 
 }
 

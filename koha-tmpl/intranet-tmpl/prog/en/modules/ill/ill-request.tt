@@ -1,0 +1,98 @@
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha &rsaquo; ILL &rsaquo; Request ILL</title>
+[% INCLUDE 'doc-head-close.inc' %]
+<script type="text/javascript" src="[% themelang %]/lib/jquery/plugins/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="[% themelang %]/lib/jquery/plugins/jquery.checkboxes.min.js"></script>
+</head>
+
+<body id="acq_suggestion" class="acq">
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+[% parent = "/cgi-bin/koha/ill/ill-requests.pl" %]
+[% here = "/cgi-bin/koha/ill/ill-new.pl" %]
+
+<div id="breadcrumbs">
+    <a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo;
+    <a href=[% parent %]>ILL</a> &rsaquo; Request ILL
+</div>
+
+<div id="doc3" class="yui-t2">
+    <div id="bd">
+        <div id="yui-main">
+            <div class="yui-b">
+
+            [% IF partner %]
+
+                <h1>Result of ILL request</h1>
+
+                <h2>Response from [% partner.surname %] ([% partner.cardnumber %])</h2>
+                <p>Request was created with RequestId = <a href="/cgi-bin/koha/ill/ill-manage.pl?op=view&rq=[% requestid %]">[% requestid %]</a></p>
+                
+                <p><a href="/cgi-bin/koha/ill/ill-request.pl">Create a new request</a></p>
+
+            [% ELSE %]
+
+                <h1>Make an ILL request</h1>
+
+                <form method="POST" action="/cgi-bin/koha/ill/ill-request.pl">
+                <fieldset id="illrequest" class="rows">
+                <legend id="illrequest_lgd">Request details</legend>
+                <ol>
+                    <li>
+                        <label for="illpartner">Request from:</label>
+                        <select id="illpartner" name="illpartner">
+                        [% FOREACH p IN illpartners %]
+                            [% IF partner.borrowernumber && partner.borrowernumber == p.borrowernumber %]
+                                <option value="[% p.borrowernumber %]" selected>[% p.surname %] ([% p.cardnumber %])</option>
+                            [% ELSE %]
+                                <option value="[% p.borrowernumber %]">[% p.surname %] ([% p.cardnumber %])</option>
+                            [% END %]
+                        [% END %]
+                        </select>
+                    </li>
+                    <li>
+                        <label for="cardnumber">On behalf of patron:</label>
+                        <input type="text" name="cardnumber" id="cardnumber" placeholder="NLR-ID"/>
+                        </li>
+                    <li>
+                        <label for="reqtype">Request type:</label>
+                        <select id="reqtype" name="reqtype">
+                        [% FOREACH t IN reqtypes %]
+                            [% IF t.authorised_value == 'Physical' %]
+                                [%# This will probably be the most common type so we pre-select it %]
+                                <option value="[% t.authorised_value %]" selected>[% t.lib %]</option>
+                            [% ELSE %]
+                                <option value="[% t.authorised_value %]">[% t.lib %]</option>
+                            [% END %]
+                        [% END %]
+                        </select>
+                    </li>
+                </ol>
+                </fieldset>
+                <fieldset id="itemdetails" class="rows">
+                <legend id="itemdetails_lgd">Item details</legend>
+                <ol>
+                    <li>
+                        <label for="barcode">Barcode:</label>
+                        <input type="text" id="barcode" name="barcode" />
+                    </li>
+                    <li>
+                        <label for="rfid">RFID:</label>
+                        <input type="text" id="rfid" name="rfid" />
+                    </li>
+                    <li>
+                        <input type="submit" value="Request" class="btn" />
+                    </li>
+                </ol>
+                </fieldset>
+                </form>
+
+            [% END %]
+
+            </div>
+        </div>
+    </div>
+</div>
+
+[% INCLUDE 'intranet-bottom.inc' %]
