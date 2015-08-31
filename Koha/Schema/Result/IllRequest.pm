@@ -156,5 +156,10 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 1 },
 );
 
+__PACKAGE__->add_columns(
+  "remote_id",
+  { data_type => "integer", is_nullable => 1 },
+);
+
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;

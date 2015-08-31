@@ -29,6 +29,7 @@ CREATE TABLE ill_requests (
     borrowernumber integer REFERENCES borrowers (borrowernumber),
     biblionumber integer REFERENCES biblio (biblionumber),
     ordered_from integer DEFAULT 0 NOT NULL,
+    remote_id integer,
     status varchar(50),
     placement_date date,
     reply_date date,
