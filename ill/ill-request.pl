@@ -28,7 +28,7 @@ use C4::Members::Attributes qw( GetBorrowerAttributeValue );
 use C4::Output;
 use C4::Context;
 use Koha::ILLRequests;
-use Koha::ILLRequest::Backend::NNCIPP qw( SendRequestItem GetILLPartners quickfix_requestbib );
+use Koha::ILLRequest::Backend::NNCIPP qw( SendRequestItem GetILLPartners quickfix_requestbib quickfix_set_ordered_from );
 use URI::Escape;
 
 my $input = CGI->new;
@@ -73,12 +73,12 @@ if ( $illpartner ) {
         'biblionumber' => $biblionumber,
         'branch'       => 'ILL',
         'borrower'     => $borrower->{'borrowernumber'}, # borrowernumber 
-        'ordered_from' => $illpartner, # borrowernumber
     });
     if ( $request ) {
-        $request->editStatus({ 'status' => 'ORDERED' });
-        my $requestid = $request->{'status'}->{'id'};
+        # Make sure the status is ORDERED. FIXME Do this after confirmation is returned?
+        $request->editStatus({ 'ordered_from' => $illpartner, 'status' => 'ORDERED' });
         # Send the request to the remote library
+        my $requestid = $request->{'status'}->{'id'};
         my $response = SendRequestItem({
             'nncip_uri' => $nncip_uri,
             'to_agency' => $partner->{ 'cardnumber' },

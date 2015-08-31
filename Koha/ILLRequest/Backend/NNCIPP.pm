@@ -34,6 +34,7 @@ our @EXPORT_OK = qw(
 
     GetILLPartners
     quickfix_requestbib
+    quickfix_set_ordered_from
 );
 
 =head1 NAME
@@ -327,8 +328,24 @@ sub quickfix_requestbib {
     my $dbh = C4::Context->dbh();
     my $sth = $dbh->prepare("UPDATE ill_request_attributes SET value = ? WHERE req_id = ? AND type = 'm./metadata/titleLevel/title';");
     $sth->execute( $args->{title}, $args->{requestid} );
-    my $sth = $dbh->prepare("UPDATE ill_request_attributes SET value = ? WHERE req_id = ? AND type = 'm./metadata/titleLevel/author';");
+    $sth = $dbh->prepare("UPDATE ill_request_attributes SET value = ? WHERE req_id = ? AND type = 'm./metadata/titleLevel/author';");
     $sth->execute( $args->{author}, $args->{requestid} );
+
+}
+
+=head2 quickfix_set_ordered_from
+
+Just set the ordered_from on an IllRequest
+
+=cut
+
+sub quickfix_set_ordered_from {
+
+    my ( $args ) = @_;
+
+    my $dbh = C4::Context->dbh();
+    my $sth = $dbh->prepare("UPDATE ill_requests SET ordered_from = ? WHERE id = ?;");
+    $sth->execute( $args->{illpartner}, $args->{requestid} );
 
 }
 
