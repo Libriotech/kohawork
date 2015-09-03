@@ -17,9 +17,11 @@ package Koha::ILLRequest::Backend::NNCIPP;
 # with Koha; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+use C4::Members;
 use C4::Members::Attributes qw ( GetBorrowerAttributeValue );
 use C4::Log;
 use C4::Items;
+use Koha::Borrowers;
 use HTTP::Tiny;
 use MARC::Record;
 use XML::Simple;
@@ -31,6 +33,7 @@ our @EXPORT_OK = qw(
     SendLookupAgency
     SendRequestItem
     send_ItemRequested
+    SendItemShipped
 
     GetILLPartners
     quickfix_requestbib
@@ -288,6 +291,45 @@ sub send_ItemRequested {
     </ns1:NCIPMessage>";
 
     return _send_message( 'ItemRequested', $msg, $nncip_uri );
+
+}
+
+=head2 SendItemShipped
+
+Send an ItemShipped message to another library
+
+=cut
+
+sub SendItemShipped {
+
+    my ( $args ) = @_;
+
+    my $request = $args->{'request'};
+    my $borrower = $request->status->getProperty('borrower');
+
+    my $dt = DateTime->now;
+    $dt->set_time_zone( 'Europe/Oslo' );
+
+    my $tmplbase = 'ill/nncipp/ItemShipped.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+
+    my ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
+
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'RequestIdentifier' => $remote_id_id,
+        'ItemIdentifier'    => $args->{'barcode'},
+        'DateShipped'       => $dt->iso8601(),
+        'borrower'          => $borrower,
+        'remote_user'       => $request->status->getProperty('remote_user'),
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
+    return _send_message( 'ItemShipped', $msg, $nncip_uri );
 
 }
 

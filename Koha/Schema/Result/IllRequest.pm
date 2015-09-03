@@ -158,7 +158,12 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->add_columns(
   "remote_id",
-  { data_type => "integer", is_nullable => 1 },
+  { data_type => "varchar", is_nullable => 1, size => 30 },
+);
+
+__PACKAGE__->add_columns(
+  "remote_user",
+  { data_type => "varchar", is_nullable => 1, size => 30 },
 );
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

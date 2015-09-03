@@ -1,0 +1,107 @@
+[% USE AuthorisedValues %]
+
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha &rsaquo; ILL &rsaquo; Change status</title>
+[% INCLUDE 'doc-head-close.inc' %]
+<script type="text/javascript" src="[% themelang %]/lib/jquery/plugins/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="[% themelang %]/lib/jquery/plugins/jquery.checkboxes.min.js"></script>
+</head>
+
+<body id="acq_suggestion" class="acq">
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+[% parent = "/cgi-bin/koha/ill/ill-requests.pl" %]
+[% here = "/cgi-bin/koha/ill/ill-new.pl" %]
+
+<div id="breadcrumbs">
+    <a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo;
+    <a href=[% parent %]>ILL</a> &rsaquo; Change status
+</div>
+
+<div id="doc3" class="yui-t2">
+    <div id="bd">
+        <div id="yui-main">
+            <div class="yui-b">
+
+            <form method="POST" action="/cgi-bin/koha/ill/ill-status.pl">
+            <fieldset id="illstatus" class="rows">
+            <legend id="illstatus_lgd">Change status</legend>
+            <ol>
+                <li>
+                    <label for="status">New status:</label>
+                    <select name="status" id="status">
+                    [% FOREACH s IN statuses %]
+                        [% IF status && status == s.authorised_value %]
+                            <option value="[% s.authorised_value %]" selected>[% s.lib %]</option>
+                        [% ELSE %]
+                            <option value="[% s.authorised_value %]">[% s.lib %]</option>
+                        [% END %]
+                    [% END %]
+                    </select>
+                </li>
+                <li>
+                    <label for="barcode">Barcode:</label>
+                    <input type="text" name="barcode" id="barcode" />
+                </li>
+                <li>
+                    <input type="submit" value="Change" class="btn" />
+                </li>
+            </ol>
+            </fieldset>
+            </form>
+            
+            <p>Barcode: [% barcode %]. Itemnumber: [% itemnumber %]. Biblionumber: [% biblionumber %].</p>
+            
+            <h2>Oldest request</h2>
+            [% FOREACH field IN request %]
+                [% IF field.value.1 and field.key != 'id' %]
+                    <span id="[% field.key %]">
+                        [% IF field.key == 'borrower' %]
+                            [% brw = field.value.1 %]
+                            [% field.value.0 _ ": " %]
+                            <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=[% brw.borrowernumber %]"
+                            title="View borrower details">
+                                [% brw.firstname _ " " _ brw.surname _ ", " _ brw.cardnumber %]
+                            </a>
+                        [% ELSIF field.key == 'status' %]
+                            [% field.value.0 _ ": " _ AuthorisedValues.GetByCode( 'ILLSTATUS', field.value.1 ) %]
+                        [% ELSE %]
+                            [% field.value.0 _ ": " _ field.value.1 %]
+                        [% END %]
+                    </span>
+                    <br/>
+                [% END %]
+            [% END %]          
+            
+            <h2>All requests</h2>
+            [% FOREACH summary IN requests %]
+                <p>
+                    [% FOREACH field IN summary %]
+                        [% IF field.value.1 and field.key != 'id' %]
+                            <span id="[% field.key %]">
+                                [% IF field.key == 'borrower' %]
+                                    [% brw = field.value.1 %]
+                                    [% field.value.0 _ ": " %]
+                                    <a href="/cgi-bin/koha/members/moremember.pl?borrowernumber=[% brw.borrowernumber %]"
+                                    title="View borrower details">
+                                        [% brw.firstname _ " " _ brw.surname _ ", " _ brw.cardnumber %]
+                                    </a>
+                                [% ELSIF field.key == 'status' %]
+                                    [% field.value.0 _ ": " _ AuthorisedValues.GetByCode( 'ILLSTATUS', field.value.1 ) %]
+                                [% ELSE %]
+                                    [% field.value.0 _ ": " _ field.value.1 %]
+                                [% END %]
+                            </span>
+                            <br/>
+                        [% END %]
+                    [% END %]
+                </p>
+            [% END %]
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+[% INCLUDE 'intranet-bottom.inc' %]

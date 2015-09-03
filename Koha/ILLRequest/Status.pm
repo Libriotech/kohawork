@@ -67,6 +67,7 @@ sub new {
         branch          => $opts->{branch}       || '',
         ordered_from    => $opts->{ordered_from} || 0,
         remote_id       => $opts->{remote_id},
+        remote_user     => $opts->{remote_user},
     };
 
     bless $self, $class;
@@ -88,6 +89,7 @@ sub getFields {
         branch          => $self->{branch},
         ordered_from    => $self->{ordered_from},
         remote_id       => $self->{remote_id},
+        remote_user     => $self->{remote_user},
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {
@@ -126,6 +128,7 @@ sub getFullStatus {
         branch          => [ "Branch", $self->{branch} ],
         ordered_from    => [ "Ordered from", $self->{ordered_from} ],
         remote_id       => [ "Remote request ID", $self->{remote_id} ],
+        remote_user     => [ "Remote user", $self->{remote_user} ],
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {
@@ -154,6 +157,7 @@ sub getSummary {
         reqtype        => [ "Request Type", $self->{reqtype} ],
         ordered_from   => [ "Ordered from", $self->{ordered_from} ],
         remote_id      => [ "Remote request ID", $self->{remote_id} ],
+        remote_user    => [ "Remote user", $self->{remote_user} ],
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {

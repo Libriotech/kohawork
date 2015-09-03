@@ -69,6 +69,7 @@ if ( $op eq 'order' && $biblionumber ne '' ) {
         'biblionumber' => $biblionumber,
         'branch'       => $borrower->{'branchcode'},
         'borrower'     => $borrowernumber, # This will be a library, where "NO-$borrowernumber" = ISIL for that library
+        'remote_user'  => $userid,
     });
     # $illRequest->save;
     # warn Dumper $illRequest;
