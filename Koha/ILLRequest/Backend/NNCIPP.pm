@@ -34,6 +34,7 @@ our @EXPORT_OK = qw(
     SendRequestItem
     send_ItemRequested
     SendItemShipped
+    SendItemReceived
 
     GetILLPartners
     quickfix_requestbib
@@ -325,6 +326,47 @@ sub SendItemShipped {
         'DateShipped'       => $dt->iso8601(),
         'borrower'          => $borrower,
         'remote_user'       => $request->status->getProperty('remote_user'),
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
+    return _send_message( 'ItemShipped', $msg, $nncip_uri );
+
+}
+
+=head2 SendItemReceived
+
+Send an ItemReceived message to a library that has sent us an item
+
+=cut
+
+sub SendItemReceived {
+
+    my ( $args ) = @_;
+
+    my $request = $args->{'request'};
+    my $borrower = $request->status->getProperty('borrower');
+
+    my $dt = DateTime->now;
+    $dt->set_time_zone( 'Europe/Oslo' );
+
+    my $tmplbase = 'ill/nncipp/ItemReceived.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+
+    my ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
+
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'AgencyID'          => $remote_id_agency,
+        'RequestIdentifier' => $remote_id_id,
+        'ItemIdentifier'    => $args->{'barcode'},
+        'DateReceived'      => $dt->iso8601(),
+        'borrower'          => $borrower,
+        'remote_user'       => $request->status->getProperty('remote_user'),
+        'barcode'           => $args->{'barcode'},
     );
     my $msg = $template->output();
 

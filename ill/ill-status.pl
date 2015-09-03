@@ -28,7 +28,7 @@ use C4::Members::Attributes qw( GetBorrowerAttributeValue );
 use C4::Output;
 use C4::Context;
 use Koha::ILLRequests;
-use Koha::ILLRequest::Backend::NNCIPP qw( SendItemShipped );
+use Koha::ILLRequest::Backend::NNCIPP qw( SendItemShipped SendItemReceived );
 use URI::Escape;
 
 my $input   = CGI->new;
@@ -42,7 +42,35 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user( {
     flagsrequired => { ill => '*' },
 } );
 
-if ( $barcode && $status && $status eq 'SHIPPED' ) {
+if ( $barcode && $status && $status eq 'RECEIVED' ) {
+
+    # Find all requests for the given biblionumber
+    my $illRequests = Koha::ILLRequests->new;
+    my $requests = $illRequests->search({
+        'remote_barcode' => $barcode,
+        'status'         => 'SHIPPED',
+    });
+    # There should only be one anyway...
+    my $request = $requests->[0];
+
+    $request->editStatus({ 'status' => 'RECEIVED' });
+    # Get the full details
+    $request->getFullDetails( { brw => 1 } );
+
+    # Send an ItemReceived message to the library that we ordered the item from
+    my $response = SendItemReceived({
+        'request' => $request,
+        'barcode' => $barcode,
+    });
+
+    $template->param(
+        'status'   => $status,
+        'request'  => $request,
+        'response' => $response,
+        'barcode'  => $barcode,
+    );
+
+} elsif ( $barcode && $status && $status eq 'SHIPPED' ) {
 
     # Find the right request, based on the barcode
     my $itemnumber = GetItemnumberFromBarcode( $barcode );

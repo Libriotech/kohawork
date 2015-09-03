@@ -68,6 +68,7 @@ sub new {
         ordered_from    => $opts->{ordered_from} || 0,
         remote_id       => $opts->{remote_id},
         remote_user     => $opts->{remote_user},
+        remote_barcode  => $opts->{remote_barcode},
     };
 
     bless $self, $class;
@@ -90,6 +91,7 @@ sub getFields {
         ordered_from    => $self->{ordered_from},
         remote_id       => $self->{remote_id},
         remote_user     => $self->{remote_user},
+        remote_barcode  => $self->{remote_barcode},
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {
@@ -129,6 +131,7 @@ sub getFullStatus {
         ordered_from    => [ "Ordered from", $self->{ordered_from} ],
         remote_id       => [ "Remote request ID", $self->{remote_id} ],
         remote_user     => [ "Remote user", $self->{remote_user} ],
+        remote_barcode  => [ "External barcode", $self->{remote_barcode} ],
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {
@@ -158,6 +161,7 @@ sub getSummary {
         ordered_from   => [ "Ordered from", $self->{ordered_from} ],
         remote_id      => [ "Remote request ID", $self->{remote_id} ],
         remote_user    => [ "Remote user", $self->{remote_user} ],
+        remote_barcode => [ "External barcode", $self->{remote_barcode} ],
     };
     # Add borrower or borrowernumber.
     if ( $params->{brw} ) {

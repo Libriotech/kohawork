@@ -166,5 +166,10 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 30 },
 );
 
+__PACKAGE__->add_columns(
+  "remote_barcode",
+  { data_type => "varchar", is_nullable => 1, size => 30 },
+);
+
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;
