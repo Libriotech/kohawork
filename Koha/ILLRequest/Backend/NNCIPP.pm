@@ -35,6 +35,7 @@ our @EXPORT_OK = qw(
     send_ItemRequested
     SendItemShipped
     SendItemReceived
+    SendRenewItem
 
     GetILLPartners
     quickfix_requestbib
@@ -345,7 +346,8 @@ sub SendItemReceived {
     my ( $args ) = @_;
 
     my $request = $args->{'request'};
-    my $borrower = $request->status->getProperty('borrower');
+    my $remote_library_id = $request->status->getProperty('ordered_from');
+    my $remote_library = GetMemberDetails( $remote_library_id );
 
     my $dt = DateTime->now;
     $dt->set_time_zone( 'Europe/Oslo' );
@@ -356,22 +358,56 @@ sub SendItemReceived {
     my $filename = "$path/modules/" . $tmplbase;
     my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
 
-    my ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
-
     $template->param(
         'FromAgency'        => C4::Context->preference('ILLISIL'),
-        'AgencyID'          => $remote_id_agency,
-        'RequestIdentifier' => $remote_id_id,
+        'ToAgency'          => $remote_library->{'cardnumber'},
         'ItemIdentifier'    => $args->{'barcode'},
         'DateReceived'      => $dt->iso8601(),
-        'borrower'          => $borrower,
-        'remote_user'       => $request->status->getProperty('remote_user'),
+        'RequestIdentifierValue' => $request->{status}->{id},
         'barcode'           => $args->{'barcode'},
     );
     my $msg = $template->output();
 
-    my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
+    my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
     return _send_message( 'ItemShipped', $msg, $nncip_uri );
+
+}
+
+=head2 SendRenewItem
+
+Send an RenewItem message to the library that has sent us an item, informing
+them that we want to renew the loan.
+
+=cut
+
+sub SendRenewItem {
+
+    my ( $args ) = @_;
+
+    my $request = $args->{'request'};
+    my $remote_library_id = $request->status->getProperty('ordered_from');
+    my $remote_library = GetMemberDetails( $remote_library_id );
+
+    # Get data about the person who has the item in hand and wants it longer
+    my $borrower_id = $request->status->getProperty('borrowernumber');
+    my $borrower    = GetMemberDetails( $borrower_id );
+
+    # Set up the template for the message
+    my $tmplbase = 'ill/nncipp/RenewItem.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'ToAgency'          => $remote_library->{'cardnumber'},
+        'UserId'            => $borrower->{'cardnumber'},
+        'barcode'           => $args->{'barcode'},
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
+    return _send_message( 'RenewItem', $msg, $nncip_uri );
 
 }
 

@@ -21,14 +21,14 @@ use CGI;
 use C4::Auth;
 use C4::Biblio;
 use C4::Branch;
-use C4::Items qw { GetItemnumberFromBarcode };
+use C4::Items qw { GetItemnumberFromBarcode GetItemnumbersForBiblio ModItem };
 use C4::Koha;
 use C4::Members;
 use C4::Members::Attributes qw( GetBorrowerAttributeValue );
 use C4::Output;
 use C4::Context;
 use Koha::ILLRequests;
-use Koha::ILLRequest::Backend::NNCIPP qw( SendItemShipped SendItemReceived );
+use Koha::ILLRequest::Backend::NNCIPP qw( SendItemShipped SendItemReceived SendRenewItem );
 use URI::Escape;
 
 my $input   = CGI->new;
@@ -42,20 +42,66 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user( {
     flagsrequired => { ill => '*' },
 } );
 
-if ( $barcode && $status && $status eq 'RECEIVED' ) {
+if ( $barcode && $status && $status eq 'RENEWREQ' ) {
+
+    # Find the right request, based on the barcode
+    my $itemnumber = GetItemnumberFromBarcode( $barcode );
+    my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
+
+    # Find the right request
+    my $illRequests = Koha::ILLRequests->new;
+    my $requests = $illRequests->search({
+        'biblionumber' => $biblionumber,
+        'status'       => 'RECEIVED',
+    });
+    # There should only be one with the given status anyway...
+    my $request = $requests->[0];
+
+    $request->editStatus({ 'status' => 'RENEWREQ' });
+    # Get the full details
+    $request->getFullDetails( { brw => 1 } );
+
+    # Send an ItemReceived message to the library that we ordered the item from
+    my $response = SendRenewItem({
+        'request' => $request,
+        'barcode' => $barcode,
+    });
+    
+    if ( $response->{'data'} ) {
+        # Response looks OK
+        $request->editStatus({ 'status' => 'RENEWOK' });
+    }
+
+    $template->param(
+        'status'   => $status,
+        'request'  => $request,
+        'response' => $response,
+        'barcode'  => $barcode,
+    );
+
+} elsif ( $barcode && $status && $status eq 'RECEIVED' ) {
 
     # Find all requests for the given biblionumber
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
-        'remote_barcode' => $barcode,
-        'status'         => 'SHIPPED',
+        'remote_barcode' => $barcode, # Set based on info in ItemShipped
+        'status'         => 'SHIPPING',
     });
     # There should only be one anyway...
     my $request = $requests->[0];
+    warn $request->status->getProperty('id');
 
     $request->editStatus({ 'status' => 'RECEIVED' });
     # Get the full details
     $request->getFullDetails( { brw => 1 } );
+    
+    # Update the item with the barcode from the physical item we have received
+    my $biblionumber = $request->status->getProperty('biblionumber');
+    my $itemnumbers = GetItemnumbersForBiblio( $biblionumber );
+    # There should only be one
+    my $itemnumber = $itemnumbers->[0];
+    warn "Editing item on $biblionumber, $itemnumber";
+    ModItem({ barcode => $barcode }, $biblionumber, $itemnumber);
 
     # Send an ItemReceived message to the library that we ordered the item from
     my $response = SendItemReceived({

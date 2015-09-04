@@ -75,10 +75,14 @@ if ( $illpartner ) {
         'borrower'     => $borrower->{'borrowernumber'}, # borrowernumber 
     });
     if ( $request ) {
-        # Make sure the status is ORDERED. FIXME Do this after confirmation is returned?
-        $request->editStatus({ 'ordered_from' => $illpartner, 'status' => 'ORDERED' });
-        # Send the request to the remote library
         my $requestid = $request->{'status'}->{'id'};
+        # Make sure the status is ORDERED. FIXME Do this after confirmation is returned?
+        $request->editStatus({
+            'ordered_from' => $illpartner,
+            'status' => 'ORDERED',
+            'remote_id' => C4::Context->preference('ILLISIL') . ':' . $requestid;
+        });
+        # Send the request to the remote library
         my $response = SendRequestItem({
             'nncip_uri' => $nncip_uri,
             'to_agency' => $partner->{ 'cardnumber' },

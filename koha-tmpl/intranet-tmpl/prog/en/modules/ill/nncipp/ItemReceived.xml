@@ -10,7 +10,7 @@
 			</ns1:FromAgencyId>
 			<!-- Owner Library -->
 			<ns1:ToAgencyId>
-				<ns1:AgencyId>NO-[% borrower.cardnumber %]</ns1:AgencyId>
+				<ns1:AgencyId>NO-[% ToAgency %]</ns1:AgencyId>
 			</ns1:ToAgencyId>
 		</ns1:InitiationHeader>
 		<!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
@@ -18,12 +18,12 @@
 			<!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
 			<!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
 			<ns1:ItemIdentifierType>Barcode</ns1:ItemIdentifierType>
-			<ns1:ItemIdentifierValue>[% barcode %]</ns1:ItemIdentifierValue>
+			<ns1:ItemIdentifierValue>[% ItemIdentifier %]</ns1:ItemIdentifierValue>
 		</ns1:ItemId>
 		<!-- The RequestId must be the one created by the initializing AgencyId in call #1 -->
 		<ns1:RequestId>
 			<!-- The initializing AgencyId must be part of the RequestId -->
-			<ns1:AgencyId>[% AgencyId %]</ns1:AgencyId>
+			<ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
 			<!-- The RequestIdentifierValue must be part of the RequestId-->
 			<ns1:RequestIdentifierValue>[% RequestIdentifierValue %]</ns1:RequestIdentifierValue>
 		</ns1:RequestId>
