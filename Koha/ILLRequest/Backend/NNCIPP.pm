@@ -36,6 +36,8 @@ our @EXPORT_OK = qw(
     SendItemShipped
     SendItemReceived
     SendRenewItem
+    SendCancelRequestItem
+    SendCancelRequestItemAsOwner
 
     GetILLPartners
     quickfix_requestbib
@@ -122,7 +124,7 @@ Send a RequestItem to another library.
 sub SendRequestItem {
 
     my ( $args ) = @_;
-    
+
     # Construct ItemIdentifierType and ItemIdentifierValue
     my $itemidentifiertype  = '';
     my $itemidentifiervalue = '';
@@ -138,7 +140,7 @@ sub SendRequestItem {
         $itemidentifiertype  .= 'RFID';
         $itemidentifiervalue .= $args->{'rfid'};
     }
-    
+
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
     <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
 	    <!-- Usage in NNCIPP 1.0 is in use-case 2: A user request a spesific uniqe item, from a external library.  -->
@@ -190,7 +192,7 @@ sub SendRequestItem {
 		    </ns1:ItemOptionalFields>
 	    </ns1:RequestItem>
     </ns1:NCIPMessage>";
-    
+
     return _send_message( 'RequestItem', $msg, $args->{'nncip_uri'} );
 
 }
@@ -236,8 +238,8 @@ sub send_ItemRequested {
     my $lang_code = _get_langcode_from_bibliodata( $bibliodata );
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
-    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" 
-    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
+    <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\"
+        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
 	    <!-- Usage in NNCIPP 1.0 is in use-case 3, call #8: Owner library informs Home library that a user requests one Item -->
 	    <ns1:ItemRequested>
 		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
@@ -411,6 +413,119 @@ sub SendRenewItem {
 
 }
 
+=head2 SendCancelRequestItem
+
+Send a CancelRequestItem to the library that we sent a RequestItem to, informing
+them we are no longer interested in the requested item.
+
+The home library sends this to the owner library.
+
+=cut
+
+sub SendCancelRequestItem{
+
+    my ( $args ) = @_;
+
+    # Get data about the "other" library, from which we have requested the loan
+    my $request = $args->{'request'};
+    my $remote_library_id = $request->status->getProperty('ordered_from');
+    my $remote_library = GetMemberDetails( $remote_library_id );
+
+    # Get data about the person for whom the initial request was made
+    my $borrower_id = $request->status->getProperty('borrowernumber');
+    my $borrower    = GetMemberDetails( $borrower_id );
+
+    my ( $remote_id_agency, $remote_id_id );
+    if ( $request->status->getProperty('remote_id') ) {
+        # If the request was initiated by another library, we find the RequestId
+        # value thusly:
+        ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
+    } else {
+        # If it was created by us, we use our ISIL and the ID from the
+        # ill_requests db table.
+        $remote_id_agency = C4::Context->preference('ILLISIL');
+        $remote_id_id     = $request->status->getProperty('id');
+    }
+
+    # Set up the template for the message
+    my $tmplbase = 'ill/nncipp/CancelRequestItem.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'ToAgency'          => $remote_library->{'cardnumber'},
+        'UserId'            => $borrower->{'cardnumber'},
+        'AgencyId'          => $remote_id_agency,
+        'RequestId'         => $remote_id_id,
+        'ItemIdentifier'    => $request->status->getProperty('remote_barcode'),
+        'RequestType'       => $request->status->getProperty('reqtype'),
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
+    return _send_message( 'CancelRequestItem', $msg, $nncip_uri );
+
+}
+
+=head2 SendCancelRequestItemAsOwner
+
+Send a CancelRequestItem to a library that we got a RequestItem from, informing
+them that we can not fullfill the loan request.
+
+The owner library sends this to the home library.
+
+=cut
+
+sub SendCancelRequestItemAsOwner{
+
+    my ( $args ) = @_;
+
+    # Get data about the "other" library, from which we have requested the loan
+    my $request = $args->{'request'};
+    my $remote_library_id = $request->status->getProperty('borrowernumber');
+    my $remote_library = GetMemberDetails( $remote_library_id );
+
+    # Get data about the person for whom the initial request was made
+    my $borrower_id = $request->status->getProperty('borrowernumber');
+    my $borrower    = GetMemberDetails( $borrower_id );
+
+    my ( $remote_id_agency, $remote_id_id );
+    if ( $request->status->getProperty('remote_id') ) {
+        # If the request was initiated by another library, we find the RequestId
+        # value thusly:
+        ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
+    } else {
+        # If it was created by us, we use our ISIL and the ID from the
+        # ill_requests db table.
+        $remote_id_agency = C4::Context->preference('ILLISIL');
+        $remote_id_id     = $request->status->getProperty('id');
+    }
+
+    # Set up the template for the message
+    my $tmplbase = 'ill/nncipp/CancelRequestItemAsOwner.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'ToAgency'          => $remote_library->{'cardnumber'},
+        'UserId'            => $borrower->{'cardnumber'},
+        'AgencyId'          => $remote_id_agency,
+        'RequestId'         => $remote_id_id,
+        'ItemIdentifier '   => $request->status->getProperty('remote_barcode'),
+        'ItemNote'          => $args->{'reject_reason'},
+        'RequestType'       => $request->status->getProperty('reqtype'),
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
+    return _send_message( 'CancelRequestItem', $msg, $nncip_uri );
+
+}
+
 =head2 GetILLPartners
 
 Return a list of all borrowers that have the nncip_uri extended attribute set.
@@ -444,7 +559,7 @@ Just fix the title and author of a placeholder IllRequest
 sub quickfix_requestbib {
 
     my ( $args ) = @_;
-    
+
     my $dbh = C4::Context->dbh();
     my $sth = $dbh->prepare("UPDATE ill_request_attributes SET value = ? WHERE req_id = ? AND type = 'm./metadata/titleLevel/title';");
     $sth->execute( $args->{title}, $args->{requestid} );
@@ -485,9 +600,16 @@ sub _send_message {
     my $response = HTTP::Tiny->new->request( 'POST', $endpoint, { 'content' => $msg } );
 
     if ( $response->{success} ){
+        # We got a 200 response from the server, but it could still contain a Problem element
         logaction( 'ILL', $req . 'Response', undef, $response->{'content'} );
+        # Check if we got a Problem response
+        my $problem = 0;
+        if ( $response->{'content'} =~ m/ns1:Problem/g ) {
+            $problem = 1;
+        }
         return {
             'success' => 1,
+            'problem' => $problem,
             'msg'     => $response->{'content'},
             'data'    => XMLin( $response->{'content'} ),
         };
@@ -502,7 +624,7 @@ sub _send_message {
 
 }
 
-=head2 _get_langcode_from_bibliodata 
+=head2 _get_langcode_from_bibliodata
 
 Take a record and pick ut the language code in controlfield 008, position 35-37.
 

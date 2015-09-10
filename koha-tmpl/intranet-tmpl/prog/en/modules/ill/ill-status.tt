@@ -24,6 +24,22 @@
         <div id="yui-main">
             <div class="yui-b">
 
+            [% IF error != '' %]
+                <div class="dialog alert">
+                    [% IF error == 'NOTFOUND' %]
+                        <h3>No ILL request for that barcode was found</h3>
+                        <p>Could not find an ILL request corresponding to barcode <strong>[% barcode %]</strong>.</p>
+                    [% END %]
+                </div>
+            [% END %]
+
+            [% IF response.problem == 1 %]
+                <div class="dialog alert">
+                        <h3>There was a problem</h3>
+                        <p>Details here.</p>
+                </div>
+            [% END %]
+
             <form method="POST" action="/cgi-bin/koha/ill/ill-status.pl">
             <fieldset id="illstatus" class="rows">
             <legend id="illstatus_lgd">Change status</legend>
@@ -41,6 +57,18 @@
                     </select>
                 </li>
                 <li>
+                    <label for="reject_reason">Reason for rejecting:</label>
+                    <select name="reject_reason" id="reject_reason">
+                    [% FOREACH r IN rejects %]
+                        [% IF reject_reason && reject_reason == r.authorised_value %]
+                            <option value="[% r.authorised_value %]" selected>[% r.lib %]</option>
+                        [% ELSE %]
+                            <option value="[% r.authorised_value %]">[% r.lib %]</option>
+                        [% END %]
+                    [% END %]
+                    </select>
+                </li>
+                <li>
                     <label for="barcode">Barcode:</label>
                     <input type="text" name="barcode" id="barcode" />
                 </li>
@@ -50,9 +78,14 @@
             </ol>
             </fieldset>
             </form>
-            
-            <p>Barcode: [% barcode %]. Itemnumber: [% itemnumber %]. Biblionumber: [% biblionumber %].</p>
-            
+
+            [% IF barcode != '' %]
+                <p>Barcode: [% barcode %]. Itemnumber: [% itemnumber %]. Biblionumber: [% biblionumber %].</p>
+            [% END %]
+
+            [% USE Dumper %]
+            [% Dumper.dump(response) %]
+
             <h2>Oldest request</h2>
             [% FOREACH field IN request %]
                 [% IF field.value.1 and field.key != 'id' %]
@@ -72,8 +105,8 @@
                     </span>
                     <br/>
                 [% END %]
-            [% END %]          
-            
+            [% END %]
+
             <h2>All requests</h2>
             [% FOREACH summary IN requests %]
                 <p>
@@ -98,7 +131,7 @@
                     [% END %]
                 </p>
             [% END %]
-            
+
             </div>
         </div>
     </div>

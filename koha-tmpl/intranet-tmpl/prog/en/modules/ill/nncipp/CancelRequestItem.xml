@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:NCIPMessage xmlns:ns1="http://www.niso.org/2008/ncip" ns1:version="http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd">
+    <!-- Usage in NNCIPP 1.0 is in use-case 5, call #10: Home library informs Owner library that the requested Ioan is canceled by the Patron -->
+    <ns1:CancelRequestItem>
+        <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+        <ns1:InitiationHeader>
+            <!-- Home Library -->
+            <ns1:FromAgencyId>
+                <ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
+            </ns1:FromAgencyId>
+            <!-- Owner Library -->
+            <ns1:ToAgencyId>
+                <ns1:AgencyId>NO-[% ToAgency %]</ns1:AgencyId>
+            </ns1:ToAgencyId>
+        </ns1:InitiationHeader>
+        <!-- The UserId must be uniqe in the scope of Home Library -->
+        <ns1:UserId>
+            <ns1:UserIdentifierValue>[% UserId %]</ns1:UserIdentifierValue>
+        </ns1:UserId>
+        <!-- The RequestId must be the one created by the initializing AgencyId in call #1 -->
+        <ns1:RequestId>
+            <ns1:AgencyId>NO-[% AgencyId %]</ns1:AgencyId>
+            <ns1:RequestIdentifierValue>[% RequestId %]</ns1:RequestIdentifierValue>
+        </ns1:RequestId>
+        <!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
+        <ns1:ItemId>
+            <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
+            <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
+            <ns1:ItemIdentifierType>Barcode</ns1:ItemIdentifierType>
+            <ns1:ItemIdentifierValue>[% ItemIdentifier %]</ns1:ItemIdentifierValue>
+        </ns1:ItemId>
+        <!-- The RequestType must be one of the following: -->
+        <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
+        <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
+        <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
+        <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
+        <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
+        <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
+        <!-- If your library dont recive 'Depot'-books; just respond with a "Unknown Value From Known Scheme"-ProblemType -->
+        <ns1:RequestType>[% RequestType %]</ns1:RequestType>
+        <!-- The following Ext is required by Alma -->
+        <ns1:Ext>
+        <!-- Who cancel the request? -->
+            <!-- if (FromAgencyId == RequestId.AgencyId) => Borrower/Home -->
+            <ns1:NoticeContent>CancelledBy.Borrower</ns1:NoticeContent>
+            <!-- FromAgencyId ==  RequestId.AgencyId -->
+        </ns1:Ext>
+    </ns1:CancelRequestItem>
+</ns1:NCIPMessage>

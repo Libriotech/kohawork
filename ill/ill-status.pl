@@ -28,7 +28,11 @@ use C4::Members::Attributes qw( GetBorrowerAttributeValue );
 use C4::Output;
 use C4::Context;
 use Koha::ILLRequests;
-use Koha::ILLRequest::Backend::NNCIPP qw( SendItemShipped SendItemReceived SendRenewItem );
+use Koha::ILLRequest::Backend::NNCIPP qw(
+    SendItemShipped SendItemReceived SendRenewItem
+    SendCancelRequestItem SendCancelRequestItemAsOwner
+    SendCancelRequestItemAsOwner
+);
 use URI::Escape;
 
 my $input   = CGI->new;
@@ -42,7 +46,119 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user( {
     flagsrequired => { ill => '*' },
 } );
 
-if ( $barcode && $status && $status eq 'RENEWREQ' ) {
+if ( $barcode && $status && $status eq 'REJECT' ) {
+
+    my $reject_reason = $input->param('reject_reason');
+
+    # Find the right request, based on the barcode
+    # my $itemnumber = GetItemnumberFromBarcode( $barcode );
+    # my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
+
+    # Find all requests for the given biblionumber
+    my $illRequests = Koha::ILLRequests->new;
+    my $requests = $illRequests->search({ # FIXME This does not find anything!
+        'remote_barcode' => $barcode,
+        'status'         => 'NEW',
+    });
+    if ( scalar @{ $requests } == 0 ) {
+
+        $template->param(
+            'status'        => $status,
+            'barcode'       => $barcode,
+            # 'itemnumber'    => $itemnumber,
+            # 'biblionumber'  => $biblionumber,
+            'reject_reason' => $reject_reason,
+            'error'         => 'NOTFOUND',
+        );
+
+    } else {
+
+        my $request = $requests->[0];
+        # Change the status
+        $request->editStatus({ 'status' => 'REJECT' });
+        # Get the full details
+        $request->getFullDetails( { brw => 1 } );
+
+        # Send an ItemShipped message to the library that ordered the item
+        my $response = SendCancelRequestItemAsOwner({
+            'request'       => $request,
+            'barcode'       => $barcode,
+            'reject_reason' => $reject_reason,
+        });
+        if ( $response->{'success'} == 1 ) { # FIXME This means we got a 200 response, but it could contain a Problem
+            # Response looks OK
+            $request->editStatus({ 'status' => 'REJECTED' });
+        }
+
+        # Get full details for all NEW requests for the biblio in question
+        my $requests_details;
+        foreach my $rq ( @{$requests} ) {
+            push @{$requests_details}, $rq->getFullDetails( { brw => 1 } );
+        }
+
+        $template->param(
+            'status'   => $status,
+            'request'  => $request,
+            'requests' => $requests_details,
+            'response' => $response,
+            'barcode'  => $barcode,
+            # 'itemnumber'   => $itemnumber,
+            # 'biblionumber' => $biblionumber,
+        );
+
+    }
+
+} elsif ( $barcode && $status && $status eq 'CANCEL' ) {
+
+    # Find the right request, based on the barcode
+    my $itemnumber = GetItemnumberFromBarcode( $barcode );
+    my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
+
+    # Find the right request
+    my $illRequests = Koha::ILLRequests->new;
+    my $requests = $illRequests->search({
+        'biblionumber' => $biblionumber,
+        'status'       => 'ORDERED',
+    });
+    # There should only be one with the given status anyway...
+    if ( scalar @{ $requests } == 0 ) {
+
+        $template->param(
+            'barcode' => $barcode,
+            'error'   => 'NOTFOUND',
+        );
+
+    } else {
+
+        my $request = $requests->[0];
+
+        $request->editStatus({ 'status' => 'CANCEL' });
+        # Get the full details
+        $request->getFullDetails( { brw => 1 } );
+
+        # Send an CancelRequestItem message to the library that we ordered the item from
+        my $response = SendCancelRequestItem({
+            'request' => $request,
+            'barcode' => $barcode,
+        });
+
+        if ( $response->{'data'} ) {
+            # Response looks OK
+            $request->editStatus({ 'status' => 'CANCELLED' });
+        }
+
+        $template->param(
+            'status'       => $status,
+            'request'      => $request,
+            'response'     => $response,
+            'barcode'      => $barcode,
+            'itemnumber'   => $itemnumber,
+            'biblionumber' => $biblionumber,
+        );
+
+    }
+
+} elsif ( $barcode && $status && $status eq 'RENEWREQ' ) {
 
     # Find the right request, based on the barcode
     my $itemnumber = GetItemnumberFromBarcode( $barcode );
@@ -66,7 +182,7 @@ if ( $barcode && $status && $status eq 'RENEWREQ' ) {
         'request' => $request,
         'barcode' => $barcode,
     });
-    
+
     if ( $response->{'data'} ) {
         # Response looks OK
         $request->editStatus({ 'status' => 'RENEWOK' });
@@ -94,7 +210,7 @@ if ( $barcode && $status && $status eq 'RENEWREQ' ) {
     $request->editStatus({ 'status' => 'RECEIVED' });
     # Get the full details
     $request->getFullDetails( { brw => 1 } );
-    
+
     # Update the item with the barcode from the physical item we have received
     my $biblionumber = $request->status->getProperty('biblionumber');
     my $itemnumbers = GetItemnumbersForBiblio( $biblionumber );
@@ -121,7 +237,7 @@ if ( $barcode && $status && $status eq 'RENEWREQ' ) {
     # Find the right request, based on the barcode
     my $itemnumber = GetItemnumberFromBarcode( $barcode );
     my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
-    
+
     # Find all requests for the given biblionumber
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
@@ -134,13 +250,13 @@ if ( $barcode && $status && $status eq 'RENEWREQ' ) {
     $request->editStatus({ 'status' => 'SHIPPED' });
     # Get the full details
     $request->getFullDetails( { brw => 1 } );
-    
+
     # Send an ItemShipped message to the library that ordered the item
     my $response = SendItemShipped({
         'request' => $request,
         'barcode' => $barcode,
     });
-    
+
     # Get full details for all NEW requests for the biblio in question
     my $requests_details;
     foreach my $rq ( @{$requests} ) {
@@ -160,7 +276,8 @@ if ( $barcode && $status && $status eq 'RENEWREQ' ) {
 }
 
 $template->param(
-    'statuses'    => GetAuthorisedValues( 'ILLSTATUS' ),
+    'statuses' => GetAuthorisedValues( 'ILLSTATUS' ),
+    'rejects'  => GetAuthorisedValues( 'ILLREJECT' ),
 );
 
 output_html_with_http_headers( $input, $cookie, $template->output );
