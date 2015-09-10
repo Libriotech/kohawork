@@ -73,6 +73,7 @@ if ( $illpartner ) {
         'biblionumber' => $biblionumber,
         'branch'       => 'ILL',
         'borrower'     => $borrower->{'borrowernumber'}, # borrowernumber 
+        'reqtype'      => $input->param('reqtype'),
     });
     if ( $request ) {
         my $requestid = $request->{'status'}->{'id'};
@@ -80,7 +81,7 @@ if ( $illpartner ) {
         $request->editStatus({
             'ordered_from' => $illpartner,
             'status' => 'ORDERED',
-            'remote_id' => C4::Context->preference('ILLISIL') . ':' . $requestid;
+            'remote_id' => C4::Context->preference('ILLISIL') . ':' . $requestid,
         });
         # Send the request to the remote library
         my $response = SendRequestItem({
