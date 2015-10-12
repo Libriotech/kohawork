@@ -371,7 +371,7 @@ sub SendItemReceived {
     my $msg = $template->output();
 
     my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
-    return _send_message( 'ItemShipped', $msg, $nncip_uri );
+    return _send_message( 'ItemReceived', $msg, $nncip_uri );
 
 }
 

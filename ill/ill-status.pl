@@ -235,14 +235,15 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
 } elsif ( $barcode && $status && $status eq 'SHIPPED' ) {
 
     # Find the right request, based on the barcode
-    my $itemnumber = GetItemnumberFromBarcode( $barcode );
-    my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
+    # my $itemnumber = GetItemnumberFromBarcode( $barcode );
+    # my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
 
     # Find all requests for the given biblionumber
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
-        'biblionumber' => $biblionumber,
-        'status'       => 'NEW',
+        # 'biblionumber' => $biblionumber,
+        'remote_barcode' => $barcode,
+        'status'       => 'RENEWOK',
     });
     # We are looking for the oldest request for this biblionumber, so we use the zero'th one
     my $request = $requests->[0];
