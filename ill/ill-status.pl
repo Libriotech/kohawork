@@ -111,14 +111,14 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
 } elsif ( $barcode && $status && $status eq 'CANCEL' ) {
 
     # Find the right request, based on the barcode
-    my $itemnumber = GetItemnumberFromBarcode( $barcode );
-    my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
+    # my $itemnumber = GetItemnumberFromBarcode( $barcode );
+    # my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
 
     # Find the right request
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
-        'biblionumber' => $biblionumber,
-        'status'       => 'ORDERED',
+        'remote_barcode' => $barcode,
+        'status'         => 'SHIPPED',
     });
     # There should only be one with the given status anyway...
     if ( scalar @{ $requests } == 0 ) {
@@ -152,8 +152,8 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
             'request'      => $request,
             'response'     => $response,
             'barcode'      => $barcode,
-            'itemnumber'   => $itemnumber,
-            'biblionumber' => $biblionumber,
+            # 'itemnumber'   => $itemnumber,
+            # 'biblionumber' => $biblionumber,
         );
 
     }
@@ -243,7 +243,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     my $requests = $illRequests->search({
         # 'biblionumber' => $biblionumber,
         'remote_barcode' => $barcode,
-        'status'       => 'RENEWOK',
+        'status'         => 'SHIPPED',
     });
     # We are looking for the oldest request for this biblionumber, so we use the zero'th one
     my $request = $requests->[0];
@@ -270,8 +270,8 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
         'requests' => $requests_details,
         'response' => $response,
         'barcode'  => $barcode,
-        'itemnumber'   => $itemnumber,
-        'biblionumber' => $biblionumber,
+        # 'itemnumber'   => $itemnumber,
+        # 'biblionumber' => $biblionumber,
     );
 
 }
