@@ -1,0 +1,485 @@
+[% USE Koha %]
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha &rsaquo; Administration &rsaquo; MARC field permissions</title>
+[% INCLUDE 'doc-head-close.inc' %]
+<link rel="stylesheet" type="text/css" href="[% themelang %]/css/datatables.css" />
+[% INCLUDE 'datatables.inc' %]
+
+<style type="text/css">
+    .required {
+        background-color: #C00;
+    }
+</style>
+
+<script type="text/javascript">
+//<![CDATA[
+
+function doSubmit(op, id) {
+    $('<input type="hidden"/>')
+    .attr('name', 'op')
+    .attr('value', op)
+    .appendTo('#marc-permissions-form');
+
+    if(id) {
+        $('<input type="hidden"/>')
+        .attr('name', 'id')
+        .attr('value', id)
+        .appendTo('#marc-permissions-form');
+    }
+
+    var valid = true;
+    if( op == 'add' || op == 'edit') {
+        var validate = [
+                        $('#marc-permissions-form input[name="filter"]'),
+                        $('#marc-permissions-form input[name="tagfield"]')
+                       ];
+        for(var i=0; i < validate.length; i++) {
+            if(validate[i].val().length == 0) {
+                validate[i].addClass('required');
+                valid = false;
+            } else {
+                validate[i].removeClass('required');
+            }
+        }
+    }
+
+    if(valid ) {
+        $('#marc-permissions-form').submit();
+    }
+
+    return valid;
+}
+
+$(document).ready(function(){
+    $('#btn-help').click(function() {
+        $('#help').toggle();
+    });
+
+    /* disable some options if subfield is indicator */
+    $('input[name="tagsubfield"]').change(function() {
+        if( /i[0-9]/.test($(this).val()) ) {
+            $('select[name="on_existing"] option[value="add"]').attr('disabled', 'disabled')
+            $('select[name="on_existing"] option[value="add_or_correct"]').attr('disabled', 'disabled')
+        } else {
+            $('select[name="on_existing"] option[value="add"]').removeAttr('disabled')
+            $('select[name="on_existing"] option[value="add_or_correct"]').removeAttr('disabled')
+        }
+    });
+
+    /* disable batch remove unless one or more checkboxes are checked */
+    $('input[name="batchremove"]').change(function() {
+        if($('input[name="batchremove"]:checked').length > 0) {
+            $('#btn_batchremove').removeAttr('disabled');
+        } else {
+            $('#btn_batchremove').attr('disabled', 'disabled');
+        }
+    });
+
+    /* check validity of regexes in field and subfield inputs */
+    $('input[name="tagfield"], input[name="tagsubfield"]').change(function() {
+        $(this).removeClass('required');
+        $(this).attr('title', '');
+        if($(this).val() != '*') {
+            try {
+                new RegExp($(this).val())
+            } catch ( e ) {
+                $(this).addClass('required');
+                $(this).attr('title', 'Invalid regular expression: ' + e.message);
+            }
+        }
+    });
+
+    $.fn.dataTable.ext.order['dom-input'] = function (settings, col) {
+        return this.api().column(col, { order: 'index' }).nodes()
+            .map(function (td, i) {
+                if($('input', td).val() != undefined) {
+                    return $('input', td).val();
+                } else if($('select', td).val() != undefined) {
+                    return $('option[selected="selected"]', td).val();
+                } else {
+                    return $(td).html();
+                }
+            });
+    }
+
+    $('#marc-permissions').dataTable($.extend(true, {}, dataTablesDefaults, {
+        "aoColumns": [
+            {"bSearchable": false, "bSortable": false},
+            {"sSortDataType": "dom-input"},
+            {"sSortDataType": "dom-input"},
+            {"bSearchable": false, "sSortDataType": "dom-input"},
+            {"bSearchable": false, "sSortDataType": "dom-input"},
+            {"bSearchable": false, "sSortDataType": "dom-input"},
+            {"bSearchable": false, "sSortDataType": "dom-input"},
+            {"bSearchable": false, "sSortDataType": "dom-input"},
+            {"bSearchable": false, "bSortable": false},
+            {"bSearchable": false, "bSortable": false}
+        ],
+        "sPaginationType": "four_button"
+    } ));
+
+});
+//]]>
+</script>
+</head>
+<body id="admin_marc-permissions" class="admin">
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/admin/admin-home.pl">Administration</a>
+ &rsaquo; MARC field permissions
+</div>
+
+<div id="doc3" class="yui-t2">
+   <div id="bd">
+    <div id="yui-main">
+    <div class="yui-b">
+
+<h1>Manage MARC field permissions <a href="#" id="btn-help"><button type="button" class="btn btn-small"><i class="icon-question-sign"></i></button></a></h1>
+[% UNLESS Koha.Preference( 'MARCPermissions' ) %]
+<div class="dialog message">
+The <b>MARCPermissions</b> preference is not set, don't forget to enable it for rules to take effect.
+</div>
+[% END %]
+<div id="help" style="display:none;" class="well">
+    <h3>Rule evaluation</h3>
+    <p>
+    Rules are evaluated from least specific to most specific. This means that a
+    more specific rule will override a less specific rule.
+
+    <b>*</b> is less specific than a regular expression. A regular expression is
+    less specific than a normal field name (e.g. <b>245</b>).
+
+    A <i>Subfield tag</i> is more specific than a <i>Tag</i>.
+
+    <p>
+    To add a field-specific rule (i.e. not a subfield), leave the <i>Subfield
+    tag</i> field blank.
+    </p>
+    </p>
+    <h4>Defaults</h4>
+    <p>
+    Default action when no rules exist is to replace the old record with the new
+    record. Same as if <b>MARCPermissions</b> is disabled.
+    </p>
+    <p>
+    Default action when no matching rule is found is to leave a field
+    unchanged (<b>skip</b>). If you wish to changed the default actions for
+    fields and subfields, please add wildcard rules.
+    </p>
+
+    <h4>Wildcards</h4>
+    <p>
+    <b>*</b> can be used as a wildcard for <i>Tag</i>, <i>Subfield tag</i> and
+    <i>Filter</i>. <b>*</b> is considered less specific than a non wildcard value,
+    and thus will be overridden by a non wildcard value (e.g. "100", "a", etc).
+    </p>
+
+    <h4>Regular expressions</h4>
+    Regular expressions can be used in both the <i>Tag</i> and <i>Subfield
+    tag</i> fields. Beware though, using regular expressions may create
+    overlapping matches, in which case they will be applied in a sorted order.
+
+    <h4>Example rules</h4>
+    <p>
+    Following is an example rule set in order of specificity.
+    </p>
+    <table>
+        <thead><tr>
+            <th>Tag</th>
+            <th>Subfield tag</th>
+            <th>Module</th>
+            <th>Filter</th>
+            <th>Description</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+            <td>*</td>
+            <td></td>
+            <td>[% modules.0.name %]</td>
+            <td>*</td>
+            <td><i>Match any field regardless of [% modules.0.name %]</i></td>
+        </tr>
+        <tr>
+            <td>*</td>
+            <td>*</td>
+            <td>[% modules.0.name %]</td>
+            <td>*</td>
+            <td><i>Match any subfield regardless of [% modules.0.name %]</i></td>
+        </tr>
+        <tr>
+            <td>245</td>
+            <td>*</td>
+            <td>[% modules.0.name %]</td>
+            <td>z39.50</td>
+            <td><i>Match any subfield under <b>245</b> when [% modules.0.name %]
+            is <b>z39.50</b></i></td>
+        </tr>
+        <tr>
+            <td>*</td>
+            <td>b</td>
+            <td>[% modules.0.name %]</td>
+            <td>z39.50</td>
+            <td><i>Match subfield <b>b</b> regardless of field when [% modules.0.name %]
+            is <b>z39.50</b></i></td>
+        </tr>
+        <tr>
+            <td>500</td>
+            <td>[a-d]</td>
+            <td>[% modules.0.name %]</td>
+            <td>z39.50</td>
+            <td><i>Match subfields <b>a, b, c, d</b> when field is 500 and [%
+            modules.0.name %] is <b>z39.50</b></i></td>
+        </tr>
+        <tr>
+            <td>5..</td>
+            <td>a</td>
+            <td>[% modules.0.name %]</td>
+            <td>z39.50</td>
+            <td><i>Match subfield <b>a</b> when field matches the regular
+            expression <b>5..</b> (500-599) and [% modules.0.name %] is <b>z39.50</b></i></td>
+        </tr>
+        <tr>
+            <td>245</td>
+            <td>a</td>
+            <td>[% modules.0.name %]</td>
+            <td>z39.50</td>
+            <td><i>Match subfield <b>a</b> when field is <b>500</b> and [%
+            modules.0.name %] is <b>z39.50</b></i></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Available filter modules</h3>
+    Filters cannot be regular expressions. Please use a single <b>*</b> as a
+    wildcard if need.
+    <table>
+        <thead>
+            <tr>
+                <th>Specificity</th>
+                <th>Module</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        [% FOREACH module IN modules %]
+            <tr>
+                <td>[% module.specificity %]</td>
+                <td>[% module.name %]</td>
+                <td>[% module.description %]</td>
+            </tr>
+        [% END %]
+        </tbody>
+    </table>
+
+    <h3>Available sources</h3>
+    The following sources currently implement MARCPermissions.
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>bulkmarcimport</td>
+                <td>bin/migration_tools/bulkmarcimport.pl</td>
+            </tr>
+            <tr>
+                <td>import_lexile</td>
+                <td>bin/migration_tools/import_lexile.pl</td>
+            </tr>
+            <tr>
+                <td>z39.50</td>
+                <td>Import from Z39.50 search in browser</td>
+            </tr>
+            <tr>
+                <td>intranet</td>
+                <td>Modifications from intranet in browser</td>
+            </tr>
+            <tr>
+                <td>batchmod</td>
+                <td>Batch record modification in browser</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+    <h3>Indicators</h3>
+    <p>
+    Indicators can be addressed as <b>i1</b> and <b>i2</b> in the <i>Subfield
+    tag</i> field. Some actions might not be available for indicators, in which
+    case they will be disabled.
+    </p>
+
+    <h3>Logging</h3>
+    <p>If <b>MARCPermissionsLog</b> is enabled, log entries for each record
+    modification will be available in the <b>Modification log</b> in the
+    <b>Catalog</b> module under the <b>Modify</b> action. This can be very
+    helpful when debugging rule sets.</p>
+</div>
+
+[% IF removeConfirm %]
+<div class="dialog alert">
+<h3>Remove rule?</h3>
+<p>Are you sure you want to remove the selected rule(s)?</p>
+
+<form action="[% script_name %]" method="GET">
+    <input type="submit" value="No, do not remove" class="deny"/>
+</form>
+<input type="button" value="Yes, remove" class="approve" onClick="doSubmit('doremove');"/>
+</div>
+[% END %]
+
+<form action="[% script_name %]" method="POST" id="marc-permissions-form">
+<table id="marc-permissions">
+    <thead><tr>
+        <th>Rule</th>
+        <th>Tag</th>
+        <th>Subfield tag</th>
+        <th>Module</th>
+        <th>Filter</th>
+        <th>On Existing</th>
+        <th>On New</th>
+        <th>On Removed</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+    </tr></thead>
+    [% UNLESS edit %]
+    <tfoot>
+        <tr>
+            <th>&nbsp;</th>
+            <th><input type="text" size="5" name="tagfield"/></th>
+            <th><input type="text" size="5" name="tagsubfield"/></th>
+            <th>
+                <select name="module">
+                    [% FOREACH module IN modules %]
+                    <option value="[% module.id %]">[% module.name %]</option>
+                    [% END %]
+                </select>
+            </th>
+            <th><input type="text" size="5" name="filter"/></th>
+            <th>
+                <select name="on_existing">
+                [% FOR on_ex IN ['skip', 'overwrite', 'add', 'add_or_correct'] %]
+                    <option value="[% on_ex %]">[% on_ex %]</option>
+                [% END %]
+                </select>
+            </th>
+            <th>
+                <select name="on_new">
+                [% FOR on_new IN ['skip', 'add'] %]
+                    <option value="[% on_new %]">[% on_new %]</option>
+                [% END %]
+                </select>
+            </th>
+            <th>
+                <select name="on_removed">
+                [% FOR on_removed IN ['skip', 'remove'] %]
+                    <option value="[% on_removed %]">[% on_removed %]</option>
+                [% END %]
+                </select>
+            </th>
+            <th><button class="btn btn-small" type="button" title="Add" onClick="doSubmit('add');" ><i class="icon-plus"></i></button></th>
+            <th><button id="btn_batchremove" disabled="disabled" class="btn btn-small" type="button" title="Batch remove" onClick="doSubmit('remove');" ><i class="icon-trash"></i></button></th>
+        </tr>
+    </tfoot>
+    [% END %]
+    <tbody>
+        [% FOREACH rule IN rules %]
+            <tr id="[% rule.id %]">
+            [% IF rule.edit %]
+                <td>[% rule.id %]</td>
+                <td><input type="text" size="3" name="tagfield" value="[% rule.tagfield %]"/></td>
+                <td><input type="text" size="1" name="tagsubfield" value="[% rule.tagsubfield %]"/></td>
+                <td>
+                    <select name="module">
+                        [% FOREACH module IN modules %]
+                            [% IF module.name == rule.module %]
+                                <option value="[% module.id %]" selected="selected">[% module.name %]</option>
+                            [% ELSE %]
+                                <option value="[% module.id %]">[% module.name %]</option>
+                            [% END %]
+                        [% END %]
+                    </select>
+                </td>
+                <td><input type="text" size="5" name="filter" value="[% rule.filter %]"/></td>
+                <td>
+                    <select name="on_existing">
+                        [% FOR on_ex IN ['skip', 'overwrite', 'add', 'add_or_correct'] %]
+                            [% IF on_ex == rule.on_existing %]
+                                <option value="[% on_ex %]" selected="selected">[% on_ex %]</option>
+                            [% ELSE %]
+                                <option value="[% on_ex %]">[% on_ex %]</option>
+                            [% END %]
+                        [% END %]
+                    </select>
+                </td>
+                <td>
+                    <select name="on_new">
+                        [% FOR on_new IN ['skip', 'add'] %]
+                            [% IF on_new == rule.on_new %]
+                                <option value="[% on_new %]" selected="selected">[% on_new %]</option>
+                            [% ELSE %]
+                                <option value="[% on_new %]">[% on_new %]</option>
+                            [% END %]
+                        [% END %]
+                    </select>
+                </td>
+                <td>
+                    <select name="on_removed">
+                        [% FOR on_removed IN ['skip', 'remove'] %]
+                            [% IF on_removed == rule.on_removed %]
+                                <option value="[% on_removed %]" selected="selected">[% on_removed %]</option>
+                            [% ELSE %]
+                                <option value="[% on_removed %]">[% on_removed %]</option>
+                            [% END %]
+                        [% END %]
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-small" type="button" title="Save" onClick="doSubmit('doedit', [% rule.id %]);"><i class="icon-ok"></i></button>
+                    <a href="?"><button class="btn btn-small" type="button" title="Cancel" ><i class="icon-ban-circle"></i></button></a>
+                    </td>
+                <td></td>
+            [% ELSE %]
+                <td>[% rule.id %]</td>
+                <td>[% rule.tagfield %]</td>
+                <td>[% rule.tagsubfield%]</td>
+                <td>[% rule.module %]</td>
+                <td>[% rule.filter %]</td>
+                <td>[% rule.on_existing %]</td>
+                <td>[% rule.on_new %]</td>
+                <td>[% rule.on_removed %]</td>
+                <td>
+                    <a href="?op=remove&id=[% rule.id %]" title="Remove"><i class="icon-remove"></i></a>
+                    <a href="?op=edit&id=[% rule.id %]" title="Edit"><i class="icon-pencil"></i></a>
+                </td>
+                <td>
+                    [% IF rule.remove %]
+                    <input type="checkbox" name="batchremove" value="[% rule.id %]" checked="checked"/>
+                    [% ELSE %]
+                    <input type="checkbox" name="batchremove" value="[% rule.id %]"/>
+                    [% END %]
+                </td>
+            [% END %]
+            </tr>
+        [% END %]
+    </tbody>
+</table>
+</form>
+
+<form action="[% script_name %]" method="post">
+<input type="hidden" name="op" value="redo-matching" />
+</form>
+
+</div>
+</div>
+<div class="yui-b">
+[% INCLUDE 'admin-menu.inc' %]
+</div>
+</div>
+[% INCLUDE 'intranet-bottom.inc' %]
