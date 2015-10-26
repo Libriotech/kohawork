@@ -88,8 +88,8 @@ if ( $illpartner ) {
             'nncip_uri' => $nncip_uri,
             'to_agency' => $partner->{ 'cardnumber' },
             'userid'    => $borrower->{'cardnumber'},
-            'barcode'   => $input->param('barcode'),
-            'rfid'      => $input->param('rfid'),
+            'idtype'    => $input->param('idtype'),
+            'id'        => $input->param('id'),
             'requestid' => $requestid,
             'reqtype'   => $input->param('reqtype'),
         });

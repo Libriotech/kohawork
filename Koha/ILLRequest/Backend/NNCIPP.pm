@@ -125,21 +125,29 @@ sub SendRequestItem {
 
     my ( $args ) = @_;
 
+    my %types = (
+        'barcode' => 'Barcode',
+        'isbn'    => 'ISBN',
+        'issn'    => 'ISSN',
+        'ean'     => 'EAN',
+        'rfid'    => 'RFID',
+    );
+
     # Construct ItemIdentifierType and ItemIdentifierValue
-    my $itemidentifiertype  = '';
-    my $itemidentifiervalue = '';
-    if ( $args->{'barcode'} ne '' ) {
-        $itemidentifiertype  .= 'Barcode';
-        $itemidentifiervalue .= $args->{'barcode'};
-    }
-    if ( $args->{'barcode'} ne '' && $args->{'rfid'} ne '' ) {
-        $itemidentifiertype  .= ';';
-        $itemidentifiervalue .= ';';
-    }
-    if ( $args->{'rfid'} ne '' ) {
-        $itemidentifiertype  .= 'RFID';
-        $itemidentifiervalue .= $args->{'rfid'};
-    }
+    my $itemidentifiertype  = $types{ $args->{'idtype'} };
+    my $itemidentifiervalue = $args->{'id'};
+#    if ( $args->{'barcode'} ne '' ) {
+#        $itemidentifiertype  .= 'Barcode';
+#        $itemidentifiervalue .= $args->{'barcode'};
+#    }
+#    if ( $args->{'barcode'} ne '' && $args->{'rfid'} ne '' ) {
+#        $itemidentifiertype  .= ';';
+#        $itemidentifiervalue .= ';';
+#    }
+#    if ( $args->{'rfid'} ne '' ) {
+#        $itemidentifiertype  .= 'RFID';
+#        $itemidentifiervalue .= $args->{'rfid'};
+#    }
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
     <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
