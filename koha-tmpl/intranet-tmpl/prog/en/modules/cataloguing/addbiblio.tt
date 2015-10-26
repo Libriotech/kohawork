@@ -527,6 +527,7 @@ function Changefwk(FwkList) {
         <input type="hidden" name="mode" value="popup" />
 [% END %]
         <input type="hidden" name="op" value="addbiblio" />
+        <input type="hidden" name="z3950" value="[% z3950 %]" />
         <input type="hidden" name="frameworkcode" value="[% frameworkcode %]" />
         <input type="hidden" name="biblionumber" value="[% biblionumber %]" />
         <input type="hidden" name="breedingid" value="[% breedingid %]" />
