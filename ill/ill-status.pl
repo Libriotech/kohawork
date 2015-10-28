@@ -31,7 +31,6 @@ use Koha::ILLRequests;
 use Koha::ILLRequest::Backend::NNCIPP qw(
     SendItemShipped SendItemReceived SendRenewItem
     SendCancelRequestItem SendCancelRequestItemAsOwner
-    SendCancelRequestItemAsOwner
 );
 use URI::Escape;
 
@@ -48,15 +47,17 @@ my ( $template, $borrowernumber, $cookie ) = get_template_and_user( {
 
 if ( $barcode && $status && $status eq 'REJECT' ) {
 
+    # Owner library rejects a RequestItem it has received
+
     my $reject_reason = $input->param('reject_reason');
 
     # Find the right request, based on the barcode
     # my $itemnumber = GetItemnumberFromBarcode( $barcode );
     # my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
 
-    # Find all requests for the given biblionumber
+    # Find all requests for the given barcode
     my $illRequests = Koha::ILLRequests->new;
-    my $requests = $illRequests->search({ # FIXME This does not find anything!
+    my $requests = $illRequests->search({
         'remote_barcode' => $barcode,
         'status'         => 'NEW',
     });
@@ -79,7 +80,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
         # Get the full details
         $request->getFullDetails( { brw => 1 } );
 
-        # Send an ItemShipped message to the library that ordered the item
+        # Send a CancelRequestItem message to the library that ordered the item
         my $response = SendCancelRequestItemAsOwner({
             'request'       => $request,
             'barcode'       => $barcode,
@@ -110,6 +111,8 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
 
 } elsif ( $barcode && $status && $status eq 'CANCEL' ) {
 
+    # Home library tries to cancel a RequestItem it has sent out
+
     # Find the right request, based on the barcode
     # my $itemnumber = GetItemnumberFromBarcode( $barcode );
     # my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
@@ -118,7 +121,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
         'remote_barcode' => $barcode,
-        'status'         => 'SHIPPED',
+        'status'         => 'ORDERED',
     });
     # There should only be one with the given status anyway...
     if ( scalar @{ $requests } == 0 ) {
@@ -177,7 +180,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     # Get the full details
     $request->getFullDetails( { brw => 1 } );
 
-    # Send an ItemReceived message to the library that we ordered the item from
+    # Send a RenewItem message to the library that we ordered the item from
     my $response = SendRenewItem({
         'request' => $request,
         'barcode' => $barcode,
@@ -185,7 +188,10 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
 
     if ( $response->{'data'} ) {
         # Response looks OK
+        # FIXME Better checking that it IS ok
         $request->editStatus({ 'status' => 'RENEWOK' });
+    } else {
+        # FIXME
     }
 
     $template->param(
@@ -205,7 +211,6 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     });
     # There should only be one anyway...
     my $request = $requests->[0];
-    warn $request->status->getProperty('id');
 
     $request->editStatus({ 'status' => 'RECEIVED' });
     # Get the full details
@@ -216,7 +221,6 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     my $itemnumbers = GetItemnumbersForBiblio( $biblionumber );
     # There should only be one
     my $itemnumber = $itemnumbers->[0];
-    warn "Editing item on $biblionumber, $itemnumber";
     ModItem({ barcode => $barcode }, $biblionumber, $itemnumber);
 
     # Send an ItemReceived message to the library that we ordered the item from

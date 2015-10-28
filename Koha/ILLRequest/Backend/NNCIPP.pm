@@ -443,17 +443,7 @@ sub SendCancelRequestItem{
     my $borrower_id = $request->status->getProperty('borrowernumber');
     my $borrower    = GetMemberDetails( $borrower_id );
 
-    my ( $remote_id_agency, $remote_id_id );
-    if ( $request->status->getProperty('remote_id') ) {
-        # If the request was initiated by another library, we find the RequestId
-        # value thusly:
-        ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
-    } else {
-        # If it was created by us, we use our ISIL and the ID from the
-        # ill_requests db table.
-        $remote_id_agency = C4::Context->preference('ILLISIL');
-        $remote_id_id     = $request->status->getProperty('id');
-    }
+    my ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
 
     # Set up the template for the message
     my $tmplbase = 'ill/nncipp/CancelRequestItem.xml';
@@ -490,7 +480,7 @@ sub SendCancelRequestItemAsOwner{
 
     my ( $args ) = @_;
 
-    # Get data about the "other" library, from which we have requested the loan
+    # Get data about the "other" library, from which we got the loan request
     my $request = $args->{'request'};
     my $remote_library_id = $request->status->getProperty('borrowernumber');
     my $remote_library = GetMemberDetails( $remote_library_id );
@@ -523,7 +513,7 @@ sub SendCancelRequestItemAsOwner{
         'UserId'            => $borrower->{'cardnumber'},
         'AgencyId'          => $remote_id_agency,
         'RequestId'         => $remote_id_id,
-        'ItemIdentifier '   => $request->status->getProperty('remote_barcode'),
+        'ItemIdentifier'    => $request->status->getProperty('remote_barcode'),
         'ItemNote'          => $args->{'reject_reason'},
         'RequestType'       => $request->status->getProperty('reqtype'),
     );

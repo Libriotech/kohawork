@@ -70,10 +70,10 @@ if ( $illpartner ) {
     # because the request should contain the locally created RequestId
     my $illRequest   = Koha::ILLRequests->new;
     my $request = $illRequest->request({
-        'biblionumber' => $biblionumber,
-        'branch'       => 'ILL',
-        'borrower'     => $borrower->{'borrowernumber'}, # borrowernumber 
-        'reqtype'      => $input->param('reqtype'),
+        'biblionumber'   => $biblionumber,
+        'branch'         => 'ILL',
+        'borrower'       => $borrower->{'borrowernumber'}, # borrowernumber
+        'reqtype'        => $input->param('reqtype'),
     });
     if ( $request ) {
         my $requestid = $request->{'status'}->{'id'};
@@ -81,7 +81,8 @@ if ( $illpartner ) {
         $request->editStatus({
             'ordered_from' => $illpartner,
             'status' => 'ORDERED',
-            'remote_id' => C4::Context->preference('ILLISIL') . ':' . $requestid,
+            'remote_id' => 'NO-' . C4::Context->preference('ILLISIL') . ':' . $requestid,
+            'remote_barcode' => $input->param('id'), # FIXME This field should be renamed
         });
         # Send the request to the remote library
         my $response = SendRequestItem({

@@ -19,7 +19,7 @@
         </ns1:UserId>
         <!-- The RequestId must be the one created by the initializing AgencyId in call #1 -->
         <ns1:RequestId>
-            <ns1:AgencyId>NO-[% AgencyId %]</ns1:AgencyId>
+            <ns1:AgencyId>[% AgencyId %]</ns1:AgencyId>
             <ns1:RequestIdentifierValue>[% RequestId %]</ns1:RequestIdentifierValue>
         </ns1:RequestId>
         <!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
