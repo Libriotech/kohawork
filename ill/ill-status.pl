@@ -164,14 +164,14 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
 } elsif ( $barcode && $status && $status eq 'RENEWREQ' ) {
 
     # Find the right request, based on the barcode
-    my $itemnumber = GetItemnumberFromBarcode( $barcode );
-    my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
-
+    # my $itemnumber = GetItemnumberFromBarcode( $barcode );
+    # my $biblionumber = GetBiblionumberFromItemnumber( $itemnumber );
+    
     # Find the right request
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
-        'biblionumber' => $biblionumber,
-        'status'       => 'RECEIVED',
+        'remote_barcode' => $barcode,
+        'status'         => 'RECEIVED',
     });
     # There should only be one with the given status anyway...
     my $request = $requests->[0];
@@ -186,12 +186,12 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
         'barcode' => $barcode,
     });
 
-    if ( $response->{'data'} ) {
-        # Response looks OK
-        # FIXME Better checking that it IS ok
-        $request->editStatus({ 'status' => 'RENEWOK' });
+    if ( $response && $response->{'problem'} == 0 ) {
+        use Data::Dumper;
+        warn Dumper $response->{'data'};
+        $request->editStatus({ 'status' => 'RENEWED' });
     } else {
-        # FIXME
+        $request->editStatus({ 'status' => 'NOTRENEWED' });
     }
 
     $template->param(

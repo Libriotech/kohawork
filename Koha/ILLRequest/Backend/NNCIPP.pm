@@ -594,6 +594,8 @@ sub _send_message {
 
     my ( $req, $msg, $endpoint ) = @_;
 
+    warn "talking to $endpoint";
+
     logaction( 'ILL', $req, undef, $msg );
     my $response = HTTP::Tiny->new->request( 'POST', $endpoint, { 'content' => $msg } );
 
