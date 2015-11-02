@@ -247,7 +247,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     my $requests = $illRequests->search({
         # 'biblionumber' => $biblionumber,
         'remote_barcode' => $barcode,
-        'status'         => 'SHIPPED',
+        'status'         => 'NEW',
     });
     # We are looking for the oldest request for this biblionumber, so we use the zero'th one
     my $request = $requests->[0];
