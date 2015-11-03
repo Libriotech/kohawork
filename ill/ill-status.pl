@@ -207,7 +207,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     my $illRequests = Koha::ILLRequests->new;
     my $requests = $illRequests->search({
         'remote_barcode' => $barcode, # Set based on info in ItemShipped
-        'status'         => 'SHIPPING',
+        'status'         => 'SHIPPED',
     });
     # There should only be one anyway...
     my $request = $requests->[0];
