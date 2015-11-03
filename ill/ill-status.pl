@@ -316,6 +316,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     
         # Find all requests for the given biblionumber
         $request = undef;
+        warn "barcode: $barcode";
         my $requests = $illRequests->search({
             # 'biblionumber' => $biblionumber,
             'remote_barcode' => "$barcode",
