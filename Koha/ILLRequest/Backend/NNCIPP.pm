@@ -34,7 +34,9 @@ our @EXPORT_OK = qw(
     SendRequestItem
     send_ItemRequested
     SendItemShipped
+    SendItemShippedAsHome
     SendItemReceived
+    SendItemReceivedAsOwner
     SendRenewItem
     SendCancelRequestItem
     SendCancelRequestItemAsOwner
@@ -345,6 +347,45 @@ sub SendItemShipped {
 
 }
 
+=head2 SendItemShippedAsHome
+
+Send an ItemShipped message from the Home Library to the Owner Library
+
+=cut
+
+sub SendItemShippedAsHome {
+
+    my ( $args ) = @_;
+
+    my $request = $args->{'request'};
+    my $borrower = $request->status->getProperty('borrower');
+
+    my $dt = DateTime->now;
+    $dt->set_time_zone( 'Europe/Oslo' );
+
+    my $tmplbase = 'ill/nncipp/ItemShippedAsHome.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+
+    my ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
+
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'RequestIdentifier' => $remote_id_id,
+        'ItemIdentifier'    => $args->{'barcode'},
+        'DateShipped'       => $dt->iso8601(),
+        'borrower'          => $borrower,
+        'remote_user'       => $request->status->getProperty('remote_user'),
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
+    return _send_message( 'ItemShipped', $msg, $nncip_uri );
+
+}
+
 =head2 SendItemReceived
 
 Send an ItemReceived message to a library that has sent us an item
@@ -363,6 +404,44 @@ sub SendItemReceived {
     $dt->set_time_zone( 'Europe/Oslo' );
 
     my $tmplbase = 'ill/nncipp/ItemReceived.xml';
+    my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
+    my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
+    my $filename = "$path/modules/" . $tmplbase;
+    my $template = C4::Templates->new( 'intranet', $filename, $tmplbase );
+
+    $template->param(
+        'FromAgency'        => C4::Context->preference('ILLISIL'),
+        'ToAgency'          => $remote_library->{'cardnumber'},
+        'ItemIdentifier'    => $args->{'barcode'},
+        'DateReceived'      => $dt->iso8601(),
+        'RequestIdentifierValue' => $request->{status}->{id},
+        'barcode'           => $args->{'barcode'},
+    );
+    my $msg = $template->output();
+
+    my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
+    return _send_message( 'ItemReceived', $msg, $nncip_uri );
+
+}
+
+=head2 SendItemReceivedAsOwner
+
+Send an ItemReceived message to a library that has returned one of our items to us
+
+=cut
+
+sub SendItemReceivedAsOwner {
+
+    my ( $args ) = @_;
+
+    my $request = $args->{'request'};
+    my $remote_library_id = $request->status->getProperty('ordered_from');
+    my $remote_library = GetMemberDetails( $remote_library_id );
+
+    my $dt = DateTime->now;
+    $dt->set_time_zone( 'Europe/Oslo' );
+
+    my $tmplbase = 'ill/nncipp/ItemReceivedAsOwner.xml';
     my $language = 'en'; # _get_template_language($query->cookie('KohaOpacLanguage'));
     my $path     = C4::Context->config('intrahtdocs'). "/prog/". $language;
     my $filename = "$path/modules/" . $tmplbase;

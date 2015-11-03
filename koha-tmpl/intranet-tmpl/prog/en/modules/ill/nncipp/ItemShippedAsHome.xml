@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns1:NCIPMessage xmlns:ns1="http://www.niso.org/2008/ncip" ns1:version="http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd">
-    <!-- Usage in NNCIPP 1.0 is in use-case 2, call #4: Owner library informs Home library that the requested Item is shipped-->
+    <!-- Usage in NNCIPP 1.0 is in use-case 2, call #6: Home library informs Owner library that the lended Item (is returned) and is shipped-->
     <ns1:ItemShipped>
         <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
         <ns1:InitiationHeader>
-            <!-- Owner Library -->
+            <!-- Home Library -->
             <ns1:FromAgencyId>
                 <ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
             </ns1:FromAgencyId>
-            <!-- Home Library -->
+            <!-- Owner Library -->
             <ns1:ToAgencyId>
                 <ns1:AgencyId>NO-[% borrower.cardnumber %]</ns1:AgencyId>
             </ns1:ToAgencyId>
@@ -20,7 +20,7 @@
             <!-- The RequestIdentifierValue must be part of the RequestId-->
             <ns1:RequestIdentifierValue>[% RequestIdentifier %]</ns1:RequestIdentifierValue>
         </ns1:RequestId>
-        <!-- The ItemId must uniquely identify the requested Item in the scope of the FromAgencyId -->
+        <!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
         <ns1:ItemId>
             <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
             <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
@@ -45,30 +45,12 @@
                 <ns1:PhysicalAddressType/>
             </ns1:PhysicalAddress>
         </ns1:ShippingInformation>
-        <!-- If an alternative Item is shipped to fulfill a loan, ItemOptionalFields.BibliographicDescription -->
-        <!-- is used to inform about what is shipped. Not used if shipped item is equal to orded item. -->
-        <!-- F.x. request for a novel, responds with a collected works book (that contains the requested novel) -->
-        <!-- Not supported by Koha, yet.
-        <ns1:ItemOptionalFields>
-            <! BibliographicDescription is used, as needed, to supplement the ItemId >
-            <ns1:BibliographicDescription>
-                <ns1:Author>100a</ns1:Author>
-                <ns1:PlaceOfPublication>260a</ns1:PlaceOfPublication>
-                <ns1:PublicationDate>260c</ns1:PublicationDate>
-                <ns1:Publisher>260b</ns1:Publisher>
-                <ns1:Title>245a</ns1:Title>
-                <! The following line is required by Alma. >
-                <ns1:BibliographicLevel>Book|Journal|Other</ns1:BibliographicLevel>
-                <ns1:Language>Use three letter codes (ISO-639-2)</ns1:Language>
-                <ns1:MediumType>Use values as defined in Implementation-part of NCIP on page 23.</ns1:MediumType>
-            </ns1:BibliographicDescription>
-        </ns1:ItemOptionalFields>
-        --> 
         <!-- The following Ext is required by Alma -->
         <ns1:Ext>
         <!-- Who is shipping the item? -->
-            <!-- if (FromAgencyId != RequestId.AgencyId) => Lender/Owner -->
-            <ns1:NoticeContent>ShippedBy.Lender</ns1:NoticeContent>
+            <!-- if (FromAgencyId == RequestId.AgencyId) => Borrower/Home -->
+            <ns1:NoticeContent>ShippedBy.Borrower</ns1:NoticeContent>
         </ns1:Ext>
     </ns1:ItemShipped>
 </ns1:NCIPMessage>
+

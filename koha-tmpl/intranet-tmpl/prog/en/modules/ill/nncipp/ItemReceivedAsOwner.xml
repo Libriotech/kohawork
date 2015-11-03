@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:NCIPMessage xmlns:ns1="http://www.niso.org/2008/ncip" ns1:version="http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd">
+    <!-- Usage in NNCIPP 1.0 is in use-case 2, call #7: Owner library acknowledge recpient of the shipped Item from Home Library-->
+    <ns1:ItemReceived>
+        <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+        <ns1:InitiationHeader>
+            <!-- Owner Library -->
+            <ns1:FromAgencyId>
+                <ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
+            </ns1:FromAgencyId>
+            <!-- Home Library -->
+            <ns1:ToAgencyId>
+                <ns1:AgencyId>NO-[% ToAgency %]</ns1:AgencyId>
+            </ns1:ToAgencyId>
+        </ns1:InitiationHeader>
+        <!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
+        <ns1:ItemId>
+            <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
+            <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
+            <ns1:ItemIdentifierType>Barcode</ns1:ItemIdentifierType>
+            <ns1:ItemIdentifierValue>[% ItemIdentifier %]</ns1:ItemIdentifierValue>
+        </ns1:ItemId>
+        <!-- The RequestId must be the one created by the initializing AgencyId in call #1 -->
+        <ns1:RequestId>
+            <!-- The initializing AgencyId must be part of the RequestId -->
+            <ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
+            <!-- The RequestIdentifierValue must be part of the RequestId-->
+            <ns1:RequestIdentifierValue>[% RequestIdentifierValue %]</ns1:RequestIdentifierValue>
+        </ns1:RequestId>
+        <!-- DateReceived must conform to ISO 8601-2004, only using GMT)-->
+        <ns1:DateReceived>[% DateReceived %]</ns1:DateReceived>
+            <!-- The following Ext is required by Alma -->
+        <ns1:Ext>
+        <!-- Who is receiving the item? -->
+            <!-- if (FromAgencyId != RequestId.AgencyId) => Lender/Owner -->
+            <ns1:NoticeContent>ReceivedBy.Lender</ns1:NoticeContent>
+        </ns1:Ext>
+    </ns1:ItemReceived>
+</ns1:NCIPMessage>

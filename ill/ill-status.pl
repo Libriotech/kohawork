@@ -29,8 +29,8 @@ use C4::Output;
 use C4::Context;
 use Koha::ILLRequests;
 use Koha::ILLRequest::Backend::NNCIPP qw(
-    SendItemShipped SendItemReceived SendRenewItem
-    SendCancelRequestItem SendCancelRequestItemAsOwner
+    SendItemShipped SendItemShippedAsHome SendItemReceived SendItemReceivedAsOwner
+    SendRenewItem SendCancelRequestItem SendCancelRequestItemAsOwner
 );
 use URI::Escape;
 
@@ -212,22 +212,56 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     # There should only be one anyway...
     my $request = $requests->[0];
 
-    $request->editStatus({ 'status' => 'RECEIVED' });
-    # Get the full details
-    $request->getFullDetails( { brw => 1 } );
+    my $response;
+    if ( $request ) {
 
-    # Update the item with the barcode from the physical item we have received
-    my $biblionumber = $request->status->getProperty('biblionumber');
-    my $itemnumbers = GetItemnumbersForBiblio( $biblionumber );
-    # There should only be one
-    my $itemnumber = $itemnumbers->[0];
-    ModItem({ barcode => $barcode }, $biblionumber, $itemnumber);
+        # We are the Home Library, notifing the Owner Library that we have 
+        # recieved the item they sent us, based on the RequestItem we sent them221
 
-    # Send an ItemReceived message to the library that we ordered the item from
-    my $response = SendItemReceived({
-        'request' => $request,
-        'barcode' => $barcode,
-    });
+        $request->editStatus({ 'status' => 'RECEIVED' });
+        # Get the full details
+        $request->getFullDetails( { brw => 1 } );
+
+        # Update the item with the barcode from the physical item we have received
+        my $biblionumber = $request->status->getProperty('biblionumber');
+        my $itemnumbers = GetItemnumbersForBiblio( $biblionumber );
+        # There should only be one
+        my $itemnumber = $itemnumbers->[0];
+        ModItem({ barcode => $barcode }, $biblionumber, $itemnumber);
+
+        # Send an ItemReceived message to the library that we ordered the item from
+        $response = SendItemReceived({
+            'request' => $request,
+            'barcode' => $barcode,
+        });
+
+    } else {
+    
+        my $requests = $illRequests->search({
+            'remote_barcode' => $barcode, # Set based on info in ItemShipped
+            'status'         => 'SHIPPING',
+        });
+        # There should only be one anyway...
+        my $request = $requests->[0];
+    
+        if ( $request ) {
+
+            # We are the Owner Library, notifying the Home Library that 
+            # we have received the document they sent us in return
+
+            $request->editStatus({ 'status' => 'COMP' });
+            # Get the full details
+            $request->getFullDetails( { brw => 1 } );
+
+            # Send an ItemReceived message to the library that ordered the item from us
+            $response = SendItemReceivedAsOwner({
+                'request' => $request,
+                'barcode' => $barcode,
+            });
+
+        }
+
+    }
 
     $template->param(
         'status'   => $status,
@@ -251,21 +285,56 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     });
     # We are looking for the oldest request for this biblionumber, so we use the zero'th one
     my $request = $requests->[0];
-    # Change the status
-    $request->editStatus({ 'status' => 'SHIPPED' });
-    # Get the full details
-    $request->getFullDetails( { brw => 1 } );
-
-    # Send an ItemShipped message to the library that ordered the item
-    my $response = SendItemShipped({
-        'request' => $request,
-        'barcode' => $barcode,
-    });
-
-    # Get full details for all NEW requests for the biblio in question
     my $requests_details;
-    foreach my $rq ( @{$requests} ) {
-        push @{$requests_details}, $rq->getFullDetails( { brw => 1 } );
+
+    my $response;
+    if ( $request ) {
+    
+        # We are the Owner Library, telling the Home Library that the item they
+        # requested has been shipped
+    
+        # Change the status
+        $request->editStatus({ 'status' => 'SHIPPED' });
+        # Get the full details
+        $request->getFullDetails( { brw => 1 } );
+
+        # Send an ItemShipped message to the library that ordered the item
+        $response = SendItemShipped({
+            'request' => $request,
+            'barcode' => $barcode,
+        });
+
+        # Get full details for all NEW requests for the biblio in question
+        foreach my $rq ( @{$requests} ) {
+            push @{$requests_details}, $rq->getFullDetails( { brw => 1 } );
+        }
+
+    } else {
+
+        # We are the Home Library, telling the Owner Library that the item they
+        # sent us has been sent back
+    
+        # Find all requests for the given biblionumber
+        my $illRequests = Koha::ILLRequests->new;
+        my $requests = $illRequests->search({
+            # 'biblionumber' => $biblionumber,
+            'remote_barcode' => $barcode,
+            'status'         => 'RECEIVED', # FIXME RENEWED
+        });
+        # We are looking for the oldest request for this biblionumber, so we use the zero'th one
+        $request = $requests->[0];
+
+        # Change the status
+        $request->editStatus({ 'status' => 'SHIPPED' });
+        # Get the full details
+        $request->getFullDetails( { brw => 1 } );
+
+        # Send an ItemShipped message to the Owner Library
+        $response = SendItemShippedAsHome({
+            'request' => $request,
+            'barcode' => $barcode,
+        });
+
     }
 
     $template->param(
