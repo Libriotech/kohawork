@@ -435,7 +435,7 @@ sub SendItemReceivedAsOwner {
     my ( $args ) = @_;
 
     my $request = $args->{'request'};
-    my $remote_library_id = $request->status->getProperty('borrowrnumber');
+    my $remote_library_id = $request->status->getProperty('borrowernumber');
     my $remote_library = GetMemberDetails( $remote_library_id );
 
     my $dt = DateTime->now;
