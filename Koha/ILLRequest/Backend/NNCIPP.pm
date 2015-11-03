@@ -358,7 +358,7 @@ sub SendItemShippedAsHome {
     my ( $args ) = @_;
 
     my $request = $args->{'request'};
-    my $borrower = $request->status->getProperty('borrowernumber');
+    my $borrower = $request->status->getProperty('ordered_from');
 
     my $dt = DateTime->now;
     $dt->set_time_zone( 'Europe/Oslo' );
