@@ -315,7 +315,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
         # sent us has been sent back
     
         # Find all requests for the given biblionumber
-        my $illRequests = Koha::ILLRequests->new;
+        $request = undef;
         my $requests = $illRequests->search({
             # 'biblionumber' => $biblionumber,
             'remote_barcode' => $barcode,
