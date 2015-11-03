@@ -318,7 +318,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
         $request = undef;
         my $requests = $illRequests->search({
             # 'biblionumber' => $biblionumber,
-            'remote_barcode' => $barcode,
+            'remote_barcode' => "$barcode",
             'status'         => 'RECEIVED', # FIXME RENEWED
         });
         # We are looking for the oldest request for this biblionumber, so we use the zero'th one
