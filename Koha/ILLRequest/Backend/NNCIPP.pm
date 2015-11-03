@@ -358,7 +358,8 @@ sub SendItemShippedAsHome {
     my ( $args ) = @_;
 
     my $request = $args->{'request'};
-    my $borrower = $request->status->getProperty('ordered_from');
+    my $remote_library_id = $request->status->getProperty('ordered_from');
+    my $remote_library = GetMemberDetails( $remote_library_id );
 
     my $dt = DateTime->now;
     $dt->set_time_zone( 'Europe/Oslo' );
@@ -376,12 +377,12 @@ sub SendItemShippedAsHome {
         'RequestIdentifier' => $remote_id_id,
         'ItemIdentifier'    => $args->{'barcode'},
         'DateShipped'       => $dt->iso8601(),
-        'borrower'          => $borrower,
+        'borrower'          => $remote_library,
         'remote_user'       => $request->status->getProperty('remote_user'),
     );
     my $msg = $template->output();
 
-    my $nncip_uri = GetBorrowerAttributeValue( $borrower->borrowernumber, 'nncip_uri' );
+    my $nncip_uri = GetBorrowerAttributeValue( $remote_library->borrowernumber, 'nncip_uri' );
     return _send_message( 'ItemShipped', $msg, $nncip_uri );
 
 }
