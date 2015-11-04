@@ -216,7 +216,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     if ( $request ) {
 
         # We are the Home Library, notifing the Owner Library that we have 
-        # recieved the item they sent us, based on the RequestItem we sent them221
+        # recieved the item they sent us, based on the RequestItem we sent them
 
         $request->editStatus({ 'status' => 'RECEIVED' });
         # Get the full details
@@ -239,7 +239,7 @@ if ( $barcode && $status && $status eq 'REJECT' ) {
     
         my $requests = $illRequests->search({
             'remote_barcode' => $barcode, # Set based on info in ItemShipped
-            'status'         => 'SHIPPED',
+            'status'         => 'SHIPPING_O',
         });
         # There should only be one anyway...
         my $request = $requests->[0];
