@@ -16,7 +16,7 @@
         <!-- The RequestId must be the one created by the initializing AgencyId in call #1 -->
         <ns1:RequestId>
             <!-- The initializing AgencyId must be part of the RequestId -->
-            <ns1:AgencyId>NO-[% borrower.cardnumber %]</ns1:AgencyId>
+            <ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
             <!-- The RequestIdentifierValue must be part of the RequestId-->
             <ns1:RequestIdentifierValue>[% RequestIdentifier %]</ns1:RequestIdentifierValue>
         </ns1:RequestId>
@@ -29,7 +29,7 @@
         </ns1:ItemId>
         <!-- The UserId must be uniqe in the scope of Home Library -->
         <ns1:UserId>
-            <ns1:UserIdentifierValue>[% remote_user %]</ns1:UserIdentifierValue>
+            <ns1:UserIdentifierValue>[% UserId %]</ns1:UserIdentifierValue>
         </ns1:UserId>
         <!-- DateShipped must conform to ISO 8601-2004, only using GMT)-->
         <ns1:DateShipped>[% DateShipped %]</ns1:DateShipped>

@@ -312,6 +312,8 @@ sub send_ItemRequested {
 
 Send an ItemShipped message to another library
 
+See also SendItemShippedAsHome.
+
 =cut
 
 sub SendItemShipped {
@@ -351,6 +353,8 @@ sub SendItemShipped {
 
 Send an ItemShipped message from the Home Library to the Owner Library
 
+See also SendItemShipped.
+
 =cut
 
 sub SendItemShippedAsHome {
@@ -360,6 +364,9 @@ sub SendItemShippedAsHome {
     my $request = $args->{'request'};
     my $remote_library_id = $request->status->getProperty('ordered_from');
     my $remote_library = GetMemberDetails( $remote_library_id );
+
+    my $borrower_id = $request->status->getProperty('borrowernumber');
+    my $borrower    = GetMemberDetails( $borrower_id );
 
     my $dt = DateTime->now;
     $dt->set_time_zone( 'Europe/Oslo' );
@@ -378,7 +385,7 @@ sub SendItemShippedAsHome {
         'ItemIdentifier'    => $args->{'barcode'},
         'DateShipped'       => $dt->iso8601(),
         'borrower'          => $remote_library,
-        'remote_user'       => $request->status->getProperty('remote_user'),
+        'UserId'            => $borrower->{'cardnumber'},
     );
     my $msg = $template->output();
 
