@@ -447,6 +447,8 @@ sub SendItemReceivedAsOwner {
     warn "remote_library_id: $remote_library_id";
     my $remote_library = GetMemberDetails( $remote_library_id );
 
+    my ( $remote_id_agency, $remote_id_id ) = split /:/, $request->status->getProperty('remote_id');
+
     my $dt = DateTime->now;
     $dt->set_time_zone( 'Europe/Oslo' );
 
@@ -461,7 +463,8 @@ sub SendItemReceivedAsOwner {
         'ToAgency'          => $remote_library->{'cardnumber'},
         'ItemIdentifier'    => $args->{'barcode'},
         'DateReceived'      => $dt->iso8601(),
-        'RequestIdentifierValue' => $request->{status}->{id},
+        'AgencyId'          => $remote_id_agency,
+        'RequestIdentifierValue' => $remote_id_id},
         'barcode'           => $args->{'barcode'},
     );
     my $msg = $template->output();

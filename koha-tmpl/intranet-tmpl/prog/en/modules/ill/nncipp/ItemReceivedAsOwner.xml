@@ -23,7 +23,7 @@
         <!-- The RequestId must be the one created by the initializing AgencyId in call #1 -->
         <ns1:RequestId>
             <!-- The initializing AgencyId must be part of the RequestId -->
-            <ns1:AgencyId>NO-[% FromAgency %]</ns1:AgencyId>
+            <ns1:AgencyId>[% AgencyId %]</ns1:AgencyId>
             <!-- The RequestIdentifierValue must be part of the RequestId-->
             <ns1:RequestIdentifierValue>[% RequestIdentifierValue %]</ns1:RequestIdentifierValue>
         </ns1:RequestId>
