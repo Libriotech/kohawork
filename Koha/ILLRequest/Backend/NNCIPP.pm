@@ -88,29 +88,29 @@ sub SendLookupAgency {
     ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\"
     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
     xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
-	    <!-- Usage in NNCIPP 1.0 is in use-case 1, call #1:
+        <!-- Usage in NNCIPP 1.0 is in use-case 1, call #1:
     i) ask for the shipping address that shuld be used to fulfill a lending request
     ii) check what versions of NNCIPP the agency comply to -->
-	    <ns1:LookupAgency>
-		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
-		    <ns1:InitiationHeader>
-			    <!-- A Library -->
-			    <ns1:FromAgencyId>
-				    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
-			    </ns1:FromAgencyId>
-			    <!-- A Library -->
-			    <ns1:ToAgencyId>
-				    <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
-			    </ns1:ToAgencyId>
-		    </ns1:InitiationHeader>
-		    <!-- State which Agency you are asking information about, normaly equal to ToAgency. -->
-		    <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
-		    <!-- State what information element you are asking for-->
-		    <!-- It is mandatory to support \"Application Profile Supported Type\" in NNCIP.  -->
-		    <ns1:AgencyElementType>Application Profile Supported Type</ns1:AgencyElementType>
-		    <!-- It is recomended to support \"Agency Address Information\" in NNCIPP. -->
-		    <ns1:AgencyElementType>Agency Address Information</ns1:AgencyElementType>
-	    </ns1:LookupAgency>
+        <ns1:LookupAgency>
+            <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+            <ns1:InitiationHeader>
+                <!-- A Library -->
+                <ns1:FromAgencyId>
+                    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+                </ns1:FromAgencyId>
+                <!-- A Library -->
+                <ns1:ToAgencyId>
+                    <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
+                </ns1:ToAgencyId>
+            </ns1:InitiationHeader>
+            <!-- State which Agency you are asking information about, normaly equal to ToAgency. -->
+            <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
+            <!-- State what information element you are asking for-->
+            <!-- It is mandatory to support \"Application Profile Supported Type\" in NNCIP.  -->
+            <ns1:AgencyElementType>Application Profile Supported Type</ns1:AgencyElementType>
+            <!-- It is recomended to support \"Agency Address Information\" in NNCIPP. -->
+            <ns1:AgencyElementType>Agency Address Information</ns1:AgencyElementType>
+        </ns1:LookupAgency>
     </ns1:NCIPMessage>";
 
     return _send_message( 'LookupAgency', $msg, $nncip_uri );
@@ -153,54 +153,67 @@ sub SendRequestItem {
 
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
     <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
-	    <!-- Usage in NNCIPP 1.0 is in use-case 2: A user request a spesific uniqe item, from a external library.  -->
-	    <ns1:RequestItem>
-		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
-		    <ns1:InitiationHeader>
-			    <!-- Home Library -->
-			    <ns1:FromAgencyId>
-				    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
-			    </ns1:FromAgencyId>
-			    <!-- Owner Library -->
-			    <ns1:ToAgencyId>
-				    <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
-			    </ns1:ToAgencyId>
-		    </ns1:InitiationHeader>
-		    <!-- The UserId must be a NLR-Id (National Patron Register) -->
-		    <ns1:UserId>
-			    <ns1:UserIdentifierValue>" . $args->{'userid'} . "</ns1:UserIdentifierValue>
-		    </ns1:UserId>
-		    <!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
-		    <ns1:ItemId>
-			    <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
-			    <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
-			    <ns1:ItemIdentifierType>" . $itemidentifiertype . "</ns1:ItemIdentifierType>
-			    <ns1:ItemIdentifierValue>" . $itemidentifiervalue . "</ns1:ItemIdentifierValue>
-		    </ns1:ItemId>
-		    <!-- The RequestId must be created by the initializing AgencyId and it has to be globaly uniqe -->
-		    <ns1:RequestId>
-			    <!-- The initializing AgencyId must be part of the RequestId -->
-			    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
-			    <!-- The RequestIdentifierValue must be part of the RequestId-->
-			    <ns1:RequestIdentifierValue>" . $args->{'requestid'} . "</ns1:RequestIdentifierValue>
-		    </ns1:RequestId>
-		    <!-- The RequestType must be one of the following: -->
-		    <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
-		    <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
-		    <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
-		    <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
-		    <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
-		    <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
-		    <!-- If your library dont recive 'Depot'-books; just respond with a \"Unknown Value From Known Scheme\"-ProblemType -->
-		    <ns1:RequestType>" . $args->{'reqtype'} . "</ns1:RequestType>
-		    <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
-		    <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
-		    <ns1:RequestScopeType>Title</ns1:RequestScopeType>
-		    <!-- Include ItemOptionalFields.BibliographicDescription if you wish to recive Bibliographic data in the response -->
-		    <ns1:ItemOptionalFields>
-			    <ns1:BibliographicDescription/>
-		    </ns1:ItemOptionalFields>
-	    </ns1:RequestItem>
+        <!-- Usage in NNCIPP 1.0 is in use-case 2: A user request a spesific uniqe item, from a external library.  -->
+        <ns1:RequestItem>
+            <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+            <ns1:InitiationHeader>
+                <!-- Home Library -->
+                <ns1:FromAgencyId>
+                    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+                </ns1:FromAgencyId>
+                <!-- Owner Library -->
+                <ns1:ToAgencyId>
+                    <ns1:AgencyId>NO-" . $args->{'to_agency'} . "</ns1:AgencyId>
+                </ns1:ToAgencyId>
+            </ns1:InitiationHeader>
+            <!-- The UserId must be a NLR-Id (National Patron Register) -->
+            <ns1:UserId>
+                <ns1:UserIdentifierValue>" . $args->{'userid'} . "</ns1:UserIdentifierValue>
+            </ns1:UserId>";
+    if ( $itemidentifiertype eq 'Barcode' ) {
+            # Barcode or FIXME RFID
+            $msg .= "<!-- The ItemId must uniquely identify the requested Item in the scope of the ToAgencyId -->
+                    <ns1:ItemId>
+                        <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
+                        <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
+                        <ns1:ItemIdentifierType>" . $itemidentifiertype . "</ns1:ItemIdentifierType>
+                        <ns1:ItemIdentifierValue>" . $itemidentifiervalue . "</ns1:ItemIdentifierValue>
+                    </ns1:ItemId>";
+    } else {
+            # ISBN, ISSN, EAN eller FIXME OwnerLocalRecordID
+            $msg .= "<ns1:BibliographicId>
+                        <ns1:BibliographicRecordId>
+                            <ns1:BibliographicRecordIdentifier>" . $itemidentifiervalue . "</ns1:BibliographicRecordIdentifier>
+                            <!-- Supported BibliographicRecordIdentifierCode is OwnerLocalRecordID, ISBN, ISSN and EAN -->
+                            <!-- Supported values of OwnerLocalRecordID is simplyfied to 'LocalId' - each system know it's own values. -->
+                            <ns1:BibliographicRecordIdentifierCode>" . $itemidentifiertype . "</ns1:BibliographicRecordIdentifierCode>
+                        </ns1:BibliographicRecordId>
+                    </ns1:BibliographicId>";
+    }
+    $msg .= "<!-- The RequestId must be created by the initializing AgencyId and it has to be globaly uniqe -->
+            <ns1:RequestId>
+                <!-- The initializing AgencyId must be part of the RequestId -->
+                <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+                <!-- The RequestIdentifierValue must be part of the RequestId-->
+                <ns1:RequestIdentifierValue>" . $args->{'requestid'} . "</ns1:RequestIdentifierValue>
+            </ns1:RequestId>
+            <!-- The RequestType must be one of the following: -->
+            <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
+            <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
+            <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
+            <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
+            <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
+            <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
+            <!-- If your library dont recive 'Depot'-books; just respond with a \"Unknown Value From Known Scheme\"-ProblemType -->
+            <ns1:RequestType>" . $args->{'reqtype'} . "</ns1:RequestType>
+            <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
+            <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
+            <ns1:RequestScopeType>Title</ns1:RequestScopeType>
+            <!-- Include ItemOptionalFields.BibliographicDescription if you wish to recive Bibliographic data in the response -->
+            <ns1:ItemOptionalFields>
+                <ns1:BibliographicDescription/>
+            </ns1:ItemOptionalFields>
+        </ns1:RequestItem>
     </ns1:NCIPMessage>";
 
     return _send_message( 'RequestItem', $msg, $args->{'nncip_uri'} );
@@ -250,58 +263,58 @@ sub send_ItemRequested {
     my $msg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
     <ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" ns1:version=\"http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\"
         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd\">
-	    <!-- Usage in NNCIPP 1.0 is in use-case 3, call #8: Owner library informs Home library that a user requests one Item -->
-	    <ns1:ItemRequested>
-		    <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
-		    <ns1:InitiationHeader>
-			    <!-- Owner Library -->
-			    <ns1:FromAgencyId>
-				    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
-			    </ns1:FromAgencyId>
-			    <!-- Home Library -->
-			    <ns1:ToAgencyId>
-				    <ns1:AgencyId>NO-" . $borrower->cardnumber . "</ns1:AgencyId>
-			    </ns1:ToAgencyId>
-		    </ns1:InitiationHeader>
-		    <!-- The UserId must be a NLR-Id (National Patron Register) -->
-		    <ns1:UserId>
-			    <ns1:UserIdentifierValue>" . $userid . "</ns1:UserIdentifierValue>
-		    </ns1:UserId>
-		    <!-- The ItemId must uniquely identify the requested Item in the scope of the FromAgencyId. -->
-		    <!-- The ToAgency may then mirror back this ItemId in a RequestItem-call to order it.-->
-		    <!-- Note: NNCIPP do not support use of BibliographicId insted of ItemId, in this case. -->
-		    <ns1:ItemId>
-			    <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
-			    <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
-			    <ns1:ItemIdentifierType>Barcode</ns1:ItemIdentifierType>
-			    <ns1:ItemIdentifierValue>" . $barcode . "</ns1:ItemIdentifierValue>
-		    </ns1:ItemId>
-		    <!-- The RequestType must be one of the following: -->
-		    <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
-		    <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
-		    <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
-		    <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
-		    <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
-		    <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
-		    <!-- If your library dont recive 'Depot'-books; just respond with a \"Unknown Value From Known Scheme\"-ProblemType -->
-		    <ns1:RequestType>Physical</ns1:RequestType>
-		    <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
-		    <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
-		    <ns1:RequestScopeType>Title</ns1:RequestScopeType>
-		    <!-- Include ItemOptionalFields.BibliographicDescription if you wish to recive Bibliographic data in the response -->
-		    <ns1:ItemOptionalFields>
-			    <!-- BibliographicDescription is used, as needed, to supplement the ItemId -->
-			    <ns1:BibliographicDescription>
-				    <ns1:Author>"             . $bibliodata->{'author'} . "</ns1:Author>
-				    <ns1:PlaceOfPublication>" . $bibliodata->{'place'} . "</ns1:PlaceOfPublication>
-				    <ns1:PublicationDate>"    . $bibliodata->{'copyrightdate'} . "</ns1:PublicationDate>
-				    <ns1:Publisher>"          . $bibliodata->{'publishercode'} . "</ns1:Publisher>
-				    <ns1:Title>"              . $bibliodata->{'title'} . "</ns1:Title>
-				    <ns1:Language>"           . $lang_code . "</ns1:Language>
-				    <ns1:MediumType>Book</ns1:MediumType> <!-- Map from " . $bibliodata->{'itemtype'} . "? -->
-			    </ns1:BibliographicDescription>
-		    </ns1:ItemOptionalFields>
-	    </ns1:ItemRequested>
+        <!-- Usage in NNCIPP 1.0 is in use-case 3, call #8: Owner library informs Home library that a user requests one Item -->
+        <ns1:ItemRequested>
+            <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->
+            <ns1:InitiationHeader>
+                <!-- Owner Library -->
+                <ns1:FromAgencyId>
+                    <ns1:AgencyId>NO-" . C4::Context->preference('ILLISIL') . "</ns1:AgencyId>
+                </ns1:FromAgencyId>
+                <!-- Home Library -->
+                <ns1:ToAgencyId>
+                    <ns1:AgencyId>NO-" . $borrower->cardnumber . "</ns1:AgencyId>
+                </ns1:ToAgencyId>
+            </ns1:InitiationHeader>
+            <!-- The UserId must be a NLR-Id (National Patron Register) -->
+            <ns1:UserId>
+                <ns1:UserIdentifierValue>" . $userid . "</ns1:UserIdentifierValue>
+            </ns1:UserId>
+            <!-- The ItemId must uniquely identify the requested Item in the scope of the FromAgencyId. -->
+            <!-- The ToAgency may then mirror back this ItemId in a RequestItem-call to order it.-->
+            <!-- Note: NNCIPP do not support use of BibliographicId insted of ItemId, in this case. -->
+            <ns1:ItemId>
+                <!-- All Items must have a scannable Id either a RFID or a Barcode or Both. -->
+                <!-- In the case of both, start with the Barcode, use colon and no spaces as delimitor.-->
+                <ns1:ItemIdentifierType>Barcode</ns1:ItemIdentifierType>
+                <ns1:ItemIdentifierValue>" . $barcode . "</ns1:ItemIdentifierValue>
+            </ns1:ItemId>
+            <!-- The RequestType must be one of the following: -->
+            <!-- Physical, a loan (of a physical item, create a reservation if not available) -->
+            <!-- Non-Returnable, a copy of a physical item - that is not required to return -->
+            <!-- PhysicalNoReservation, a loan (of a physical item), do NOT create a reservation if not available -->
+            <!-- LII, a patron initialized physical loan request, threat as a physical loan request -->
+            <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a reservation if not available -->
+            <!-- Depot, a border case; some librarys get a box of (foreign language) books from the national library -->
+            <!-- If your library dont recive 'Depot'-books; just respond with a \"Unknown Value From Known Scheme\"-ProblemType -->
+            <ns1:RequestType>Physical</ns1:RequestType>
+            <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is on title-level -->
+            <!-- (and not Item-level - even though the request was on a Id that uniquely identify the requested Item) -->
+            <ns1:RequestScopeType>Title</ns1:RequestScopeType>
+            <!-- Include ItemOptionalFields.BibliographicDescription if you wish to recive Bibliographic data in the response -->
+            <ns1:ItemOptionalFields>
+                <!-- BibliographicDescription is used, as needed, to supplement the ItemId -->
+                <ns1:BibliographicDescription>
+                    <ns1:Author>"             . $bibliodata->{'author'} . "</ns1:Author>
+                    <ns1:PlaceOfPublication>" . $bibliodata->{'place'} . "</ns1:PlaceOfPublication>
+                    <ns1:PublicationDate>"    . $bibliodata->{'copyrightdate'} . "</ns1:PublicationDate>
+                    <ns1:Publisher>"          . $bibliodata->{'publishercode'} . "</ns1:Publisher>
+                    <ns1:Title>"              . $bibliodata->{'title'} . "</ns1:Title>
+                    <ns1:Language>"           . $lang_code . "</ns1:Language>
+                    <ns1:MediumType>Book</ns1:MediumType> <!-- Map from " . $bibliodata->{'itemtype'} . "? -->
+                </ns1:BibliographicDescription>
+            </ns1:ItemOptionalFields>
+        </ns1:ItemRequested>
     </ns1:NCIPMessage>";
 
     return _send_message( 'ItemRequested', $msg, $nncip_uri );
