@@ -444,6 +444,7 @@ sub SendItemReceivedAsOwner {
 
     my $request = $args->{'request'};
     my $remote_library_id = $request->status->getProperty('borrowernumber');
+    warn "remote_library_id: $remote_library_id";
     my $remote_library = GetMemberDetails( $remote_library_id );
 
     my $dt = DateTime->now;
@@ -466,6 +467,7 @@ sub SendItemReceivedAsOwner {
     my $msg = $template->output();
 
     my $nncip_uri = GetBorrowerAttributeValue( $remote_library_id, 'nncip_uri' );
+    warn "nncip_uri: $nncip_uri";
     return _send_message( 'ItemReceived', $msg, $nncip_uri );
 
 }
