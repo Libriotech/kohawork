@@ -464,7 +464,7 @@ sub SendItemReceivedAsOwner {
         'ItemIdentifier'    => $args->{'barcode'},
         'DateReceived'      => $dt->iso8601(),
         'AgencyId'          => $remote_id_agency,
-        'RequestIdentifierValue' => $remote_id_id},
+        'RequestIdentifierValue' => $remote_id_id,
         'barcode'           => $args->{'barcode'},
     );
     my $msg = $template->output();
