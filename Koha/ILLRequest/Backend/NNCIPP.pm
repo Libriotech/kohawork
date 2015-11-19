@@ -323,7 +323,7 @@ sub send_ItemRequested {
 
 =head2 SendItemShipped
 
-Send an ItemShipped message to another library
+Send an ItemShipped message to another library as the Owner Library
 
 See also SendItemShippedAsHome.
 
