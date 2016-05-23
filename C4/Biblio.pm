@@ -367,7 +367,7 @@ sub ModBiblio {
     _koha_marc_update_bib_ids( $record, $frameworkcode, $biblionumber, $biblioitemnumber );
 
     # load the koha-table data object
-    my $oldbiblio = TransformMarcToKoha( $dbh, $record, $frameworkcode, undef, $biblionumber, $filter );
+    my $oldbiblio = TransformMarcToKoha( $record, $frameworkcode, undef, $biblionumber, $filter );
 
     # update MARC subfield that stores biblioitems.cn_sort
     _koha_marc_update_biblioitem_cn_sort( $record, $oldbiblio, $frameworkcode );
