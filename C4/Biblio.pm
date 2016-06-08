@@ -367,7 +367,7 @@ sub ModBiblio {
     _koha_marc_update_bib_ids( $record, $frameworkcode, $biblionumber, $biblioitemnumber );
 
     # load the koha-table data object
-    my $oldbiblio = TransformMarcToKoha( $record, $frameworkcode, undef, $biblionumber, $filter );
+    my $oldbiblio = TransformMarcToKoha( $dbh, $record, $frameworkcode, undef, $biblionumber, $filter );
 
     # update MARC subfield that stores biblioitems.cn_sort
     _koha_marc_update_biblioitem_cn_sort( $record, $oldbiblio, $frameworkcode );
@@ -2624,7 +2624,7 @@ our $inverted_field_map;
 
 =head2 TransformMarcToKoha
 
-  $result = TransformMarcToKoha( $record, $frameworkcode, $biblionumber, $filter )
+  $result = TransformMarcToKoha( $dbh, $record, $frameworkcode, $biblionumber, $filter )
 
 Extract data from a MARC bib record into a hashref representing
 Koha biblio, biblioitems, and items fields. 
@@ -2635,7 +2635,7 @@ hash_ref
 =cut
 
 sub TransformMarcToKoha {
-    my ( $record, $frameworkcode, $limit_table, $biblionumber, $filter ) = @_;
+    my ( $dbh, $record, $frameworkcode, $limit_table, $biblionumber, $filter ) = @_;
 
     my $result = {};
     if (!defined $record) {
