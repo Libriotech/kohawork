@@ -178,26 +178,66 @@
                         [% END # / IF patronid %]
 
                         [% IF ( validuser ) %]
-                            <div id="newcheckout" class="sco_entry">
-                                <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
-                                    <fieldset>
-                                        <legend>Check out[% IF ( AllowSelfCheckReturns ) %], return[% END %] or renew an item: </legend>
-                                        <div class="input-append">
-                                            <label for="barcode">Scan a new item or enter its barcode:</label>
-                                            <input id="barcode" name="barcode" size="20" type="text" class="focus" autocomplete="off" />
-                                            <button type="submit" class="btn">Submit</button>
-                                        </div>
-                                        <input type="hidden" name="op" value="checkout" />
-                                        <input type="hidden" name="patronid" value="[% patronid %]" />
-                                    </fieldset>
-                                </form>
+                            <div id="newcheckout" class="sco_entry toptabs">
 
-                                <div>
-                                    <form method="post" action="#" id="logout_form">
-                                        <button type="submit" class="btn"><i class="icon finish"></i> Finish</button>
-                                    </form>
-                                </div>
+    <ul>
+        <li id="tab_checkout"><a href="#checkout">Checkout</a></li>
+        <li id="tab_renew"><a href="#renew">Renew</a></li>
+        [% IF ( AllowSelfCheckReturns ) %]
+        <li id="tab_return"><a href="#return">Return</a></li>
+        [% END %]
+    </ul>
+
+    <div id="checkout">
+        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
+            <fieldset>
+            <div class="input-append">
+                <label for="barcode">Scan a new item or enter its barcode:</label>
+                <input id="barcode" name="barcode" size="20" type="text" class="focus" autocomplete="off" />
+                <button type="submit" class="btn">Submit</button>
+            </div>
+            <input type="hidden" name="op" value="checkout" />
+            <input type="hidden" name="patronid" value="[% patronid %]" />
+        </fieldset>
+        </form>
+    </div> <!-- / #checkout -->
+
+    <div id="renew">
+        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
+            <fieldset>
+            <div class="input-append">
+                <label for="barcode">Scan a new item or enter its barcode:</label>
+                <input id="barcode" name="barcode" size="20" type="text" autocomplete="off" />
+                <button type="submit" class="btn">Submit</button>
+            </div>
+            <input type="hidden" name="op" value="renew" />
+            <input type="hidden" name="patronid" value="[% patronid %]" />
+        </fieldset>
+        </form>
+    </div> <!-- / #renew -->
+
+    [% IF ( AllowSelfCheckReturns ) %]
+    <div id="return">
+        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
+            <fieldset>
+            <div class="input-append">
+                <label for="barcode">Scan a new item or enter its barcode:</label>
+                <input id="barcode" name="barcode" size="20" type="text" autocomplete="off" />
+                <button type="submit" class="btn">Submit</button>
+            </div>
+            <input type="hidden" name="op" value="bookreturn" />
+            <input type="hidden" name="patronid" value="[% patronid %]" />
+        </fieldset>
+        </form>
+    </div> <!-- / #return -->
+    [% END %]
+
                             </div> <!-- / #newcheckout -->
+                            <div>
+                                <form method="post" action="#" id="logout_form">
+                                    <button type="submit" class="btn"><i class="icon finish"></i> Finish</button>
+                                </form>
+                            </div>
                 </div> <!-- / .span12/12 -->
                 [% IF ( display_patron_image ) %]
                     <div class="span2">
@@ -406,6 +446,7 @@
 
                 return true;
             });
+            $('#newcheckout').tabs();
     });
     //]]>
     </script>

@@ -134,6 +134,9 @@ elsif ( $op eq "returnbook" && $allowselfcheckreturns ) {
     #warn "returnbook: " . $doreturn;
     $borrower = GetMemberDetails(undef,$patronid);
 }
+elsif ( $op eq "renew" ) {
+    AddRenewal( $borrower, $item->{itemnumber} );
+}
 elsif ( $op eq "checkout" ) {
     my $impossible  = {};
     my $needconfirm = {};
