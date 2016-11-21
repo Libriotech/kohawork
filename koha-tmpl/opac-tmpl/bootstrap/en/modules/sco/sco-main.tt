@@ -210,8 +210,8 @@
         <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
             <fieldset>
             <div class="input-append">
-                <label for="barcode">Scan a new item or enter its barcode to checkout:</label>
-                <input id="barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <label for="checkout-barcode">Scan a new item or enter its barcode to checkout:</label>
+                <input id="checkout-barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
                 <span class="input-group-btn">
                     <button type="submit" class="btn btn-default" type="button">Submit</button>
                 </span>
@@ -230,8 +230,8 @@
         <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
             <fieldset>
             <div class="input-append">
-                <label for="barcode">Scan a new item or enter its barcode to renew it:</label>
-                <input id="barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <label for="renew-barcode">Scan a new item or enter its barcode to renew it:</label>
+                <input id="renew-barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
                 <button type="submit" class="btn">Submit</button>
             </div>
             <input type="hidden" name="op" value="renew" />
@@ -249,8 +249,8 @@
         <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
             <fieldset>
             <div class="input-append">
-                <label for="barcode">Scan a new item or enter its barcode to return it:</label>
-                <input id="barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <label for="return-barcode">Scan a new item or enter its barcode to return it:</label>
+                <input id="return-barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
                 <button type="submit" class="btn">Submit</button>
             </div>
             <input type="hidden" name="op" value="returnbook" />
