@@ -211,7 +211,7 @@
             <fieldset>
             <div class="input-append">
                 <label for="checkout-barcode">Scan a new item or enter its barcode to checkout:</label>
-                <input id="checkout-barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <input id="checkout-barcode" name="barcode" size="20" type="text" class="form-control focus" autocomplete="off" />
                 <span class="input-group-btn">
                     <button type="submit" class="btn btn-default" type="button">Submit</button>
                 </span>
@@ -231,7 +231,7 @@
             <fieldset>
             <div class="input-append">
                 <label for="renew-barcode">Scan a new item or enter its barcode to renew it:</label>
-                <input id="renew-barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <input id="renew-barcode" name="barcode" size="20" type="text" class="form-control focus" autocomplete="off" />
                 <button type="submit" class="btn">Submit</button>
             </div>
             <input type="hidden" name="op" value="renew" />
@@ -250,7 +250,7 @@
             <fieldset>
             <div class="input-append">
                 <label for="return-barcode">Scan a new item or enter its barcode to return it:</label>
-                <input id="return-barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <input id="return-barcode" name="barcode" size="20" type="text" class="form-control focus" autocomplete="off" />
                 <button type="submit" class="btn">Submit</button>
             </div>
             <input type="hidden" name="op" value="returnbook" />
