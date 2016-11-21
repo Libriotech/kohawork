@@ -170,6 +170,9 @@ i.cancel {
 i.finish {
     background : transparent url("../lib/famfamfam/silk/stop.png") no-repeat 0 0;
 }
+.finish-button {
+    padding-top: 20px;
+}
 
 i.help {
     background : transparent url("../lib/famfamfam/silk/help.png") no-repeat 0 0;

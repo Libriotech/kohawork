@@ -233,7 +233,7 @@
     [% END %]
 
                             </div> <!-- / #newcheckout -->
-                            <div>
+                            <div class="finish-button">
                                 <form method="post" action="#" id="logout_form">
                                     <button type="submit" class="btn"><i class="icon finish"></i> Finish</button>
                                 </form>
