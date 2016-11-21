@@ -178,23 +178,43 @@
                         [% END # / IF patronid %]
 
                         [% IF ( validuser ) %]
-                            <div id="newcheckout" class="sco_entry toptabs">
 
-    <ul>
-        <li id="tab_checkout"><a href="#checkout">Checkout</a></li>
-        <li id="tab_renew"><a href="#renew">Renew</a></li>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        [% IF ( op_sanitized == 'checkout' ) %]
+            <li role="presentation" class="active"><a href="#checkout" aria-controls="checkout" role="tab" data-toggle="tab">Checkout</a></li>
+        [% ELSE %]
+            <li role="presentation"><a href="#checkout" aria-controls="checkout" role="tab" data-toggle="tab">Checkout</a></li>
+        [% END %]
+        [% IF ( op_sanitized == 'renew' ) %]
+            <li role="presentation" class="active"><a href="#renew" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
+        [% ELSE %]
+            <li role="presentation"><a href="#renew" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
+        [% END %]
         [% IF ( AllowSelfCheckReturns ) %]
-        <li id="tab_return"><a href="#return">Return</a></li>
+            [% IF ( op_sanitized == 'return' ) %]
+                <li role="presentation" class="active"><a href="#return" aria-controls="return" role="tab" data-toggle="tab">Return</a></li>
+            [% ELSE %]
+                <li role="presentation"><a href="#return" aria-controls="return" role="tab" data-toggle="tab">Return</a></li>
+            [% END %]
         [% END %]
     </ul>
 
-    <div id="checkout">
+    <!-- Tab panes -->
+    <div class="tab-content">
+    [% IF ( op_sanitized == 'checkout' ) %]
+        <div role="tabpanel" class="tab-pane active" id="checkout">
+    [% ELSE %]
+        <div role="tabpanel" class="tab-pane" id="checkout">
+    [% END %]
         <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
             <fieldset>
             <div class="input-append">
-                <label for="barcode">Scan a new item or enter its barcode:</label>
-                <input id="barcode" name="barcode" size="20" type="text" class="focus" autocomplete="off" />
-                <button type="submit" class="btn">Submit</button>
+                <label for="barcode">Scan a new item or enter its barcode to checkout:</label>
+                <input id="barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" type="button">Submit</button>
+                </span>
             </div>
             <input type="hidden" name="op" value="checkout" />
             <input type="hidden" name="patronid" value="[% patronid %]" />
@@ -202,12 +222,16 @@
         </form>
     </div> <!-- / #checkout -->
 
-    <div id="renew">
+    [% IF ( op_sanitized == 'renew' ) %]
+        <div role="tabpanel" class="tab-pane active" id="renew">
+    [% ELSE %]
+        <div role="tabpanel" class="tab-pane" id="renew">
+    [% END %]
         <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
             <fieldset>
             <div class="input-append">
-                <label for="barcode">Scan a new item or enter its barcode:</label>
-                <input id="barcode" name="barcode" size="20" type="text" autocomplete="off" />
+                <label for="barcode">Scan a new item or enter its barcode to renew it:</label>
+                <input id="barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
                 <button type="submit" class="btn">Submit</button>
             </div>
             <input type="hidden" name="op" value="renew" />
@@ -217,22 +241,26 @@
     </div> <!-- / #renew -->
 
     [% IF ( AllowSelfCheckReturns ) %]
-    <div id="return">
+    [% IF ( op_sanitized == 'return' ) %]
+        <div role="tabpanel" class="tab-pane active" id="return">
+    [% ELSE %]
+        <div role="tabpanel" class="tab-pane" id="return">
+    [% END %]
         <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
             <fieldset>
             <div class="input-append">
-                <label for="barcode">Scan a new item or enter its barcode:</label>
-                <input id="barcode" name="barcode" size="20" type="text" autocomplete="off" />
+                <label for="barcode">Scan a new item or enter its barcode to return it:</label>
+                <input id="barcode" name="barcode" size="20" type="text" class="form-control" autocomplete="off" />
                 <button type="submit" class="btn">Submit</button>
             </div>
-            <input type="hidden" name="op" value="bookreturn" />
+            <input type="hidden" name="op" value="returnbook" />
             <input type="hidden" name="patronid" value="[% patronid %]" />
         </fieldset>
         </form>
     </div> <!-- / #return -->
     [% END %]
+    </div> <!-- / #tab-content-->
 
-                            </div> <!-- / #newcheckout -->
                             <div class="finish-button">
                                 <form method="post" action="#" id="logout_form">
                                     <button type="submit" class="btn"><i class="icon finish"></i> Finish</button>
@@ -446,7 +474,7 @@
 
                 return true;
             });
-            $('#newcheckout').tabs();
+            ### $('#newcheckout').tabs();
     });
     //]]>
     </script>

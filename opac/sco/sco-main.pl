@@ -286,9 +286,20 @@ if ($borrower->{cardnumber}) {
     );
 }
 
+# Send a sanitized value for op to the template, to determine active tab
+my $op_sanitized;
+if ( $op eq 'returnbook' ) {
+    $op_sanitized = 'return';
+} elsif ( $op eq 'renew' ) {
+    $op_sanitized = 'renew';
+} else {
+    $op_sanitized = 'checkout';
+}
+
 $template->param(
-    SCOUserJS  => C4::Context->preference('SCOUserJS'),
-    SCOUserCSS => C4::Context->preference('SCOUserCSS'),
+    SCOUserJS    => C4::Context->preference('SCOUserJS'),
+    SCOUserCSS   => C4::Context->preference('SCOUserCSS'),
+    op_sanitized => $op_sanitized,
 );
 
 output_html_with_http_headers $query, $cookie, $template->output, undef, { force_no_caching => 1 };
