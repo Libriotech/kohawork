@@ -187,9 +187,9 @@
             <li role="presentation"><a href="#checkout" aria-controls="checkout" role="tab" data-toggle="tab">Checkout</a></li>
         [% END %]
         [% IF ( op_sanitized == 'renew' ) %]
-            <li role="presentation" class="active"><a href="#renew" id="renew-tab" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
+            <li role="presentation" class="active"><a href="#renew" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
         [% ELSE %]
-            <li role="presentation"><a href="#renew" id="renew-tab" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
+            <li role="presentation"><a href="#renew" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
         [% END %]
         [% IF ( AllowSelfCheckReturns ) %]
             [% IF ( op_sanitized == 'return' ) %]
@@ -475,8 +475,10 @@
                 return true;
             });
 
-            $('#renew-tab').click(function() {
-                $('#renew-barcode').select();
+            // Make sure the barcode box on the selected tab is given focus
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr("href");
+                $(target + '-barcode').focus();
             });
 
     });
