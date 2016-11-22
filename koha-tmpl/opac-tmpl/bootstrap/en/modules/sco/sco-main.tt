@@ -187,9 +187,9 @@
             <li role="presentation"><a href="#checkout" aria-controls="checkout" role="tab" data-toggle="tab">Checkout</a></li>
         [% END %]
         [% IF ( op_sanitized == 'renew' ) %]
-            <li role="presentation" class="active"><a href="#renew" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
+            <li role="presentation" class="active"><a href="#renew" id="renew-tab" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
         [% ELSE %]
-            <li role="presentation"><a href="#renew" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
+            <li role="presentation"><a href="#renew" id="renew-tab" aria-controls="renew" role="tab" data-toggle="tab">Renew</a></li>
         [% END %]
         [% IF ( AllowSelfCheckReturns ) %]
             [% IF ( op_sanitized == 'return' ) %]
@@ -207,7 +207,7 @@
     [% ELSE %]
         <div role="tabpanel" class="tab-pane" id="checkout">
     [% END %]
-        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
+        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('checkout', '[% patronid %]');">
             <fieldset>
             <div class="input-append">
                 <label for="checkout-barcode">Scan a new item or enter its barcode to checkout:</label>
@@ -227,7 +227,7 @@
     [% ELSE %]
         <div role="tabpanel" class="tab-pane" id="renew">
     [% END %]
-        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
+        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('renew', '[% patronid %]');">
             <fieldset>
             <div class="input-append">
                 <label for="renew-barcode">Scan a new item or enter its barcode to renew it:</label>
@@ -246,7 +246,7 @@
     [% ELSE %]
         <div role="tabpanel" class="tab-pane" id="return">
     [% END %]
-        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('[% patronid %]');">
+        <form id="scan_form" name="scan_form" method="post" action="/cgi-bin/koha/sco/sco-main.pl" onsubmit="return checkout_confirm('return', '[% patronid %]');">
             <fieldset>
             <div class="input-append">
                 <label for="return-barcode">Scan a new item or enter its barcode to return it:</label>
@@ -415,8 +415,8 @@
 
           return false;
         }
-        function checkout_confirm(patronid) {
-            var   barcode = $("#barcode").val();
+        function checkout_confirm(target, patronid) {
+            var   barcode = $("#" + target + "-barcode").val();
             // alert("checkout_confirm('" + patronid + "') called for barcode '" + barcode + "'");
             if (! barcode) { dofocus(); return false; }    // no barcode
             if (barcode == "__KOHA_NEW_CIRC__") {   // magic barcode
@@ -474,7 +474,11 @@
 
                 return true;
             });
-            ### $('#newcheckout').tabs();
+
+            $('#renew-tab').click(function() {
+                $('#renew-barcode').select();
+            });
+
     });
     //]]>
     </script>
