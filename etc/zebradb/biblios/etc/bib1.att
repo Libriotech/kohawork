@@ -346,10 +346,18 @@ att 9705    Cumulative-index-availability
 att 9706    script-Title
 att 9707    char-encoding
 
+att 9790    Relator-term
+
 # Author-personal-bibliography - lastname,firstname in 100$a
 att 9900    Author-personal-bibliography
+
+# Author-bibliography - This should be a combo of Author-personal-bibliography,
+# Author-name-corporate and Author-name-conference
+att 9911    Author-bibliography
+
 # Author-in-order - firstname lastname in 245$c statement of responsibility
 att 9902    Author-in-order
+
 # Lexile number
 att 9903    lexile-number
 att 9908    Interest-age-level
