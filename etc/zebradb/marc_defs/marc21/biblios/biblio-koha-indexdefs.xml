@@ -247,11 +247,18 @@
   <!--record.abs line 81: melm 080        UDC-classification-->
   <index_data_field tag="080">
     <target_index>UDC-classification:w</target_index>
+    <target_index>Classification:w</target_index>
   </index_data_field>
   <!--record.abs line 82: melm 082        Dewey-classification:w,Dewey-classification:s-->
   <index_data_field tag="082">
     <target_index>Dewey-classification:w</target_index>
     <target_index>Dewey-classification:s</target_index>
+    <target_index>Classification:w</target_index>
+    <target_index>Classification:s</target_index>
+  </index_data_field>
+  <index_data_field tag="084">
+    <target_index>Classification:w</target_index>
+    <target_index>Classification:s</target_index>
   </index_data_field>
   <!--record.abs line 83: melm 086        Number-govt-pub-->
   <index_data_field tag="086">
@@ -1324,6 +1331,9 @@
     <target_index>Local-classification:w</target_index>
     <target_index>Local-classification:p</target_index>
     <target_index>Local-classification:s</target_index>
+    <target_index>Classification:w</target_index>
+    <target_index>Classification:p</target_index>
+    <target_index>Classification:s</target_index>
   </index_subfields>
   <!--record.abs line 310: melm 952$p      barcode,barcode:n-->
   <index_subfields tag="952" subfields="p">
