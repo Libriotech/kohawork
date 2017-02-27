@@ -94,6 +94,10 @@
     <target_index>Number-natl-biblio:w</target_index>
     <target_index>Identifier-standard:w</target_index>
   </index_data_field>
+  <index_subfields tag="019" subfields="b">
+    <target_index>Material-type:w</target_index>
+    <target_index>Material-type:s</target_index>
+  </index_subfields>
   <!--record.abs line 81: melm 020$a      ISBN:w,Identifier-standard:w-->
   <index_subfields tag="020" subfields="a">
     <target_index>ISBN:w</target_index>
@@ -184,6 +188,12 @@
     <target_index>Author-personal-bibliography:w</target_index>
     <target_index>Author-personal-bibliography:p</target_index>
     <target_index>Author-personal-bibliography:s</target_index>
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
+  </index_subfields>
+  <index_subfields tag="100" subfields="j">
+    <target_index>Nationality:w</target_index>
   </index_subfields>
   <!--record.abs line 115: melm 100        Author,Author-title,Author-name-personal,Name,Name-and-title,Personal-name-->
   <index_data_field tag="100">
@@ -198,6 +208,11 @@
   <index_subfields tag="110" subfields="9">
     <target_index>Koha-Auth-Number:w</target_index>
   </index_subfields>
+  <index_subfields tag="110" subfields="a">
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
+  </index_subfields>
   <!--record.abs line 117: melm 110        Author,Author-title,Author-name-corporate,Name,Name-and-title,Corporate-name-->
   <index_data_field tag="110">
     <target_index>Author:w</target_index>
@@ -210,6 +225,11 @@
   <!--record.abs line 118: melm 111$9      Koha-Auth-Number-->
   <index_subfields tag="111" subfields="9">
     <target_index>Koha-Auth-Number:w</target_index>
+  </index_subfields>
+  <index_subfields tag="111" subfields="a">
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 119: melm 111        Author,Author-title,Author-name-corporate,Name,Name-and-title,Conference-name-->
   <index_data_field tag="111">
@@ -383,6 +403,9 @@
     <target_index>Subject-name-personal:w</target_index>
     <target_index>Subject:w</target_index>
     <target_index>Subject:p</target_index>
+  </index_subfields>'
+  <index_subfields tag="600" subfields="j">
+    <target_index>Nationality:w</target_index>
   </index_subfields>
   <!--record.abs line 181: melm 600$t      Name-and-title,Title,Subject,Subject:p-->
   <index_subfields tag="600" subfields="t">
@@ -439,6 +462,9 @@
     <target_index>Name-and-title:w</target_index>
     <target_index>Subject:w</target_index>
     <target_index>Subject:p</target_index>
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 191: melm 611$t      Name-and-title,Title,Subject,Subject:p-->
   <index_subfields tag="611" subfields="t">
@@ -573,10 +599,16 @@
   <index_subfields tag="700" subfields="a">
     <target_index>Author:w</target_index>
     <target_index>Author:p</target_index>
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 220: melm 700$i      Thematic-number-->
   <index_subfields tag="700" subfields="i">
     <target_index>Thematic-number:w</target_index>
+  </index_subfields>
+  <index_subfields tag="700" subfields="j">
+    <target_index>Nationality:w</target_index>
   </index_subfields>
   <!--record.abs line 221: melm 700$n      Thematic-number-->
   <index_subfields tag="700" subfields="n">
@@ -634,6 +666,9 @@
   <!--record.abs line 235: melm 711$a      Name-and-title-->
   <index_subfields tag="711" subfields="a">
     <target_index>Name-and-title:w</target_index>
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 237: melm 711$t      Author-title,Title,Title-uniform-->
   <index_subfields tag="711" subfields="t">
@@ -711,6 +746,9 @@
   <index_subfields tag="800" subfields="a">
     <target_index>Name-and-title:w</target_index>
   </index_subfields>
+  <index_subfields tag="800" subfields="j">
+    <target_index>Nationality:w</target_index>
+  </index_subfields>
   <!--record.abs line 257: melm 800$t      Author-title,Name-and-title,Title,Title-series-->
   <index_subfields tag="800" subfields="t">
     <target_index>Author-title:w</target_index>
@@ -732,6 +770,9 @@
   <!--record.abs line 260: melm 810$a      Name-and-title-->
   <index_subfields tag="810" subfields="a">
     <target_index>Name-and-title:w</target_index>
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 261: melm 810$t      Author-title,Name-and-title,Title,Title-series-->
   <index_subfields tag="810" subfields="t">
@@ -754,6 +795,9 @@
   <!--record.abs line 264: melm 811$a      Name-and-title-->
   <index_subfields tag="811" subfields="a">
     <target_index>Name-and-title:w</target_index>
+    <target_index>Author-bibliography:w</target_index>
+    <target_index>Author-bibliography:p</target_index>
+    <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 265: melm 811$9      Koha-Auth-Number-->
   <index_subfields tag="811" subfields="9">
@@ -782,6 +826,9 @@
     <target_index>Title:w</target_index>
     <target_index>Title-series:w</target_index>
   </index_data_field>
+  <index_subfields tag="900" subfields="j">
+    <target_index>Nationality:w</target_index>
+  </index_subfields>
   <!--record.abs line 275: melm 999$c      Local-Number:n,Local-Number:w,Local-Number:s-->
   <index_subfields tag="999" subfields="c">
     <target_index>Local-Number:n</target_index>
@@ -883,6 +930,7 @@
   <!--record.abs line 300: melm 952$a      homebranch-->
   <index_subfields tag="952" subfields="a">
     <target_index>homebranch:w</target_index>
+    <target_index>Possessing-institution:w</target_index>
   </index_subfields>
   <!--record.abs line 301: melm 952$b      holdingbranch-->
   <index_subfields tag="952" subfields="b">
