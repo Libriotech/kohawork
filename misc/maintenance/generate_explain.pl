@@ -29,7 +29,7 @@ sudo PERL5LIB=/usr/share/koha/lib KOHA_CONF=/etc/koha/sites/kohadev/koha-conf.xm
 
 =head1 DESCRIPTION
 
-Reads an optional config file, some of Koha's config files and generates an 
+Reads an optional config file, some of Koha's config files and generates an
 Explain document that can be served by the Zebra SRU server.
 
 By default, the generated Explain document will be written to STDOUT. Specify
@@ -56,7 +56,7 @@ use C4::Templates;
 
 =item B<-c | --configfile>
 
-Path to a configfile that should be used to generate parts of the Explain 
+Path to a configfile that should be used to generate parts of the Explain
 document.
 
 =item B<-a | --authorities>
@@ -142,32 +142,32 @@ further details about the options.
     contact: "librarian@example.org"
 
     # Extent
-    extent: 
+    extent:
         - text: "This is the extent of the database."
           lang: "en"
           primary: "true"
 
     # History
-    history: 
+    history:
         - text: "This is the history of the database."
           lang: "en"
           primary: "true"
 
     # langUsage
-    langUsage: 
+    langUsage:
         - text: "Records are in English and Norwegian"
           codes: "en nb"
           lang: "en"
           primary: "true"
 
     # Restrictions
-    restrictions: 
+    restrictions:
         - text: "Free for all!"
           lang: "en"
           primary: "true"
 
     # Subjects
-    subjects: 
+    subjects:
         - "Subject A"
         - "Subject B"
 
@@ -234,7 +234,7 @@ foreach my $line ( @lines ) {
 
     # Look for lines that start with "set."
     if ( $line =~ m/^set\.(.*?) {0,}= {0,}(.*)/ ) {
-        push @{ $pqf{'sets'} }, { 
+        push @{ $pqf{'sets'} }, {
             'name' => $1,
             'identifier' => $2,
         };
