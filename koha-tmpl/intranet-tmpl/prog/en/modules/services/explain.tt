@@ -11,11 +11,11 @@
 
 <explain xmlns="http://explain.z3950.org/dtd/2.0/">
 
-  <serverInfo protocol="[% IF ( config.protocol ) %][% config.protocol %][% ELSE %]SRW/SRU/Z39.50[% END %]" 
-              version="2.0" 
+  <serverInfo protocol="[% IF ( config.protocol ) %][% config.protocol %][% ELSE %]SRW/SRU/Z39.50[% END %]"
+              version="2.0"
               transport="[% IF ( config.transport ) %][% config.transport %][% ELSE %]http[% END %]">
-    <!-- If host is set to @ you need to hand edit it, or you can edit the 
-         <listen> element for "publicserver" in koha-conf.xml: 
+    <!-- If host is set to @ you need to hand edit it, or you can edit the
+         <listen> element for "publicserver" in koha-conf.xml:
          <listen id="publicserver" >tcp:<host>:<port></listen>
          and then regenerate the Explain doc. -->
     <host>[% host %]</host>
@@ -113,8 +113,8 @@
     <implementation identifier="zebra" version="2.0">
       <title>Index Data YAZ/ZEBRA http://www.indexdata.dk/zebra</title>
     </implementation>
-    
-    <links> 
+
+    <links>
       [% IF ( Koha.Preference( 'OPACBaseURL' ) ) %]<link type="www">[% Koha.Preference( 'OPACBaseURL' ) %]/</link>[% END %]
       <link type="z39.50">[% IF ( config.transport ) %][% config.transport %][% ELSE %]http[% END %]://[% host %]:[% port %]</link>
       <link type="srw">[% IF ( config.transport ) %][% config.transport %][% ELSE %]http[% END %]://[% host %]:[% port %]</link>
@@ -122,7 +122,7 @@
       [% IF ( Koha.Preference( 'OAI-PMH' ) ) %]<link type="oai">[% Koha.Preference( 'OPACBaseURL' ) %]/cgi-bin/koha/oai.pl</link>[% END %]
       [% IF ( Koha.Preference( 'OpacFavicon' ) ) %]<link type="icon">[% Koha.Preference( 'OpacFavicon' ) %]</link>[% END %]
     </links>
-    
+
   </databaseInfo>
 
   <metaInfo>
@@ -176,7 +176,7 @@
     <!-- support proximity (Empty) -->
     <!-- <supports type="proximity"></supports> --> <!-- DEAD,  title = (house prox/distance=1/unit=word  the) FAILS -->
 
-    <!-- proximity modifier supported by the server or index 
+    <!-- proximity modifier supported by the server or index
          (relation, distance, unit, ordering) -->
     <!-- <supports type="proximityModifier"></supports> -->
 
@@ -202,7 +202,7 @@
     <!-- supported sortmodifier (ascending, missingValue, caseSensitive) -->
     <!-- <supports type="sortModifier"></supports> -->
 
-    <!-- presentation settings --> 
+    <!-- presentation settings -->
 
     <!-- default number of records that a server will return at once  -->
     <default type="numberOfRecords">0</default>
@@ -219,7 +219,7 @@
     <!-- <setting type="maximumRecords">1000</setting> -->
 
     <!-- support result sets (Empty) -->
-    <!-- <supports type="resultSets"></supports>  --> 
+    <!-- <supports type="resultSets"></supports>  -->
 
     <!-- XPath retrieval supported -->
     <!-- <supports type="recordXPath"></supports> -->
@@ -256,5 +256,5 @@
     <!-- The URI identifier of a supported profile -->
     <!-- <supports type="profile"></supports> -->
   </configInfo>
-   
+
 </explain>
