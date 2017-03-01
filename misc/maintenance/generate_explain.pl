@@ -269,7 +269,7 @@ foreach my $line ( @lines ) {
 
 # Set up the template
 my $template = C4::Templates::gettemplate(
-    'services/explain-biblios.tt',
+    'services/explain.tt',
     'intranet',
     new CGI
 );
