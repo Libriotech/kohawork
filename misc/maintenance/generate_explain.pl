@@ -59,7 +59,12 @@ use C4::Templates;
 Path to a configfile that should be used to generate parts of the Explain 
 document.
 
-=item B<--overwrite>
+=item B<-a | --authorities>
+
+If this option is not specified, the script will assume we are dealing with
+biblios.
+
+=item B<-o | --overwrite>
 
 Actually overwrite the existing explain document. If this is not specified, the
 generated Explain document will be written to STDOUT and no files will be
@@ -77,9 +82,10 @@ More verbose output.
 
 =cut
 
-my ( $configfile, $overwrite, $help, $verbose );
+my ( $configfile, $authorities, $overwrite, $help, $verbose );
 GetOptions(
     'c|configfile=s'  => \$configfile,
+    'a|authorities'   => \$authorities,
     'o|overwrite'     => \$overwrite,
     'h|help'          => \$help,
     'v|verbose'       => \$verbose,
@@ -208,7 +214,7 @@ my $conf = XMLin(
 # Get the SRU host and port from the Koha config file
 my $publicserver = $conf->{'listen'}->{'publicserver'}->{'content'};
 my ( $tcp, $host, $port ) = split /:/, $publicserver;
-say "SRU is listening on port $port" if $verbose;
+say "SRU is listening on host $host and port $port" if $verbose;
 
 # Find the path to pqf.properties file
 my $pqf_properties_file = $conf->{'server'}->{'publicserver'}->{'cql2rpn'};
@@ -270,10 +276,11 @@ my $template = C4::Templates::gettemplate(
 
 # Pass some values to the template
 $template->param(
-    'config' => $config,
-    'pqf'    => \%pqf,
-    'host'   => $host,
-    'port'   => $port,
+    'config'      => $config,
+    'pqf'         => \%pqf,
+    'host'        => $host,
+    'port'        => $port,
+    'authorities' => $authorities,
 );
 
 # Get the output from the template
