@@ -245,6 +245,20 @@ foreach my $line ( @lines ) {
         };
     }
 
+    # Look for lines that start with "relation."
+    if ( $line =~ m/^relation\.(.*?) {0,}=.*$/ ) {
+        push @{ $pqf{'relations'} }, {
+            'rel' => $1,
+        };
+    }
+
+    # Look for lines that start with "relationModifier."
+    if ( $line =~ m/^relationModifier\.(.*?) {0,}=.*$/ ) {
+        push @{ $pqf{'relationmodifiers'} }, {
+            'relmod' => $1,
+        };
+    }
+
 }
 
 # Set up the template
