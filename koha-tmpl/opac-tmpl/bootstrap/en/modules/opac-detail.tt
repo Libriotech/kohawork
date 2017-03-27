@@ -537,6 +537,12 @@
                         <div id="BW_citations"></div>
                     [% END # / IF Babeltheque%]
 
+        [% IF ( Koha.Preference( 'OPACDetailViewLinkedData' ) ) %]
+            <div style="border: 1px solid blue; padding: 1em; border-radius: 1em;">
+                Linked data [% ldtt | eval %]
+            </div>
+        [% END %]
+
                 </div> <!-- / #catalogue_detail_biblio -->
 
                 <div id="bibliodescriptions" class="toptabs">

@@ -1110,6 +1110,14 @@ if ( C4::Context->preference('OpacStarRatings') !~ /disable/ ) {
     );
 }
 
+# Linked data
+if ( C4::Context->preference('OPACDetailViewLinkedData') ) {
+    $template->param(
+        ldtt  => 'a[% value %]c',
+        value => 'b',
+    );
+}
+
 #Search for title in links
 my $marccontrolnumber   = GetMarcControlnumber ($record, $marcflavour);
 my $marcissns = GetMarcISSN ( $record, $marcflavour );
