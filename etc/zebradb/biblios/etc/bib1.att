@@ -347,6 +347,9 @@ att 9706    script-Title
 att 9707    char-encoding
 
 att 9790    Relator-term
+att 9791    classAuthority
+att 9792    identifierAuthority
+att 9793    subjectAuthority
 
 # Author-personal-bibliography - lastname,firstname in 100$a
 att 9900    Author-personal-bibliography

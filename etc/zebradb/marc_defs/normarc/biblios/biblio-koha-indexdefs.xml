@@ -604,7 +604,7 @@
     <target_index>Author-bibliography:s</target_index>
   </index_subfields>
   <!--record.abs line 220: melm 700$i      Thematic-number-->
-  <index_subfields tag="700" subfields="ae">
+  <index_subfields tag="700" subfields="e">
     <target_index>Relator-term:w</target_index>
   </index_subfields>
   <index_subfields tag="700" subfields="i">
