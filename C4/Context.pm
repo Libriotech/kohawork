@@ -96,6 +96,7 @@ use POSIX ();
 use DateTime::TimeZone;
 use Module::Load::Conditional qw(can_load);
 use Carp;
+use YAML;
 
 use C4::Boolean;
 use C4::Debug;
@@ -772,6 +773,69 @@ sub restore_dbh
 
     # FIXME - If it is determined that restore_context should
     # return something, then this function should, too.
+}
+
+=head2 triplestore
+
+  my $triplestore = C4::Context->triplestore($model_name);
+
+Returns a handle to an initialised RDF::Trine::Model object
+
+=cut
+
+sub triplestore {
+    my ($self,$name) = @_;
+    die "Must provide a model name as an argument for the triplestore() method" unless $name;
+    my $triplestore = ( $context->{triplestore} && $context->{triplestore}->{$name} ) ? $context->{triplestore}->{$name} : undef;
+    if ( ! $triplestore ){
+        my $config_file = $context->config('triplestore_config');
+        if ( -f $config_file ){
+            my $config = YAML::LoadFile($config_file);
+            if ($config && $name){
+                my $new_triplestore = $self->_new_triplestore($config,$name);
+                if ( $new_triplestore && $new_triplestore->isa("RDF::Trine::Model") ){
+                    $triplestore = $new_triplestore;
+                    $context->{triplestore}->{$name} = $new_triplestore;
+                }
+            }
+        }
+    }
+    return $triplestore;
+}
+
+=head2 _new_triplestore
+
+=cut
+
+sub _new_triplestore {
+    my ($self, $config,$name) = @_;
+    if ($config && $name){
+        my $models = $config->{models};
+        if ($models){
+            my $model = $models->{$name};
+            if ($model){
+                my $module = $model->{module};
+                if ($module && $module eq 'RDF::Trine::Store::SPARQL'){
+                    if ($module && can_load( 'modules' => { $module => undef } ) ){
+                        my $url = URI->new($model->{url});
+                        if ($url){
+                            my $ua = RDF::Trine->default_useragent;
+                            if ($ua){
+                                my $realm = $model->{realm};
+                                my $username = $model->{username};
+                                my $password = $model->{password};
+                                $ua->credentials($url->host.":".$url->port, $realm, $username, $password);
+                            }
+                            my $store = RDF::Trine::Store::SPARQL->new($url);
+                            my $model = RDF::Trine::Model->new($store);
+                            return $model;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return;
 }
 
 =head2 queryparser

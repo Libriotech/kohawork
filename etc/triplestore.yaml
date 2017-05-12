@@ -1,0 +1,30 @@
+---
+models:
+    query:
+        #module must be a valid RDF::Trine::Store::* module
+        module: RDF::Trine::Store::SPARQL
+
+        #When using RDF::Trine::Store::SPARQL:
+        url:
+        realm:
+        username:
+        password:
+    update:
+        #module must be a valid RDF::Trine::Store::* module
+        module: RDF::Trine::Store::SPARQL
+
+        #When using RDF::Trine::Store::SPARQL:
+        url:
+        realm:
+        username:
+        password:
+    #NOTE: Only the above models are likely to be used in Koha
+    read/write:
+        #module must be a valid RDF::Trine::Store::* module
+        module: RDF::Trine::Store::SPARQL
+
+        #When using RDF::Trine::Store::SPARQL:
+        url:
+        realm:
+        username:
+        password:

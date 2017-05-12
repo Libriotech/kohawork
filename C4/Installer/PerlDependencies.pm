@@ -862,6 +862,11 @@ our $PERL_DEPS = {
         'required' => '0',
         'min_ver'  => '0.07',
     },
+    'RDF::Trine' => {
+        'usage' => 'Managing RDF and triplestores',
+        'required' => '1',
+        'min_ver' => '1.017',
+    },
 };
 
 1;

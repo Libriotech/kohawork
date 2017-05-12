@@ -711,6 +711,10 @@ eof
     generate_config_file zebra.passwd.in \
         "/etc/koha/sites/$name/zebra.passwd"
 
+    # Generate and install triplestore config file
+    generate_config_file triplestore.yaml.in \
+        "/etc/koha/sites/$name/triplestore.yaml"
+
 
     # Create a GPG-encrypted file for requesting a DB to be set up.
     if [ "$op" = request ]

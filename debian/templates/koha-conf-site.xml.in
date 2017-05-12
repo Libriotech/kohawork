@@ -327,5 +327,8 @@ __END_SRU_PUBLICSERVER__
      <index_name>koha___KOHASITE__</index_name>
  </elasticsearch>
 
+ <!-- Configuration for RDF triplestore -->
+ <triplestore_config>/etc/koha/sites/__KOHASITE__/triplestore.yaml</triplestore_config>
+
 </config>
 </yazgfs>
