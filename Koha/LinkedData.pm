@@ -36,8 +36,6 @@ use Carp;
 use C4::Context;
 use base qw(Class::Accessor);
 
-__PACKAGE__->mk_accessors(qw( trackingmethod ));
-
 sub get_data_from_biblionumber {
 
     my ( $self, $biblionumber ) = @_;
