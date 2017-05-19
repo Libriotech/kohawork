@@ -52,6 +52,7 @@ use Koha::RecordProcessor;
 use Koha::AuthorisedValues;
 use Koha::Biblios;
 use Koha::ItemTypes;
+use Koha::LinkedData;
 use Koha::Virtualshelves;
 use Koha::Ratings;
 use Koha::Reviews;
@@ -1112,19 +1113,10 @@ if ( C4::Context->preference('OpacStarRatings') !~ /disable/ ) {
 
 # Linked data
 if ( C4::Context->preference('OPACDetailViewLinkedData') ) {
-
-    my $triplestore = C4::Context->triplestore;
-    # say Dumper $triplestore;
-
-    my $sparql = '
-    SELECT * WHERE { ?s ?p ?o }
-    ';
-
-    my $data = $triplestore->get_sparql( $sparql );
-    warn Dumper $data;
-
+    my $ld = Koha::LinkedData->new();
+    my ( $data, $tt ) = $ld->get_data_from_biblionumber( $biblionumber );
     $template->param(
-        ld_tt  => '<ul>[% WHILE ( d = ld_data.next ) %]<li>[% d.o.value %]</li>[% END %]</ul>',
+        ld_tt  => $tt,
         ld_data => $data,
     );
 }
