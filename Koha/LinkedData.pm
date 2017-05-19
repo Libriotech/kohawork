@@ -25,7 +25,7 @@ Koha::LinkedData
 
   use Koha::LinkedData;
   my $ld = Koha::LinkedData->new();
-  $ld->get_data_from_biblionumber( $biblionumber );
+  my ( $data, $tt ) = $ld->get_data_from_biblionumber( $biblionumber );
 
 =head1 FUNCTIONS
 
