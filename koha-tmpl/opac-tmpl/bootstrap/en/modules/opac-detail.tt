@@ -539,7 +539,7 @@
 
         [% IF ( Koha.Preference( 'OPACDetailViewLinkedData' ) ) %]
             <div style="border: 1px solid blue; padding: 1em; border-radius: 1em;">
-                Linked data [% ldtt | eval %]
+                Linked data [% ld_tt | eval %]
             </div>
         [% END %]
 
