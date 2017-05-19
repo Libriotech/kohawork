@@ -413,12 +413,3 @@ Administration:
               choices:
                 Zebra: Zebra
                 Elasticsearch: Elasticsearch
-    Linked data:
-        -
-            - Use
-            - pref: LinkedDataSPARQLEndpointRead
-            - "as the SPARQL endpoint that Koha reads Linked Data from"
-        -
-            - Use
-            - pref: LinkedDataSPARQLEndpointWrite
-            - "as the SPARQL endpoint that Koha writes Linked Data to"
