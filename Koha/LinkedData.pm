@@ -17,8 +17,11 @@ package Koha::LinkedData;
 # with Koha; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-use Modern::Perl;
 use C4::Context;
+
+use Data::Dumper;
+use Modern::Perl;
+our $debug = 1;
 
 # TODO The code in here should probably be moved to Koha::RDF or thereabouts,
 # but I'll keep it as a separate module for now, to avoid conflicts.
@@ -53,6 +56,49 @@ sub get_data_from_biblionumber {
     # For now, we fake it, so we can get some actual data from the triplestore
     my $uri = 'http://demo.semweb.bibkat.no/bib/1';
 
+    # Figure out the type of the record we are looking at, so we can use the
+    # proper queries and templates for that type.
+    my $type = _get_type_of_record( $uri );
+
+    # Find the main template for this type
+    my $main_template = _get_main_template( $type );
+
+    return ( $main_template );
+
+}
+
+=head2 _get_main_template
+
+Given a type URI, find the main template for that type.
+
+This should of course come from the database, but for now we mock it.
+
+=cut
+
+sub _get_main_template {
+
+    my ( $type ) = @_;
+    return '<h3>Sound recording</h3>';
+
+}
+
+=head2 _get_type_of_record
+
+Given a URI, return the rdf:type of that URI.
+
+The Libris data has three levels, and each of those has a type. The SPARQL query
+used here returns all three, but for now, we use the middle one.
+
+The SPARQL query used here should perhaps be in a syspref, to account for any
+kind of data scheme. (Or maybe we should normalize data in the triplestore to a
+standard form that we would always know how to query.)
+
+=cut
+
+sub _get_type_of_record {
+
+    my ( $uri ) = @_;
+
     my $triplestore = C4::Context->triplestore;
     my $sparql = "
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -72,25 +118,16 @@ PREFIX bibframe: <http://id.loc.gov/ontologies/bibframe/>
 } }
 ";
     my $data = $triplestore->get_sparql( $sparql );
+    my $d = $data->next;
+    warn Dumper $d if $debug;
 
-    my $tt = '
-<ul>
-[% WHILE ( d = ld_data.next ) %]
-  <li>[% d.type1.value %]</li>
-  <li>[% d.type2.value %]</li>
-  <li>[% d.type3.value %]</li>
-[% END %]
-</ul>
-';
-
-    return ( $data, $tt );
+    return $d->{type2}->value;
 
 }
 
 =head2 EXPORT
 
 None by default.
-
 
 =head1 AUTHOR
 
@@ -99,5 +136,3 @@ Magnus Enger, E<lt>magnus@libriotech.noE<gt>
 =cut
 
 1;
-
-__END__

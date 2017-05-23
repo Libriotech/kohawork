@@ -1114,10 +1114,10 @@ if ( C4::Context->preference('OpacStarRatings') !~ /disable/ ) {
 # Linked data
 if ( C4::Context->preference('OPACDetailViewLinkedData') ) {
     my $ld = Koha::LinkedData->new();
-    my ( $data, $tt ) = $ld->get_data_from_biblionumber( $biblionumber );
+    my ( $main_template ) = $ld->get_data_from_biblionumber( $biblionumber );
     $template->param(
-        ld_tt  => $tt,
-        ld_data => $data,
+        ld_tt  => $main_template,
+        # ld_data => $data,
     );
 }
 
