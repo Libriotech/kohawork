@@ -823,11 +823,3 @@ OPAC:
             - "The patron should see the charge description as "
             - pref: PayPalChargeDescription
               class: long
-    Linked data:
-        -
-            - pref: OPACDetailViewLinkedData
-              default: 1
-              choices:
-                  yes: Show
-                  no: Don't show
-            - "Linked Data in the OPAC detail view"
