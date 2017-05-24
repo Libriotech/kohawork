@@ -63,7 +63,87 @@ sub get_data_from_biblionumber {
     # Find the main template for this type
     my $main_template = _get_main_template( $type );
 
-    return ( $main_template );
+    my $data_and_templates = _get_data_and_templates( $uri, $type );
+
+    return ( $main_template, $data_and_templates );
+
+}
+
+=head2 _get_data_and_templates
+
+Based on the URI and the type, query the database for corresponding queries
+and templates. Then execute the queries to get the data, and return the data
+and the templates.
+
+=cut
+
+sub _get_data_and_templates {
+
+    my ( $uri, $type ) = @_;
+    my $triplestore = C4::Context->triplestore;
+
+    my %data_and_templates;
+    my @queries_and_templates = _get_queries_and_templates( $type );
+    foreach my $qt ( @queries_and_templates ) {
+        # Add the data to the hash
+        my $data = $triplestore->get_sparql( $qt->{'query'} );
+        $data_and_templates{ $qt->{'slug'} } = {
+            'data' => $data,
+            'template' => $qt->{'template'},
+        };
+    }
+
+    warn Dumper \%data_and_templates if $debug;
+    return \%data_and_templates;
+
+}
+
+=head2 _get_queries_and_templates
+
+Get the queries and the templates, based on a given type, and return them.
+
+FIXME This should come from the db, but we are faking it, for now.
+
+FIXME The queries need to have placeholders for our /bib/1 URIs.
+
+=cut
+
+sub _get_queries_and_templates {
+
+    my ( $type ) = @_;
+
+    # Series title
+    my $query1 = "
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX bibframe: <http://id.loc.gov/ontologies/bibframe/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  SELECT ?seriesTitle WHERE  { {
+    <http://demo.semweb.bibkat.no/bib/1> rdfs:seeAlso ?graph
+    FILTER ( ?type1 != '' )
+  } UNION {
+    GRAPH ?graph {
+      ?graph rdf:type ?type1 .
+      ?graph <http://schema.org/mainEntity> ?mainEnt .
+      ?mainEnt bibframe:hasSeries ?series .
+      ?series <http://purl.org/dc/terms/title> ?seriesTitle .
+    }
+} }
+";
+    my $template1 = '
+<h4>Series title</h4>
+<ul>
+[% WHILE ( d = ld_dt.series_title.data.next ) %]
+  <li>[% d.seriesTitle.value %]</li>
+[% END %]
+</ul>
+';
+    my %qt1 = (
+        'slug'     => 'series_title',
+        'query'    => $query1,
+        'template' => $template1,
+    );
+
+    return ( \%qt1 );
 
 }
 
@@ -71,14 +151,17 @@ sub get_data_from_biblionumber {
 
 Given a type URI, find the main template for that type.
 
-This should of course come from the database, but for now we mock it.
+FIXME This should come from the database, but for now we fake it.
 
 =cut
 
 sub _get_main_template {
 
     my ( $type ) = @_;
-    return '<h3>Sound recording</h3>';
+    return '
+<h3>Sound recording</h3>
+[% ld_dt.series_title.template | eval %]
+';
 
 }
 
