@@ -1118,7 +1118,6 @@ if ( C4::Context->preference('OPACDetailViewLinkedData') ) {
     $template->param(
         ld_tt => $main_template,
         ld_dt => $data_and_templates,
-        # ld_data => $data,
     );
 }
 
