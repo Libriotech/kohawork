@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# Please note! This script needs to talk to the Fuseki "write" endpoint.
+# There is currently no way to configure this through misc/linked_data/insert_triple.pl
+
 use C4::Context;
 
 use Data::Dumper;
