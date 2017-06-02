@@ -125,4 +125,7 @@
     [% IF ( CAN_user_tools_upload_general_files ) %]
        <li><a href="/cgi-bin/koha/tools/upload.pl">Upload any file</a></li>
     [% END %]
+    [%# FIXME IF ( CAN_user_tools_upload_general_files ) %]
+       <li><a href="/cgi-bin/koha/tools/ld_queries_templates.pl">Linked Data queries and templates</a></li>
+    [%# END %]
 </ul></div></div>

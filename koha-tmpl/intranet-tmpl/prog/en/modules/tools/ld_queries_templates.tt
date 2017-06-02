@@ -23,7 +23,12 @@
     <div class="yui-b">
     <h1>Linked Data queries and templates</h1>
 
-    <p>[% test %]</p>
+    [% USE Dumper %]
+    <ul>
+    [% FOREACH t IN main_templates %]
+        <li>[% t.name %] ([% t.type_uri %])<textarea>[% t.main_template %]</textarea></li>
+    [% END %]
+    </ul>
 
     </div>
    </div>

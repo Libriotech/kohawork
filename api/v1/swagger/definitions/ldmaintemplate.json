@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "ld_main_template_id": {
+      "$ref": "../x-primitives.json#/ ld_main_template_id"
+    },
+    "type_uri": {
+      "description": "type URI",
+      "type": "string"
+    },
+    "name": {
+      "description": "template name",
+      "type": "string"
+    },
+    "main_template": {
+      "description": "body of the main template",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": ["ld_main_template_id", "type_uri", "name", "main_template"]
+}

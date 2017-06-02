@@ -13,5 +13,11 @@
   },
   "error": {
     "$ref": "definitions/error.json"
+  },
+  "ldmaintemplate": {
+    "$ref": "definitions/ldmaintemplate.json"
+  },
+  "ldmaintemplate": {
+    "$ref": "definitions/ldmaintemplate.json"
   }
 }

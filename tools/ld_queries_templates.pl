@@ -24,6 +24,8 @@ use JSON;
 use C4::Auth;
 use C4::Output;
 
+use Koha::LdMainTemplates;
+
 my $input  = CGI::->new;
 my $op     = $input->param('op');
 
@@ -36,7 +38,9 @@ my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     }
 );
 
+my $main_templates = Koha::LdMainTemplates->search();
+
 $template->param(
-    test => 'LinkedData, baby!',
+    'main_templates' => $main_templates,
 );
 output_html_with_http_headers $input, $cookie, $template->output;
