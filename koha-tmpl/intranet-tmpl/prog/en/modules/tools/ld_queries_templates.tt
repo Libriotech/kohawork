@@ -31,9 +31,20 @@
         <h1>Linked Data queries and templates</h1>
         <p>Existing main templates:</p>
         <table>
-            <tr><th>Name</th><th>Type URI</th><td></td></tr>
+            <tr>
+                <th>Name</th>
+                <th>Type URI</th>
+                <td></td>
+            </tr>
         [% FOREACH t IN main_templates %]
-            <tr><td>[% t.name %]</td><td>[% t.type_uri %]</td><td><a href="?op=edit_template&id=[% t.ld_main_template_id %]">Edit</a></td></tr>
+            <tr>
+                <td>[% t.name %]</td>
+                <td>[% t.type_uri %]</td>
+                <td>
+                    <a href="?op=edit_template&id=[% t.ld_main_template_id %]">Edit</a> |
+                    <a href="?op=queries&id=[% t.ld_main_template_id %]">Queries</a>
+                </td>
+            </tr>
         [% END %]
         </table>
 
