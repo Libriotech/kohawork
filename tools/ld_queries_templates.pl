@@ -38,9 +38,47 @@ my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     }
 );
 
-my $main_templates = Koha::LdMainTemplates->search();
-
+my $base_path = '/cgi-bin/koha/tools/ld_queries_templates.pl';
 $template->param(
-    'main_templates' => $main_templates,
+    'op'        => $op,
+    'base_path' => $base_path,
 );
+
+if ( $op eq 'edit' ) {
+
+    # Find the main template we want to edit
+    my $ld_main_template_id = $input->param('id');
+    my $main_template = Koha::LdMainTemplates->find( $ld_main_template_id );
+    $template->param(
+        'main_template' => $main_template,
+    );
+
+} elsif ( $op eq 'save_template' ) {
+
+    # Find the main template
+    my $ld_main_template_id = $input->param('ld_main_template_id');
+    my $main_template = Koha::LdMainTemplates->find( $ld_main_template_id );
+
+    # Save the new data
+    $main_template->set({
+        'name'          => $input->param('name'),
+        'type_uri'      => $input->param('type_uri'),
+        'main_template' => $input->param('main_template'),
+    });
+    $main_template->store();
+
+    # Redirect to the main screen
+    print $input->redirect( $base_path );
+    exit;
+
+} else {
+
+    # Get all the main templates
+    my $main_templates = Koha::LdMainTemplates->search();
+    $template->param(
+        'main_templates' => $main_templates,
+    );
+
+}
+
 output_html_with_http_headers $input, $cookie, $template->output;

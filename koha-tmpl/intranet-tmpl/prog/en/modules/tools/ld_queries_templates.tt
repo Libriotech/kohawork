@@ -21,14 +21,47 @@
    <div id="bd">
     <div id="yui-main">
     <div class="yui-b">
-    <h1>Linked Data queries and templates</h1>
 
-    [% USE Dumper %]
-    <ul>
-    [% FOREACH t IN main_templates %]
-        <li>[% t.name %] ([% t.type_uri %])<textarea>[% t.main_template %]</textarea></li>
+    [% IF op == 'edit' %]
+
+        <h1>Edit: [% main_template.name %]</h1>
+        <form action="[% base_path %]" method="POST">
+        <input type="hidden" name="op" value="save_template" />
+        <input type="hidden" name="ld_main_template_id" value="[% main_template.ld_main_template_id %]" />
+        <fieldset class="rows">
+            <legend>Edit the '[% main_template.name %]' main template</legend>
+            <ol>
+                <li>
+                    <label class="required" for="name">Name</label>
+                    <input type="text" name="name" id="name" size="75" required="required" value="[% main_template.name %]" />
+                </li>
+                <li>
+                    <label class="required" for="type_uri">Type URI</label>
+                    <input type="url" name="type_uri" size="75" required="required" value="[% main_template.type_uri %]" />
+                </li>
+                <li>
+                    <label class="required" for="main_template">Template</label>
+                    <textarea name="main_template" id="main_template" cols="75" rows="10" required="required">[% main_template.main_template %]</textarea>
+                </li>
+            </ol>
+        </fieldset>
+        <fieldset class="action">
+            <input type="submit" class="button" value="Save" />
+            <a href="[% base_path %]">Cancel</a>
+        </fieldset>
+        </form>
+
+    [% ELSE %]
+
+        <h1>Linked Data queries and templates</h1>
+        <table>
+            <tr><th>Name</th><th>Type URI</th><td></td></tr>
+        [% FOREACH t IN main_templates %]
+            <tr><td>[% t.name %]</td><td>[% t.type_uri %]</td><td><a href="?op=edit&id=[% t.ld_main_template_id %]">Edit</a></td></tr>
+        [% END %]
+        </table>
+
     [% END %]
-    </ul>
 
     </div>
    </div>
