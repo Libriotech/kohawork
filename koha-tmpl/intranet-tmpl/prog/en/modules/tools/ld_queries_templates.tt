@@ -22,14 +22,36 @@
     <div id="yui-main">
     <div class="yui-b">
 
-    [% IF op == 'edit' %]
+    [% IF op == 'edit_template' %]
 
-        <h1>Edit: [% main_template.name %]</h1>
+        [% PROCESS template_form %]
+
+    [% ELSE %]
+
+        <h1>Linked Data queries and templates</h1>
+        <p>Existing main templates:</p>
+        <table>
+            <tr><th>Name</th><th>Type URI</th><td></td></tr>
+        [% FOREACH t IN main_templates %]
+            <tr><td>[% t.name %]</td><td>[% t.type_uri %]</td><td><a href="?op=edit_template&id=[% t.ld_main_template_id %]">Edit</a></td></tr>
+        [% END %]
+        </table>
+
+        [% PROCESS template_form %]
+
+    [% END %]
+
+    [% BLOCK template_form %]
+
         <form action="[% base_path %]" method="POST">
         <input type="hidden" name="op" value="save_template" />
-        <input type="hidden" name="ld_main_template_id" value="[% main_template.ld_main_template_id %]" />
         <fieldset class="rows">
-            <legend>Edit the '[% main_template.name %]' main template</legend>
+            [% IF main_template %]
+                <input type="hidden" name="ld_main_template_id" value="[% main_template.ld_main_template_id %]" />
+                <legend>Edit the '[% main_template.name %]' main template</legend>
+            [% ELSE %]
+                <legend>Add a new main template</legend>
+            [% END %]
             <ol>
                 <li>
                     <label class="required" for="name">Name</label>
@@ -50,16 +72,6 @@
             <a href="[% base_path %]">Cancel</a>
         </fieldset>
         </form>
-
-    [% ELSE %]
-
-        <h1>Linked Data queries and templates</h1>
-        <table>
-            <tr><th>Name</th><th>Type URI</th><td></td></tr>
-        [% FOREACH t IN main_templates %]
-            <tr><td>[% t.name %]</td><td>[% t.type_uri %]</td><td><a href="?op=edit&id=[% t.ld_main_template_id %]">Edit</a></td></tr>
-        [% END %]
-        </table>
 
     [% END %]
 

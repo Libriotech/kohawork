@@ -44,7 +44,11 @@ $template->param(
     'base_path' => $base_path,
 );
 
-if ( $op eq 'edit' ) {
+if ( $op eq 'add_template' ) {
+
+    
+
+} elsif ( $op eq 'edit_template' ) {
 
     # Find the main template we want to edit
     my $ld_main_template_id = $input->param('id');
@@ -55,11 +59,17 @@ if ( $op eq 'edit' ) {
 
 } elsif ( $op eq 'save_template' ) {
 
-    # Find the main template
     my $ld_main_template_id = $input->param('ld_main_template_id');
-    my $main_template = Koha::LdMainTemplates->find( $ld_main_template_id );
+    my $main_template;
+    if ( $ld_main_template_id && $ld_main_template_id ne '' ) {
+        # Find the main template
+        $main_template = Koha::LdMainTemplates->find( $ld_main_template_id );
+    } else {
+        # ... or create a new one
+        $main_template = Koha::LdMainTemplate->new();
+    }
 
-    # Save the new data
+    # Save the (new) data
     $main_template->set({
         'name'          => $input->param('name'),
         'type_uri'      => $input->param('type_uri'),
