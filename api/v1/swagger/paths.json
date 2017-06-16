@@ -11,6 +11,9 @@
   "/holds/{reserve_id}": {
     "$ref": "paths/holds.json#/~1holds~1{reserve_id}"
   },
+  "/ldmaintemplates": {
+    "$ref": "paths/ldmaintemplates.json#/~1ldmaintemplates"
+  },
   "/patrons": {
     "$ref": "paths/patrons.json#/~1patrons"
   },

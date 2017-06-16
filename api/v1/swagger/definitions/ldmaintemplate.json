@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "ld_main_template_id": {
-      "$ref": "../x-primitives.json#/ ld_main_template_id"
+      "$ref": "../x-primitives.json#/ld_main_template_id"
     },
     "type_uri": {
       "description": "type URI",

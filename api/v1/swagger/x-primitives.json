@@ -28,6 +28,10 @@
     "type": ["integer", "null"],
     "description": "internally assigned item identifier"
   },
+  "ld_main_template_id": {
+    "type": ["integer", "null"],
+    "description": "id of a main template"
+  },
   "phone": {
     "type": ["string", "null"],
     "description": "primary phone number for patron's primary address"
