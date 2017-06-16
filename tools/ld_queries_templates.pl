@@ -27,7 +27,7 @@ use C4::Output;
 use Koha::LdMainTemplates;
 
 my $input  = CGI::->new;
-my $op     = $input->param('op');
+my $op     = scalar $input->param('op');
 
 my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     {   template_name   => "tools/ld_queries_templates.tt",
@@ -51,7 +51,7 @@ if ( $op eq 'add_template' ) {
 } elsif ( $op eq 'edit_template' ) {
 
     # Find the main template we want to edit
-    my $ld_main_template_id = $input->param('id');
+    my $ld_main_template_id = scalar $input->param('id');
     my $main_template = Koha::LdMainTemplates->find( $ld_main_template_id );
     $template->param(
         'main_template' => $main_template,
@@ -59,7 +59,7 @@ if ( $op eq 'add_template' ) {
 
 } elsif ( $op eq 'save_template' ) {
 
-    my $ld_main_template_id = $input->param('ld_main_template_id');
+    my $ld_main_template_id = scalar $input->param('ld_main_template_id');
     my $main_template;
     if ( $ld_main_template_id && $ld_main_template_id ne '' ) {
         # Find the main template
@@ -71,9 +71,9 @@ if ( $op eq 'add_template' ) {
 
     # Save the (new) data
     $main_template->set({
-        'name'          => $input->param('name'),
-        'type_uri'      => $input->param('type_uri'),
-        'main_template' => $input->param('main_template'),
+        'name'          => scalar $input->param('name'),
+        'type_uri'      => scalar $input->param('type_uri'),
+        'main_template' => scalar $input->param('main_template'),
     });
     $main_template->store();
 
