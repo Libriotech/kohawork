@@ -22,7 +22,7 @@ use base qw(Koha::Object);
 
 =head1 NAME
 
-Koha::City - Koha Linked Data Main Template Object class
+Koha::LdMainTemplate - Koha Linked Data Main Template Object class
 
 =head1 API
 

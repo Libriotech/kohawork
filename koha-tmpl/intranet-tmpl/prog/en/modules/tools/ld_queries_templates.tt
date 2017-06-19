@@ -3,6 +3,11 @@
 [% INCLUDE 'doc-head-open.inc' %]
 <title>Koha &rsaquo; Tools &rsaquo; Linked Data queries and templates</title>
 [% INCLUDE 'doc-head-close.inc' %]
+<script>
+$(document).ready(function() {
+    $( "#queries_templates" ).accordion({ collapsible: true, active:false, animate: 200, heightStyle: 'content' });
+});
+</script>
 </head>
 <body id="tools_inventory" class="tools">
 [% INCLUDE 'header.inc' %]
@@ -22,7 +27,76 @@
     <div id="yui-main">
     <div class="yui-b">
 
-    [% IF op == 'edit_template' %]
+    [% IF op == 'queries' %]
+
+        <h1>Queries for '[% main_template.name %]'</h1>
+        <p>Main template:</p>
+        <div style="border: 1px solid black; padding: 1em; margin: 1em; border-radius: 0.5em;">[% main_template.main_template %]</div>
+        <div id="queries_templates">
+            [% FOREACH q IN queries %]
+            <h3>[% q.name %] ([% q.slug %])</h3>
+            <form action="[% base_path %]" method="POST">
+            <input type="hidden" name="op" value="save_query" />
+            <input type="hidden" name="ld_queries_templates_id" value="[% q.ld_queries_templates_id %]"/>
+            <input type="hidden" name="ld_main_template_id" value="[% main_template.ld_main_template_id %]"/>
+            <fieldset class="rows">
+            <legend>Edit '[% q.name %]' ([% q.slug %])</legend>
+                <ol>
+                    <li>
+                        <label class="required" for="name">Name</label>
+                        <input type="text" name="name" value="[% q.name %]"/>
+                    </li>
+                    <li>
+                        <label class="required" for="slug">Slug</label>
+                        <input type="text" name="slug" value="[% q.slug %]"/>
+                    </li>
+                    <li>
+                        <label class="required" for="query">Query</label>
+                        <textarea name="query">[% q.query %]</textarea>
+                    </li>
+                    <li>
+                        <label class="required" for="template">Template</label>
+                        <textarea name="template">[% q.template %]</textarea>
+                    </li>
+                </ol>
+            </fieldset>
+            <fieldset class="action">
+                <input type="submit" class="button" value="Save" />
+            </fieldset>
+            </form>
+            [% END %]
+            <h3>Add a new query</h3>
+            <form action="[% base_path %]" method="POST">
+            <input type="hidden" name="op" value="save_query" />
+            <input type="hidden" name="ld_main_template_id" value="[% main_template.ld_main_template_id %]"/>
+            <fieldset class="rows">
+            <legend>Add a new query</legend>
+                <ol>
+                    <li>
+                        <label class="required" for="name">Name</label>
+                        <input type="text" name="name" value=""/>
+                    </li>
+                    <li>
+                        <label class="required" for="slug">Slug</label>
+                        <input type="text" name="slug" value=""/>
+                    </li>
+                    <li>
+                        <label class="required" for="query">Query</label>
+                        <textarea name="query"></textarea>
+                    </li>
+                    <li>
+                        <label class="required" for="template">Template</label>
+                        <textarea name="template"></textarea>
+                    </li>
+                </ol>
+            </fieldset>
+            <fieldset class="action">
+                <input type="submit" class="button" value="Save" />
+            </fieldset>
+            </form>
+        </div>
+
+    [% ELSIF op == 'edit_template' %]
 
         [% PROCESS template_form %]
 

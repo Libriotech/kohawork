@@ -25,6 +25,7 @@ use C4::Auth;
 use C4::Output;
 
 use Koha::LdMainTemplates;
+use Koha::LdQueriesTemplates;
 
 my $input  = CGI::->new;
 my $op     = scalar $input->param('op');
@@ -44,11 +45,7 @@ $template->param(
     'base_path' => $base_path,
 );
 
-if ( $op eq 'add_template' ) {
-
-    
-
-} elsif ( $op eq 'edit_template' ) {
+if ( $op eq 'edit_template' ) {
 
     # Find the main template we want to edit
     my $ld_main_template_id = scalar $input->param('id');
@@ -79,6 +76,46 @@ if ( $op eq 'add_template' ) {
 
     # Redirect to the main screen
     print $input->redirect( $base_path );
+    exit;
+
+} elsif ( $op eq "queries" ) {
+
+    my $ld_main_template_id = scalar $input->param('id');
+    my $main_template = Koha::LdMainTemplates->find( $ld_main_template_id );
+
+    my @queries = Koha::LdQueriesTemplates->search({
+        'ld_main_template_id' => $ld_main_template_id,
+    });
+
+    $template->param(
+        'main_template' => $main_template,
+        'queries'       => \@queries,
+    );
+
+} elsif ( $op eq "save_query" ) {
+
+    my $ld_queries_templates_id = scalar $input->param('ld_queries_templates_id');
+    my $qt;
+    if ( $ld_queries_templates_id && $ld_queries_templates_id ne '' ) {
+        # Find the query-and-template
+        $qt = Koha::LdQueriesTemplates->find( $ld_queries_templates_id );
+    } else {
+        # ... or create a new one
+        $qt = Koha::LdQueriesTemplate->new();
+    }
+
+    # Save the (new) data
+    $qt->set({
+        'name'                => scalar $input->param('name'),
+        'slug'                => scalar $input->param('slug'),
+        'query'               => scalar $input->param('query'),
+        'template'            => scalar $input->param('template'),
+        'ld_main_template_id' => scalar $input->param('ld_main_template_id'),
+    });
+    $qt->store();
+
+    # Redirect to the main screen
+    print $input->redirect( "$base_path?op=queries&id=" . scalar $input->param('ld_main_template_id') );
     exit;
 
 } else {
