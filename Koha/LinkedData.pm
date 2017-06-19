@@ -80,7 +80,7 @@ and the templates.
 sub _get_data_and_templates {
 
     my ( $uri, $type ) = @_;
-    my $triplestore = C4::Context->triplestore;
+    my $triplestore = C4::Context->triplestore( 'query' );
 
     my %data_and_templates;
     my @queries_and_templates = _get_queries_and_templates( $type );
@@ -182,7 +182,7 @@ sub _get_type_of_record {
 
     my ( $uri ) = @_;
 
-    my $triplestore = C4::Context->triplestore;
+    my $triplestore = C4::Context->triplestore( 'query' );
     my $sparql = "
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
