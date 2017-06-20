@@ -20,6 +20,7 @@ package Koha::LinkedData;
 use C4::Context;
 
 use Koha::LdMainTemplates;
+use Koha::LdQueriesTemplates;
 use Koha::RDF;
 
 use Data::Dumper;
@@ -62,9 +63,9 @@ sub get_data_from_biblionumber {
     my $type = _get_type_of_record( $uri );
 
     # Find the main template for this type
-    my $main_template = _get_main_template( $type );
+    my ( $main_template_id, $main_template ) = _get_main_template( $type );
 
-    my $data_and_templates = _get_data_and_templates( $uri, $type );
+    my $data_and_templates = _get_data_and_templates( $uri, $main_template_id );
 
     return ( $main_template, $data_and_templates );
 
@@ -80,71 +81,46 @@ and the templates.
 
 sub _get_data_and_templates {
 
-    my ( $uri, $type ) = @_;
+    my ( $uri, $main_template_id ) = @_;
     my $triplestore = C4::Context->triplestore( 'query' );
 
     my %data_and_templates;
-    my @queries_and_templates = _get_queries_and_templates( $type );
-    foreach my $qt ( @queries_and_templates ) {
-        # Add the data to the hash
+    my $queries_and_templates = _get_queries_and_templates( $main_template_id );
+    foreach my $qt ( @{ $queries_and_templates } ) {
+
+        # FIXME Replace a placeholder in the query with the actual URI
+        $qt->{'query'} =~ s/__URI__/$uri/g;
+
+        # Get the data from the triplestore and add it to the hash
         my $data = $triplestore->get_sparql( $qt->{'query'} );
         $data_and_templates{ $qt->{'slug'} } = {
             'data' => $data,
             'template' => $qt->{'template'},
         };
+
     }
 
-    warn Dumper \%data_and_templates if $debug;
+    # warn Dumper \%data_and_templates if $debug;
     return \%data_and_templates;
 
 }
 
 =head2 _get_queries_and_templates
 
-Get the queries and the templates, based on a given type, and return them.
-
-FIXME This should come from the db, but we are faking it, for now.
-
-FIXME The queries need to have placeholders for our /bib/1 URIs.
+Get the queries and the templates, associated with a given main template, and 
+return them.
 
 =cut
 
 sub _get_queries_and_templates {
 
-    my ( $type ) = @_;
+    my ( $main_template_id ) = @_;
 
-    # Series title
-    my $query1 = "
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX bibframe: <http://id.loc.gov/ontologies/bibframe/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  SELECT ?seriesTitle WHERE  { {
-    <http://demo.semweb.bibkat.no/bib/1> rdfs:seeAlso ?graph
-    FILTER ( ?type1 != '' )
-  } UNION {
-    GRAPH ?graph {
-      ?graph rdf:type ?type1 .
-      ?graph <http://schema.org/mainEntity> ?mainEnt .
-      ?mainEnt bibframe:hasSeries ?series .
-      ?series <http://purl.org/dc/terms/title> ?seriesTitle .
-    }
-} }
-";
-    my $template1 = '
-<h4>Series title</h4>
-<ul>
-[% WHILE ( d = ld_dt.series_title.data.next ) %]
-  <li>[% d.seriesTitle.value %]</li>
-[% END %]
-</ul>
-';
-    my %qt1 = (
-        'slug'     => 'series_title',
-        'query'    => $query1,
-        'template' => $template1,
-    );
+    my $qts = Koha::LdQueriesTemplates->search({
+        'ld_main_template_id' => $main_template_id,
+    })->unblessed;
 
-    return ( \%qt1 );
+    return $qts;
 
 }
 
@@ -160,7 +136,7 @@ sub _get_main_template {
     my $mt = Koha::LdMainTemplates->find({
         'type_uri' => $type,
     })->unblessed;
-    return $mt->{'main_template'};
+    return ( $mt->{'ld_main_template_id'}, $mt->{'main_template'} );
 
 }
 
