@@ -19,6 +19,8 @@ package Koha::LinkedData;
 
 use C4::Context;
 
+use Koha::LdMainTemplates;
+
 use Data::Dumper;
 use Modern::Perl;
 our $debug = 1;
@@ -151,17 +153,15 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 Given a type URI, find the main template for that type.
 
-FIXME This should come from the database, but for now we fake it.
-
 =cut
 
 sub _get_main_template {
 
     my ( $type ) = @_;
-    return '
-<h3>Sound recording</h3>
-[% ld_dt.series_title.template | eval %]
-';
+    my $mt = Koha::LdMainTemplates->find({
+        'type_uri' => $type,
+    })->unblessed;
+    return $mt->{'main_template'};
 
 }
 
@@ -202,7 +202,6 @@ PREFIX bibframe: <http://id.loc.gov/ontologies/bibframe/>
 ";
     my $data = $triplestore->get_sparql( $sparql );
     my $d = $data->next;
-    warn Dumper $d if $debug;
 
     return $d->{type2}->value;
 
