@@ -29,9 +29,9 @@ $(document).ready(function() {
 
     [% IF op == 'queries' %]
 
-        <h1>Queries for '[% main_template.name %]'</h1>
-        <p>Main template:</p>
+        <h1>Queries for main template '[% main_template.name %]'</h1>
         <div style="border: 1px solid black; padding: 1em; margin: 1em; border-radius: 0.5em;">[% main_template.main_template %]</div>
+        <p><a href="?op=edit_template&id=[% main_template.ld_main_template_id %]">Edit</a></p>
         <div id="queries_templates">
             [% FOREACH q IN queries %]
             <h3>[% q.name %] ([% q.slug %])</h3>
