@@ -44,19 +44,19 @@ $(document).ready(function() {
                 <ol>
                     <li>
                         <label class="required" for="name">Name</label>
-                        <input type="text" name="name" value="[% q.name %]"/>
+                        <input type="text" name="name" size="75" value="[% q.name %]"/>
                     </li>
                     <li>
                         <label class="required" for="slug">Slug</label>
-                        <input type="text" name="slug" value="[% q.slug %]"/>
+                        <input type="text" name="slug" size="75" value="[% q.slug %]"/>
                     </li>
                     <li>
                         <label class="required" for="query">Query</label>
-                        <textarea name="query">[% q.query %]</textarea>
+                        <textarea name="query" rows="10" cols="75">[% q.query %]</textarea>
                     </li>
                     <li>
                         <label class="required" for="template">Template</label>
-                        <textarea name="template">[% q.template %]</textarea>
+                        <textarea name="template" rows="10" cols="75">[% q.template %]</textarea>
                     </li>
                 </ol>
             </fieldset>
@@ -74,19 +74,19 @@ $(document).ready(function() {
                 <ol>
                     <li>
                         <label class="required" for="name">Name</label>
-                        <input type="text" name="name" value=""/>
+                        <input type="text" name="name" size="75" value=""/>
                     </li>
                     <li>
                         <label class="required" for="slug">Slug</label>
-                        <input type="text" name="slug" value=""/>
+                        <input type="text" name="slug" size="75" value=""/>
                     </li>
                     <li>
                         <label class="required" for="query">Query</label>
-                        <textarea name="query"></textarea>
+                        <textarea name="query" rows="10" cols="75"></textarea>
                     </li>
                     <li>
                         <label class="required" for="template">Template</label>
-                        <textarea name="template"></textarea>
+                        <textarea name="template" rows="10" cols="75"></textarea>
                     </li>
                 </ol>
             </fieldset>
