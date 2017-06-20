@@ -133,9 +133,19 @@ Given a type URI, find the main template for that type.
 sub _get_main_template {
 
     my ( $type ) = @_;
+
+    # Find the right main template
     my $mt = Koha::LdMainTemplates->find({
         'type_uri' => $type,
     })->unblessed;
+
+    # Replace placeholders. This should turn this:
+    #     {{something}}
+    # into this:
+    #     [% ld_dt.something.template | eval %]
+    $mt->{'main_template'} =~ s/{{/[% ld_dt./g;
+    $mt->{'main_template'} =~ s/}}/.template | eval %]/g;
+
     return ( $mt->{'ld_main_template_id'}, $mt->{'main_template'} );
 
 }
