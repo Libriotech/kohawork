@@ -20,6 +20,7 @@ package Koha::LinkedData;
 use C4::Context;
 
 use Koha::LdMainTemplates;
+use Koha::RDF;
 
 use Data::Dumper;
 use Modern::Perl;
@@ -53,10 +54,8 @@ sub get_data_from_biblionumber {
     my ( $self, $biblionumber ) = @_;
 
     # Mint the URI
-    # my $rdf = Koha::RDF->new;
-    # my $uri = $rdf->mint_uri('biblio',1);
-    # For now, we fake it, so we can get some actual data from the triplestore
-    my $uri = 'http://demo.semweb.bibkat.no/bib/1';
+    my $rdf = Koha::RDF->new;
+    my $uri = $rdf->mint_uri( 'biblio', $biblionumber );
 
     # Figure out the type of the record we are looking at, so we can use the
     # proper queries and templates for that type.
